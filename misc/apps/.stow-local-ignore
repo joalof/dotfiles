@@ -1,0 +1,2 @@
+# Only stow the following folders
+^((?!(\/)bin|include|lib|lib64|local|sbin|share|tmp).)*$

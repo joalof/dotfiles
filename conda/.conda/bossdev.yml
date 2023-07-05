@@ -1,0 +1,50 @@
+name: bossdev
+
+dependencies:
+  #  basics
+  - python=3.10
+  - pip
+  - cython
+  - scipy
+  - numpy=1.23.5
+  - pandas
+
+  # ML
+  - scikit-learn
+
+  # visualisation
+  - pillow
+  - matplotlib
+  - seaborn
+
+  # notebooks
+  - jupyter
+  - jupyterlab
+  - jupytext
+
+  # Spreadsheets etc
+  - openpyxl
+  # - visidata
+
+  # doc
+  - sphinx
+  - sphinx_rtd_theme
+  - nbsphinx
+  - numpydoc
+
+  # dev
+  - conda-build
+  - coverage
+  - pytest
+  - pytest-xdist
+  - black
+  - isort
+  - twine
+  - debugpy
+  - pynvim
+  - pandas-stubs
+
+  # magma nvim
+  - pip:
+    - pnglatex
+    # - ueberzug

@@ -1,0 +1,9 @@
+name: ml4ms
+
+channels:
+  - conda-forge
+
+dependencies:
+  #  basics
+  - python=3.7
+  - pip

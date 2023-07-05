@@ -1,0 +1,18 @@
+name: aldoe
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python>=3.8
+  - pip
+  - cython
+  - scipy
+  - numpy
+  - pandas
+  - matplotlib
+  - jupyter
+  - jupyterlab
+  - jupytext
+  - pip:
+    - aalto-boss

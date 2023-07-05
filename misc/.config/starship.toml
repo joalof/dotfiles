@@ -1,0 +1,8 @@
+[cmd_duration]
+disabled = true
+
+[python]
+disabled = true
+
+[lua]
+disabled = true

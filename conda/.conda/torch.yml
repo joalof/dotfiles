@@ -1,0 +1,33 @@
+name: torch
+
+channels:
+  - pytorch
+  - conda-forge
+
+dependencies:
+  #  basics
+  - pip
+  - cython
+  - scipy
+  - numpy
+  - pandas
+  - mamba
+
+  # ML
+  - scikit-learn
+  - scikit-image
+  - pytorch-gpu
+  - torchvision
+
+  # visualisation
+  - matplotlib
+
+  # notebooks
+  - jupyter
+  - jupyterlab
+
+  # dev
+  - ipdb
+  - pytest
+  - pytest-xdist
+  - black

@@ -1,0 +1,41 @@
+name: game
+
+channels:
+  - conda-forge
+  - pytorch
+  # cant use cogsci for pygame, use pip inside env
+
+dependencies:
+  # basics
+  - python=3.8
+  - scipy
+  - numpy
+  - pandas
+  - mamba
+
+  # ML
+  - scikit-learn
+  - scikit-image
+  - pytorch::pytorch
+  - pytorch::torchvision
+
+  # visualisation
+  - matplotlib
+
+  # notebooks
+  - jupyter
+  - jupyterlab
+
+  # doc
+  - sphinx
+  - sphinx_rtd_theme
+  - nbsphinx
+
+  # dev
+  - conda-build
+  - coverage
+  - pytest
+  - pytest-xdist
+  - black
+  - pylint
+  - twine
