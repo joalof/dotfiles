@@ -5,7 +5,7 @@ return {
         "hrsh7th/cmp-path",
         'saadparwaiz1/cmp_luasnip',
         "hrsh7th/cmp-nvim-lsp",
-        "hrsh7th/cmp-nvim-lsp-signature-help",
+        -- "hrsh7th/cmp-nvim-lsp-signature-help",
         'hrsh7th/cmp-nvim-lua',
         'hrsh7th/cmp-omni',
         'onsails/lspkind.nvim',
@@ -13,10 +13,6 @@ return {
     event = "InsertEnter",
     config = function()
         vim.opt.completeopt = { "menuone", "noselect" }
-
-        local cmp = require('cmp')
-        local lspkind = require('lspkind')
-        local luasnip = require('luasnip')
         local cmp = require('cmp')
         cmp.setup {
             sources = cmp.config.sources { { name = 'omni', }, }
@@ -35,7 +31,7 @@ return {
             -- snippets
             snippet = {
                 expand = function(args)
-                    luasnip.lsp_expand(args.body)
+                    require('luasnip').lsp_expand(args.body)
                 end,
             },
             -- key mappings
@@ -63,7 +59,7 @@ return {
             -- sources
             sources = {
                 {name = 'nvim_lsp', max_item_count=10},
-                {name = 'nvim_lsp_signature_help'},
+                -- {name = 'nvim_lsp_signature_help'},
                 {name = 'nvim_lua'},
                 {name = 'luasnip'},
                 {name = 'path', max_item_count=10},
@@ -71,7 +67,7 @@ return {
             },
             -- formatting
             formatting = {
-                format = lspkind.cmp_format {
+                format = require('lspkind').cmp_format {
                     mode = 'symbol_text',
                 }
             },

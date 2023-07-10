@@ -1,6 +1,6 @@
 return {
-    'joalof/vim-kitty-navigator',
-    branch = 'fix-multikey-mappings',
+    'knubie/vim-kitty-navigator',
+    -- branch = 'fix-multikey-mappings',
     build = 'cp ./*.py ~/.config/kitty/',
     config = function ()
         vim.g.kitty_navigator_no_mappings = 1

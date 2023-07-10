@@ -3,9 +3,7 @@ require("mason").setup({
     ui = {border = 'none'},
 })
 
--- require("mason-lspconfig").setup {
---     ensure_installed = {'pyright', 'sumneko_lua'},
--- }
+require("mason-lspconfig").setup({})
 
 -- handlers
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
@@ -27,32 +25,12 @@ require("neodev").setup({
 })
 
 -- set up lspconfig
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local on_attach = function(client, bufnr)
-
-    -- require "lsp_signature".on_attach({
-    --     floating_window = true,
-    --     bind = true, -- This is mandatory, otherwise border config won't get registered.
-    --     handler_opts = {
-    --         border = "rounded"
-    --     },
-    --     hint_enable = true,  -- turn off virtual text hints
-    -- }, bufnr)
-    --
-    
-    vim.api.nvim_create_autocmd("CursorHold", {
-        callback = function()
-            vim.diagnostic.open_float(bufnr, {scope = 'cursor', focus = false})
-        end,
-        buffer = bufnr,
-    })
-
     if client.server_capabilities.documentHighlightProvider then
-
         vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
         vim.api.nvim_clear_autocmds {buffer = bufnr, group = "lsp_document_highlight"}
-
         vim.api.nvim_create_autocmd("CursorHold", {
                 callback = vim.lsp.buf.document_highlight,
                 buffer = bufnr,
@@ -71,14 +49,13 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, opts)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-
 end
 
 -- Pyright
 local lspconfig = require('lspconfig')
 lspconfig['pyright'].setup {
     on_attach = on_attach,
-    capabilities = capabilities,
+    capabilities = lsp_capabilities,
     settings = {
         python = {
             analysis = {
@@ -95,7 +72,7 @@ lspconfig['pyright'].setup {
 -- sumneko: lua
 lspconfig['lua_ls'].setup({
     on_attach = on_attach,
-    capabilities = capabilities,
+    capabilities = lsp_capabilities,
     settings = {
         Lua = {
             completion = {
@@ -109,6 +86,7 @@ lspconfig['lua_ls'].setup({
 })
 
 lspconfig['r_language_server'].setup({
-  on_attach = on_attach,
-  flags = { debounce_text_changes = 150 },
+    on_attach = on_attach,
+    capabilities = lsp_capabilities,
+    flags = { debounce_text_changes = 150 },
 })
