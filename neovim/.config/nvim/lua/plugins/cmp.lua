@@ -5,14 +5,12 @@ return {
         "hrsh7th/cmp-path",
         'saadparwaiz1/cmp_luasnip',
         "hrsh7th/cmp-nvim-lsp",
-        -- "hrsh7th/cmp-nvim-lsp-signature-help",
         'hrsh7th/cmp-nvim-lua',
         'hrsh7th/cmp-omni',
         'onsails/lspkind.nvim',
     },
     event = "InsertEnter",
     config = function()
-        vim.opt.completeopt = { "menuone", "noselect" }
         local cmp = require('cmp')
         cmp.setup {
             sources = cmp.config.sources { { name = 'omni', }, }
@@ -28,6 +26,10 @@ return {
         end
 
         cmp.setup {
+            
+            completion = {
+                completeopt = 'menuone,noselect'
+            },
             -- snippets
             snippet = {
                 expand = function(args)
@@ -59,11 +61,10 @@ return {
             -- sources
             sources = {
                 {name = 'nvim_lsp', max_item_count=10},
-                -- {name = 'nvim_lsp_signature_help'},
-                {name = 'nvim_lua'},
-                {name = 'luasnip'},
                 {name = 'path', max_item_count=10},
                 {name = 'buffer', max_item_count=10},
+                {name = 'nvim_lua'},
+                {name = 'luasnip'},
             },
             -- formatting
             formatting = {
@@ -74,40 +75,3 @@ return {
         }
     end,
 }
-
--- local cmp_autopairs = require('nvim-autopairs.completion.cmp')
--- cmp.event:on(
---   'confirm_done',
---   cmp_autopairs.on_confirm_done()
--- )
-
--- Tab key mapping for snippets?
---  -- Check if there's a word before the cursor (used by <TAB> mapping)
--- local has_words_before = function()
---   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
---   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
--- end
--- Send feed keys with special codes (used by <S-TAB> mapping)
--- local feedkey = function(key, mode)
---   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
--- end
--- ["<Tab>"] = cmp.mapping(function(fallback)
---   if cmp.visible() then
---     cmp.select_next_item()
---   elseif vim.fn["vsnip#available"]() == 1 then
---     feedkey("<Plug>(vsnip-expand-or-jump)", "")
---   elseif has_words_before() then
---     cmp.complete()
---   else
---     fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
---   end
--- end, { "i", "s" }),
--- ["<S-Tab>"] = cmp.mapping(function()
---   if cmp.visible() then
---     cmp.select_prev_item()
---   elseif vim.fn["vsnip#jumpable"](-1) == 1 then
---     feedkey("<Plug>(vsnip-jump-prev)", "")
---   end
--- end, { "i", "s" }),
---
---

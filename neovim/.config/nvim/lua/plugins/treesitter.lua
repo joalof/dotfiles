@@ -22,7 +22,7 @@ return {
 
             -- playground
             playground = {
-                enable = true,
+                enable = false,
                 disable = {},
             },
 

@@ -6,16 +6,13 @@ return {
     },
     config = function()
         require('telescope').setup({
-            pickers = {
-                git_files = {
-                    mappings = {
-                        i = {
-                            ['<C-j>'] = require('telescope.actions').select_default,
-                       },
-                        n = {
-                            ['<C-j>'] = require('telescope.actions').select_default,
-                        },
-
+            defaults = {
+                mappings = {
+                    i = {
+                        ['<C-j>'] = require('telescope.actions').select_default,
+                    },
+                    n = {
+                        ['<C-j>'] = require('telescope.actions').select_default,
                     },
                 },
             },

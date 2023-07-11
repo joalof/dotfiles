@@ -75,5 +75,6 @@
         "/home/joalof/.config/nvim/lua",
         "/home/joalof/.config/nvim/lua",
         "${3rd}/luv/library"
-    ]
+    ],
+    "workspace.checkThirdParty": false
 }

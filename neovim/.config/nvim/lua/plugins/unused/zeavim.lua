@@ -1,6 +1,5 @@
 return {
     'KabbAmine/zeavim.vim',
-    event = 'VeryLazy',
     init = function()
         vim.g.zv_disable_mapping = 1
     end,
