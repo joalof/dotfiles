@@ -27,7 +27,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_autocmds" }
 
         vim.api.nvim_create_autocmd("CursorHold", {
-            callback = vim.diagnostic.open_float,
+            callback = function ()
+                vim.diagnostic.open_float({scope = 'cursor'})
+            end,
             buffer = bufnr,
             group = "lsp_autocmds",
             desc = "Show diagnostics on hover",
