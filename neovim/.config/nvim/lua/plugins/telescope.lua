@@ -1,5 +1,4 @@
 return {
-
     'nvim-telescope/telescope.nvim', tag = '0.1.2',
     dependencies = {
         'nvim-lua/plenary.nvim',
@@ -35,8 +34,25 @@ return {
                 return vim.fn.getcwd()
             end
         end
-        vim.keymap.set('n', '<leader>ff', function() builtin.find_files({cwd = get_root_dir()}) end)
+        vim.keymap.set(
+            'n',
+            '<leader>ff',
+            function() builtin.find_files({cwd = get_root_dir(), hidden=true}) end
+        )
         vim.keymap.set('n', '<leader>fh', builtin.help_tags)
-        vim.keymap.set('n', '<leader>fp', require('telescope').extensions.projects.projects)
+        vim.keymap.set(
+            'n',
+            '<leader>fp',
+            require('telescope').extensions.projects.projects
+        )
+        vim.keymap.set(
+            'n',
+            '<leader>fn',
+            function()
+                builtin.find_files(
+                    {cwd = vim.fn.environ()['HOME'] .. '/.config/nvim', hidden=true}
+                )
+            end
+        )
     end,
 }
