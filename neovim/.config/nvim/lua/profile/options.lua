@@ -1,14 +1,16 @@
 vim.opt.scrolloff = 3
 vim.opt.sidescrolloff = 5
+
 vim.opt.swapfile = false
 vim.opt.backup = false
--- vim.opt.listchars = {
---     eol = "$",
---     tab = ">-",
---     trail = "~",
---     extends = ">",
---     precedes = "<",
--- }
+
+vim.opt.listchars = {
+    eol = "$",
+    tab = ">-",
+    trail = "~",
+    extends = ">",
+    precedes = "<",
+}
 vim.opt.signcolumn = 'number'
 vim.opt.showmode = false
 
@@ -43,3 +45,6 @@ vim.opt.autowriteall = true
 vim.opt.wildignore = {
     "*.o", "*.obj", "*~", "*.png", "*.jpg", "*.gif", "*.eps",
 }
+
+-- termguicolors
+vim.opt.termguicolors = true
