@@ -1,6 +1,6 @@
 -- plugins that have to be set up before lspconfig
 require("mason").setup({
-    ui = {border = 'none'},
+    ui = {border = 'rounded'},
 })
 
 require("mason-lspconfig").setup({})

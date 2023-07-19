@@ -6,6 +6,15 @@ return {
             -- show_current_context_start = true,
             show_first_indent_level = true,
             max_indent_increase=1,
+            filetype_exclude = {
+                "help",
+                "alpha",
+                "dashboard",
+                "Trouble",
+                "lazy",
+                "mason",
+                "notify",
+            }
         }
     end,
 }
