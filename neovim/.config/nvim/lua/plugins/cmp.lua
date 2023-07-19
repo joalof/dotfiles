@@ -25,6 +25,8 @@ return {
             end
         end
 
+        local luasnip = require('luasnip')
+
         cmp.setup {
             
             completion = {
@@ -33,7 +35,7 @@ return {
             -- snippets
             snippet = {
                 expand = function(args)
-                    require('luasnip').lsp_expand(args.body)
+                    luasnip.lsp_expand(args.body)
                 end,
             },
             -- key mappings
@@ -43,14 +45,28 @@ return {
                 ['<C-u>'] = cmp.mapping.scroll_docs(-4),
                 ['<C-d>'] = cmp.mapping.scroll_docs(4),
                 -- ['<C-j'] = cmp.mapping.complete(),
-                -- ['<C-e>'] = cmp.mapping.abort(),
+                ['<C-c>'] = cmp.mapping.abort(),
                 -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                ['<C-y>'] = cmp.mapping.confirm({select = true}), 
+                ['<C-j>'] = cmp.mapping.confirm({select = true}),
                 -- ['<CR>'] = cmp.mapping.confirm({ select = true }),
                 -- tab mapping
                 ['<Tab>'] = cmp.mapping(function(fallback)
                     if cmp.visible() then
-                        cmp.select_next_item(select_opts)
+                        cmp.select_next_item()
+                    elseif luasnip.jumpable(1) then
+                        luasnip.jump(1)
+                    elseif check_back_space() then
+                        fallback()
+                    else
+                        cmp.complete()
+                    end
+                end, {'i', 's'}),
+                -- reverse direction with shift-tab 
+                ['<S-Tab>'] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
+                        cmp.select_prev_item()
+                    elseif luasnip.jumpable(-1) then
+                        luasnip.jump(-1)
                     elseif check_back_space() then
                         fallback()
                     else
@@ -61,10 +77,10 @@ return {
             -- sources
             sources = {
                 {name = 'nvim_lsp', max_item_count=10},
-                {name = 'path', max_item_count=10},
                 {name = 'buffer', max_item_count=10},
-                {name = 'nvim_lua'},
                 {name = 'luasnip'},
+                {name = 'nvim_lua'},
+                {name = 'path', max_item_count=10},
             },
             -- formatting
             formatting = {

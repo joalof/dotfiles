@@ -1,0 +1,49 @@
+snippet cla
+	class ${1:class_name}:
+		"""${2:description}"""
+		def __init__(self, ${3:args}):
+			${0}
+
+snippet dataclass
+	@dataclass
+	class ${1:ClassName}:
+		"""${2:description}"""
+		${3:var}: ${4:type}
+		${0}
+
+snippet imp_script
+	import numpy as np
+	import pandas as pd
+	import matplotlib.pyplot as plt
+	${0}
+
+snippet imp_boss
+	import numpy as np
+	import pandas as pd
+	import matplotlib.pyplot as plt
+	from boss.bo.bo_main import BOMain
+	from boss.pp.pp_main import PPMain
+	${0}
+
+snippet bomain 
+	bo = BOMain(
+		f=${1:func_name},
+		bounds=${2:bounds},
+		noise=${3:noise},
+		initpts=${4:initpts},
+		iterpts=${5:iterpts},
+		kernel='rbf',
+		acqfn_name='lcb',
+	)
+	res = bo.run()
+	${0}
+
+snippet ppmain
+	pp = PPMain(
+		res,
+		pp_models=True,
+		pp_acq_funcs=True,
+		pp_models_slice=[0, 1, 50],
+	)
+	pp.run()
+	${0}

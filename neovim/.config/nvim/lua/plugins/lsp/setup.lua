@@ -127,3 +127,6 @@ lspconfig['lua_ls'].setup({
 lspconfig['r_language_server'].setup({
     flags = { debounce_text_changes = 150 },
 })
+
+-- json-lsp
+lspconfig['jsonls'].setup({})
