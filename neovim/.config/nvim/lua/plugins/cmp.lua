@@ -28,7 +28,6 @@ return {
         local luasnip = require('luasnip')
 
         cmp.setup {
-            
             completion = {
                 completeopt = 'menuone,noselect'
             },
@@ -74,7 +73,6 @@ return {
                     end
                 end, {'i', 's'}),
             },
-            -- sources
             sources = {
                 {name = 'nvim_lsp', max_item_count=10},
                 {name = 'buffer', max_item_count=10},
@@ -82,7 +80,6 @@ return {
                 {name = 'nvim_lua'},
                 {name = 'path', max_item_count=10},
             },
-            -- formatting
             formatting = {
                 format = require('lspkind').cmp_format {
                     mode = 'symbol_text',

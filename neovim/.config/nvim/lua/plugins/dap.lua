@@ -53,26 +53,33 @@ return {
                 ensure_installed = {},
             },
         },
+        {
+            'HiPhish/debugpy.nvim',
+            cmd = {'Debugpy'},
+        },
     },
     keys = {
         { "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = "Breakpoint Condition" },
         { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
-        { "<leader>dc", function() require("dap").continue() end, desc = "Continue" },
-        -- { "<leader>dc", function() require("dap").run_to_cursor() end, desc = "Run to Cursor" },
-        { "<leader>dg", function() require("dap").goto_() end, desc = "Go to line (no execute)" },
-        { "<leader>dl", function() require("dap").step_into() end, desc = "Step Into" },
-        { "<leader>dj", function() require("dap").down() end, desc = "Down" },
-        { "<leader>dk", function() require("dap").up() end, desc = "Up" },
-        -- { "<leader>dl", function() require("dap").run_last() end, desc = "Run Last" },
-        { "<leader>dh", function() require("dap").step_out() end, desc = "Step Out" },
-        { "<leader>dn", function() require("dap").step_over() end, desc = "Step Over" },
-        { "<leader>dp", function() require("dap").pause() end, desc = "Pause" },
-        { "<leader>dr", function() require("dap").repl.toggle() end, desc = "Toggle REPL" },
-        { "<leader>ds", function() require("dap").session() end, desc = "Session" },
+        -- { "<leader>dg", function() require("dap").goto_() end, desc = "Go to line (no execute)" },
+
+        { "<leader>dj", function() require("dap").step_over() end, desc = "Step over" },
+        { "<leader>dk", function() require("dap").step_back() end, desc = "Step back" },
+        { "<leader>dl", function() require("dap").step_into() end, desc = "Step into" },
+        { "<leader>dh", function() require("dap").step_out() end, desc = "Step out" },
+        { "<leader>dn", function() require("dap").down() end, desc = "Frame Down"},
+        { "<leader>dp", function() require("dap").up() end, desc = "Up" },
         { "<leader>dx", function() require("dap").terminate() end, desc = "Terminate" },
+
+        { "<leader>dc", function() require("dap").continue() end, desc = "Continue" },
+        { "<leader>dr", function() require("dap").restart() end, desc = "Toggle REPL" },
+
+        -- { "<leader>dp", function() require("dap").pause() end, desc = "Pause" },
+        -- { "<leader>ds", function() require("dap").session() end, desc = "Session" },
+        
+        -- { "<leader>dl", function() require("dap").run_last() end, desc = "Run Last" },
         -- { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
     },
-
     config = function()
         vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
         local signs = {

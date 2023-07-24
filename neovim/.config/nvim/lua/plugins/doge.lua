@@ -6,5 +6,5 @@ return {
     end,
     config = function()
         vim.g.doge_python_settings = {omit_redundant_param_types=0, single_quotes=0}
-    end
+    end,
 }
