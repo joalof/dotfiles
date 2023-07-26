@@ -95,33 +95,10 @@ lsp_settings()
 
 -- Set up individual language servers
 -- Pyright
-lspconfig['pyright'].setup {
-    settings = {
-        python = {
-            analysis = {
-                -- typeCheckingMode = "basic",
-                useLibraryCodeForTypes = true,
-                diagnosticMode = 'openFilesOnly',
-                autoSearchPaths = true,
-                stubPath = '/home/joalof/.local/share/typings'
-            }
-        }
-    }
-}
+lspconfig['pyright'].setup({settings = require('plugins.lsp.pyright')})
 
 -- sumneko: lua
-lspconfig['lua_ls'].setup({
-    settings = {
-        Lua = {
-            completion = {
-                -- Whether to show call snippets or not. When disabled, only
-                -- the function name will be completed. When enabled, a
-                -- "more complete" snippet will be offered.
-                callSnippet = "Disable" -- Disable, Both, Replace
-            },
-        },
-    },
-})
+lspconfig['lua_ls'].setup({settings = require('plugins.lsp.lua_ls')})
 
 -- R language server
 lspconfig['r_language_server'].setup({
