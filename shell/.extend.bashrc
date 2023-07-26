@@ -30,6 +30,10 @@ export LIBRARY_PATH=$HOME/.local/lib
 export LD_LIBRARY_PATH=$HOME/.local/lib
 export CPLUS_INCLUDE_PATH=$HOME/.local/include
 
+export GOOGLE_API_KEY="no"
+export GOOGLE_DEFAULT_CLIENT_ID="no"
+export GOOGLE_DEFAULT_CLIENT_SECRET="no"
+
 # Python {{{
 export PYTHONBREAKPOINT=ipdb.set_trace
 # }}}
