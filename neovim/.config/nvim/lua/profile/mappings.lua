@@ -9,21 +9,14 @@ vim.keymap.set("n", "`", "'")
 vim.keymap.set("n", "0", "^")
 vim.keymap.set("n", "^", "0")
 
-vim.keymap.set("n", "<c-h>", "hx<esc>")
 vim.keymap.set("n", "<c-l>", "i<space><esc>l")
 vim.keymap.set("n", "<c-j>", "o<esc>")
 vim.keymap.set("n", "<c-k>", "O<esc>")
-
-vim.keymap.set("n", "]q", ":cnext<cr>")
-vim.keymap.set("n", "[q", ":cprevious<cr>")
-vim.keymap.set("n", "]Q", ":clast<cr>")
-vim.keymap.set("n", "[Q", ":cfirst<cr>")
 
 vim.keymap.set("n", "]b", ":bnext<cr>")
 vim.keymap.set("n", "[b", ":bprevious<cr>")
 vim.keymap.set("n", "]B", ":blast<cr>")
 vim.keymap.set("n", "[B", ":bfirst<cr>")
-
 
 -- splitline
 vim.keymap.set('n', 'S',
