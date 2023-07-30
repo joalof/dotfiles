@@ -6,10 +6,10 @@ return {
             {
                 prefer_loclist = false,
                 quickfix = {
-                    default_bindings = false
+                    default_bindings = true
                 },
                 loclist = {
-                    default_bindings = false
+                    default_bindings = true
                 },
             }
             vim.keymap.set("n", "]q", "<CMD>QNext<CR>")

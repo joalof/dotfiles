@@ -26,15 +26,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.api.nvim_create_augroup("lsp_autocmds", { clear = true })
         vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_autocmds" }
 
-        vim.api.nvim_create_autocmd("CursorHold", {
-            callback = function ()
-                vim.diagnostic.open_float({scope = 'cursor'})
-            end,
-            buffer = bufnr,
-            group = "lsp_autocmds",
-            desc = "Show diagnostics on hover",
-        })
-
         if client.server_capabilities.documentHighlightProvider then
             vim.api.nvim_create_autocmd("CursorHold", {
                 callback = vim.lsp.buf.document_highlight,
@@ -51,7 +42,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end
 
         local opts = {silent = true, buffer = bufnr}
-        vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, opts)
+        vim.keymap.set('n', '<leader>af', vim.lsp.buf.format, opts)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
@@ -73,6 +64,13 @@ local function lsp_settings()
             header = "",
             prefix = "",
         },
+    })
+
+    vim.api.nvim_create_autocmd("CursorHold", {
+        callback = function ()
+            vim.diagnostic.open_float({scope = 'cursor'})
+        end,
+        desc = "Show diagnostics on hover",
     })
 
     -- handlers

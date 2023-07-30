@@ -1,10 +1,43 @@
 return {
     {
         "kylechui/nvim-surround",
-        version = "*", -- Use for stability; omit to use `main` branch for the latest features
+        -- version = "*", -- Use for stability; omit to use `main` branch for the latest features
         event = "VeryLazy",
         config = function()
-            require("nvim-surround").setup({})
+            Config = require('nvim-surround.config')
+            require("nvim-surround").setup({
+                -- modify pair surrounds to never add spaces
+                surrounds = {
+                    ["("] = {
+                        add = { "(", ")" },
+                        find = function()
+                            return Config.get_selection({ motion = "a(" })
+                        end,
+                        delete = "^(. ?)().-( ?.)()$",
+                    },
+                    ["{"] = {
+                        add = { "{", "}" },
+                        find = function()
+                            return Config.get_selection({ motion = "a{" })
+                        end,
+                        delete = "^(. ?)().-( ?.)()$",
+                    },
+                    ["<"] = {
+                        add = { "<", ">" },
+                        find = function()
+                            return Config.get_selection({ motion = "a<" })
+                        end,
+                        delete = "^(. ?)().-( ?.)()$",
+                    },
+                    ["["] = {
+                        add = { "[", "]" },
+                        find = function()
+                            return Config.get_selection({ motion = "a[" })
+                        end,
+                        delete = "^(. ?)().-( ?.)()$",
+                    },
+                },
+            })
         end
     },
     -- {

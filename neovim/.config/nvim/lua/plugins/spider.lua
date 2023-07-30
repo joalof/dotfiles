@@ -1,6 +1,5 @@
 return {
-    'joalof/nvim-spider',
-    dev = true,
+    'chrisgrieser/nvim-spider',
     config = function()
         local modes = {"n", "o", "x"}
         vim.keymap.set(modes, "w", "<cmd>lua require('spider').motion('w')<CR>")
