@@ -23,7 +23,7 @@ local settings = {
             enable = false,
         },
         completion = {
-            -- callSnippet = "Disable" -- Disable, Both, Replace
+            callSnippet = "Replace" -- Disable, Both, Replace
         },
     },
 }

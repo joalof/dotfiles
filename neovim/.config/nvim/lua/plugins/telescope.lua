@@ -5,23 +5,25 @@ return {
         {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
         -- {"ahmedkhalf/project.nvim"},
     },
-    config = function()
-
-        require('telescope').setup({
-            defaults = {
-                mappings = {
-                    i = {
-                        ['<C-j>'] = require('telescope.actions').select_default,
-                    },
-                    n = {
-                        ['<C-j>'] = require('telescope.actions').select_default,
-                        ['<C-c>'] = require('telescope.actions').close,
-                    },
+    cmd = 'Telescope',
+    keys = {'<leader>ff', '<leader>fn', '<leader>fh'},
+    opts = function()
+        local defaults = {
+            mappings = {
+                i = {
+                    ['<C-j>'] = require('telescope.actions').select_default,
+                },
+                n = {
+                    ['<C-j>'] = require('telescope.actions').select_default,
+                    ['<C-c>'] = require('telescope.actions').close,
                 },
             },
-        })
-        require('telescope').load_extension('fzf')
+        }
+        return {defaults = defaults}
+    end,
+    config = function()
 
+        require('telescope').load_extension('fzf')
 
         local function get_git_root()
             local dot_git_path = vim.fn.finddir(".git", ".;")

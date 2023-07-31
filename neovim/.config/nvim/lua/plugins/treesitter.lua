@@ -14,7 +14,9 @@ return {
                 load_textobjects = true
             end,
         },
-        {'nvim-treesitter/playground'}
+        -- {
+        --     'nvim-treesitter/playground',
+        -- },
     },
     cmd = {"TSUpdateSync"},
     opts = {
@@ -37,7 +39,7 @@ return {
             "vimdoc",
             "yaml",
         },
-        playground = {enable = false},
+        -- playground = {enable = true},
     },
     config = function(_, opts)
         if type(opts.ensure_installed) == "table" then

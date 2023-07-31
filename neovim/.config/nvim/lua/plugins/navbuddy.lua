@@ -4,12 +4,11 @@ return {
         "SmiteshP/nvim-navic",
         "MunifTanjim/nui.nvim"
     },
-    config = function()
-        local navbuddy = require('nvim-navbuddy')
+    opts = function()
         local actions = require('nvim-navbuddy.actions')
-        navbuddy.setup({
+        return {
             lsp = {auto_attach = true},
             mappings={['<C-j>'] = actions.select()}
-        })
-    end
+        }
+    end,
 }
