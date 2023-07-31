@@ -12,9 +12,9 @@ local lspconfig = require('lspconfig')
 -- update default capabilities
 local lsp_defaults = lspconfig.util.default_config
 lsp_defaults.capabilities = vim.tbl_deep_extend(
-  'force',
-  lsp_defaults.capabilities,
-  require('cmp_nvim_lsp').default_capabilities()
+    'force',
+    lsp_defaults.capabilities,
+    require('cmp_nvim_lsp').default_capabilities()
 )
 
 -- define autocmds and mappings on lsp attach
@@ -23,23 +23,23 @@ vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         local bufnr = args.buf
-        vim.api.nvim_create_augroup("lsp_autocmds", { clear = true })
-        vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_autocmds" }
+        -- vim.api.nvim_create_augroup("lsp_autocmds", { clear = true })
+        -- vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_autocmds" }
 
-        if client.server_capabilities.documentHighlightProvider then
-            vim.api.nvim_create_autocmd("CursorHold", {
-                callback = vim.lsp.buf.document_highlight,
-                buffer = bufnr,
-                group = "lsp_autocmds",
-                desc = "Highlight all references",
-            })
-            vim.api.nvim_create_autocmd("CursorMoved", {
-                callback = vim.lsp.buf.clear_references,
-                buffer = bufnr,
-                group = "lsp_autocmds",
-                desc = "Clear all the reference highlights",
-            })
-        end
+        -- if client.server_capabilities.documentHighlightProvider then
+        --     vim.api.nvim_create_autocmd("CursorHold", {
+        --         callback = vim.lsp.buf.document_highlight,
+        --         buffer = bufnr,
+        --         group = "lsp_autocmds",
+        --         desc = "Highlight all references",
+        --     })
+        --     vim.api.nvim_create_autocmd("CursorMoved", {
+        --         callback = vim.lsp.buf.clear_references,
+        --         buffer = bufnr,
+        --         group = "lsp_autocmds",
+        --         desc = "Clear all the reference highlights",
+        --     })
+        -- end
 
         local opts = {silent = true, buffer = bufnr}
         vim.keymap.set('n', '<leader>af', vim.lsp.buf.format, opts)
@@ -75,12 +75,12 @@ local function lsp_settings()
 
     -- handlers
     vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-      vim.lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = false,
-        underline = true,
-        signs = true,
-        update_in_insert = true,
-      }
+        vim.lsp.diagnostic.on_publish_diagnostics, {
+            virtual_text = false,
+            underline = true,
+            signs = true,
+            update_in_insert = true,
+        }
     )
 
     vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
