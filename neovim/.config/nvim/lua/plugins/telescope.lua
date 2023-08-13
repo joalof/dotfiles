@@ -6,22 +6,21 @@ return {
         -- {"ahmedkhalf/project.nvim"},
     },
     cmd = 'Telescope',
-    keys = {'<leader>ff', '<leader>fn', '<leader>fh'},
-    opts = function()
-        local defaults = {
-            mappings = {
-                i = {
-                    ['<C-j>'] = require('telescope.actions').select_default,
-                },
-                n = {
-                    ['<C-j>'] = require('telescope.actions').select_default,
-                    ['<C-c>'] = require('telescope.actions').close,
+    keys = {'<leader>ff', '<leader>fn', '<leader>fh', '<leader>fg'},
+    config = function()
+        require('telescope').setup({
+            defaults = {
+                mappings = {
+                    i = {
+                        ['<C-j>'] = require('telescope.actions').select_default,
+                    },
+                    n = {
+                        ['<C-j>'] = require('telescope.actions').select_default,
+                        ['<C-c>'] = require('telescope.actions').close,
+                    },
                 },
             },
-        }
-        return {defaults = defaults}
-    end,
-    config = function()
+        })
 
         require('telescope').load_extension('fzf')
 
@@ -46,6 +45,11 @@ return {
             'n',
             '<leader>ff',
             function() builtin.find_files({cwd = get_root_dir()}) end
+        )
+        vim.keymap.set(
+            'n',
+            '<leader>fg',
+            function() builtin.live_grep({cwd = get_root_dir()}) end
         )
         vim.keymap.set('n', '<leader>fh', builtin.help_tags)
         vim.keymap.set(
