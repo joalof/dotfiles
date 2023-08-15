@@ -15,10 +15,10 @@ return {
     end,
     config = function()
         vim.keymap.set('n', '<leader>rr', ':update | TerminatorRunFileInOutputBuffer<cr>',
-            {silent = true, noremap = true})
+            { silent = true, noremap = true })
         vim.keymap.set('n', '<leader>rx', ':update | TerminatorStopRun<cr>',
-            {silent = true, noremap = true})
-        vim.cmd[[
+            { silent = true, noremap = true })
+        vim.cmd [[
         function CloseRemainingOutput()
             if winnr() == 1 && bufname() == 'OUTPUT_BUFFER'
                 quit

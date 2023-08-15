@@ -17,11 +17,11 @@ return {
 
         -- autoclose functionality
         local function get_win_type()
-            local winid = vim.api.nvim_get_current_win()
-            local info = vim.fn.getwininfo(winid)[1]
-            if info.loclist == 1 then
+            local wid = vim.api.nvim_get_current_win()
+            local winfo = vim.fn.getwininfo(wid)[1]
+            if winfo.loclist == 1 then
                 return "l"
-            elseif info.quickfix == 1 then
+            elseif winfo.quickfix == 1 then
                 return 'c'
             end
         end

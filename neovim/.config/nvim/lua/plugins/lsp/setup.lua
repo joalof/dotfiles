@@ -1,6 +1,6 @@
 -- plugins that have to be set up before lspconfig
 require("mason").setup({
-    ui = {border = 'rounded'},
+    ui = { border = 'rounded' },
 })
 
 require("mason-lspconfig").setup({})
@@ -41,7 +41,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         --     })
         -- end
 
-        local opts = {silent = true, buffer = bufnr}
+        local opts = { silent = true, buffer = bufnr }
         vim.keymap.set('n', '<leader>af', vim.lsp.buf.format, opts)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
@@ -51,7 +51,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
         vim.keymap.set('n', '<leader>ar', vim.lsp.buf.rename, opts)
-        -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
     end,
 })
 
@@ -72,8 +71,8 @@ local function lsp_settings()
     })
 
     vim.api.nvim_create_autocmd("CursorHold", {
-        callback = function ()
-            vim.diagnostic.open_float({scope = 'cursor'})
+        callback = function()
+            vim.diagnostic.open_float({ scope = 'cursor' })
         end,
         desc = "Show diagnostics on hover",
     })
@@ -98,10 +97,10 @@ lsp_settings()
 
 -- Set up individual language servers
 -- Pyright
-lspconfig['pyright'].setup({settings = require('plugins.lsp.pyright')})
+lspconfig['pyright'].setup({ settings = require('plugins.lsp.pyright') })
 
 -- sumneko: lua
-lspconfig['lua_ls'].setup({settings = require('plugins.lsp.lua_ls')})
+lspconfig['lua_ls'].setup({ settings = require('plugins.lsp.lua_ls') })
 
 -- R language server
 lspconfig['r_language_server'].setup({

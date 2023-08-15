@@ -6,7 +6,7 @@ return {
         vim.g.vimtex_mappings_enabled = 1
         vim.g.vimtex_text_obj_variant = "vimtex"
         vim.g.vimtex_view_method = "zathura"
-        vim.g.vimtex_compiler_latexmk = {continuous=0}
+        vim.g.vimtex_compiler_latexmk = { continuous = 0 }
     end,
     config = function()
         vim.keymap.set('n', '<leader>ll', '<plug>(vimtex-compile)')

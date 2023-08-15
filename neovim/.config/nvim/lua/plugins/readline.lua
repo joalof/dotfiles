@@ -1,7 +1,7 @@
 return {
     'linty-org/readline.nvim',
     event = 'VeryLazy',
-    config = function ()
+    config = function()
         vim.keymap.set('!', '<M-f>', function() require('readline').forward_word() end)
         vim.keymap.set('!', '<M-b>', require('readline').backward_word)
         vim.keymap.set('!', '<C-a>', require('readline').beginning_of_line)

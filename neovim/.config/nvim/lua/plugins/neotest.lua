@@ -6,14 +6,35 @@ return {
         "antoinemadec/FixCursorHold.nvim",
         "nvim-neotest/neotest-python",
     },
-    keys = {'<leader>tn', '<leader>tf'},
+    keys = { '<leader>tn', '<leader>tf' },
     config = function()
         require('neotest').setup({
             adapters = {
-                require("neotest-python")({
-                    dap = {justMyCode = true},
-                }),
+                require("neotest-python")({}),
             },
+            quickfix = {
+                enabled = true,
+                open = true,
+            },
+            -- consumers = {
+            --     always_open_output = function(client)
+            --         local async = require("neotest.async")
+            --
+            --         client.listeners.results = function(adapter_id, results)
+            --             local file_path = async.fn.expand("%:p")
+            --             local row = async.fn.getpos(".")[2] - 1
+            --             local position = client:get_nearest(file_path, row, {})
+            --             if not position then
+            --                 return
+            --             end
+            --             local pos_id = position:data().id
+            --             if not results[pos_id] then
+            --                 return
+            --             end
+            --             require('neotest').output.open({ position_id = pos_id, adapter = adapter_id })
+            --         end
+            --     end,
+            -- },
         })
         vim.keymap.set(
             'n',
@@ -31,7 +52,7 @@ return {
         )
         vim.keymap.set(
             'n',
-            '<leader>ts',
+            '<leader>tx',
             function()
                 require('neotest').run.stop()
             end
