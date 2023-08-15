@@ -198,27 +198,36 @@ if [[ `has_wsl` == true ]] ; then
 fi
 # }}}
 
-# conda {{{
+# Mamba {{{
+export MAMBA_EXE='/home/joalof/.local/bin/micromamba';
+export MAMBA_ROOT_PREFIX='/home/joalof/apps/micromamba';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    alias micromamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+fi
+unset __mamba_setup
 
-. "/home/joalof/apps/mambaforge/etc/profile.d/mamba.sh"
-conda_last_env=~/.cache/conda_last_env
-if [[ -f $conda_last_env ]]; then
-    read -r env_name < $conda_last_env
-    mamba activate $env_name
+# . "/home/joalof/apps/mambaforge/etc/profile.d/mamba.sh"
+mamba_last_env=~/.cache/mamba_last_env
+if [[ -f $mamba_last_env ]]; then
+    read -r env_name < $mamba_last_env
+    micromamba activate $env_name
 fi
 
-eval "original_$(declare -f mamba)" 2> /dev/null
-if [ $? -ne 0 ]; then
-    original_mamba () {
-      command mamba "$@"
-    }
-fi
+# eval "original_$(declare -f mamba)" 2> /dev/null
+# if [ $? -ne 0 ]; then
+#     original_mamba () {
+#       command mamba "$@"
+#     }
+# fi
 # Redefine conda command, part b: Add new functionality related to items (i) and (ii).
 mamba () {
   # Run the regular conda
-  original_mamba "$@"
+  micromamba "$@"
   if [[ $1 == "activate" || $1 == "deactivate" ]]; then
-      echo $CONDA_DEFAULT_ENV > ~/.cache/conda_last_env
+      echo $CONDA_DEFAULT_ENV > ~/.cache/mamba_last_env
   fi
 }
 

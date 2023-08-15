@@ -1,0 +1,1 @@
+/home/joalof/apps/micromamba/envs/bossdev

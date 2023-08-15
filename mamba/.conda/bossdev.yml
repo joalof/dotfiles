@@ -6,11 +6,12 @@ dependencies:
   - pip
   - cython
   - scipy
-  - numpy=1.23.5
+  - numpy=1.24.3
   - pandas
 
   # ML
   - scikit-learn
+  - gpy
 
   # visualisation
   - pillow
