@@ -15,10 +15,44 @@ return {
     end,
     keys = {'<leader>rr', '<leader>rx'},
     config = function()
-        vim.keymap.set('n', '<leader>rr', ':update | TerminatorRunFileInOutputBuffer<cr>',
-            { silent = true, noremap = true })
+
         vim.keymap.set('n', '<leader>rx', ':update | TerminatorStopRun<cr>',
             { silent = true, noremap = true })
+
+        -- Create a function that will run our script in an output buffer
+        -- and start a timer with a scheduled  task that monitors the output
+        -- buffer and closes it if it has not been touched in grace_time seconds.
+        -- Note that the timer is stopped after the buffer is closed.
+        local function run_and_autoclose()
+            vim.cmd('update | TerminatorRunFileInOutputBuffer')
+
+            local grace_time = 5
+            local timer = vim.loop.new_timer()
+            if not timer then return end
+
+            local function scheduled_output_close()
+                local open_buffers = vim.fn.getbufinfo()
+                for _, buf in pairs(open_buffers) do
+                    if vim.fs.basename(buf.name) == 'OUTPUT_BUFFER' then
+                        local recently_used = (os.time() - buf.lastused) < grace_time
+                        if not recently_used then
+                            timer:stop()
+                            vim.api.nvim_buf_delete(buf.bufnr, { force = false, unload = false })
+                        end
+                    end
+                end
+            end
+
+            timer:start(
+                grace_time * 1000,
+                10000,
+                vim.schedule_wrap(function() scheduled_output_close() end)
+            )
+        end
+
+        vim.keymap.set('n', '<leader>rr', function() run_and_autoclose() end,
+            { silent = true, noremap = true }
+        )
 
         -- close output buffer if it's the last open buffer
         local function output_close_if_last()
@@ -27,6 +61,7 @@ return {
                 vim.cmd("quit")
             end
         end
+
         vim.api.nvim_create_autocmd("WinEnter", {
             desc = "Auto-close output buffer if it's the last remaning window.",
             pattern = "*",
@@ -34,27 +69,5 @@ return {
                 output_close_if_last()
             end,
         })
-
-        -- close output buffer after a certain amount of time has elapsed
-        local grace_time = 5
-        local function scheduled_output_close(c)
-        local open_buffers = vim.fn.getbufinfo()
-            for _, buf in pairs(open_buffers) do
-                if vim.fs.basename(buf.name) == 'OUTPUT_BUFFER' then
-                    local recently_used = (os.time() - buf.lastused) < grace_time
-                    if not recently_used then
-                        vim.api.nvim_buf_delete(buf.bufnr, { force = false, unload = false })
-                    end
-                end
-            end
-        end
-
-        local timer = vim.loop.new_timer()
-        if not timer then return end
-        timer:start(
-            grace_time * 1000,
-            10000,
-            vim.schedule_wrap(function() scheduled_output_close() end)
-        )
     end,
 }
