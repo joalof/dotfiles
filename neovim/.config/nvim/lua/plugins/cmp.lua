@@ -46,7 +46,7 @@ return {
                 -- ['<C-j'] = cmp.mapping.complete(),
                 ['<C-c>'] = cmp.mapping.abort(),
                 -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                ['<C-j>'] = cmp.mapping.confirm({select = true}),
+                ['<C-y>'] = cmp.mapping.confirm({select = true}),
                 -- ['<CR>'] = cmp.mapping.confirm({ select = true }),
                 -- tab mapping
                 ['<Tab>'] = cmp.mapping(function(fallback)
