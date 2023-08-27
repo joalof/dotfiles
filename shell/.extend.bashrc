@@ -199,8 +199,8 @@ fi
 # }}}
 
 # Mamba {{{
-export MAMBA_EXE='/home/joalof/.local/bin/micromamba';
-export MAMBA_ROOT_PREFIX='/home/joalof/apps/micromamba';
+export MAMBA_EXE="$HOME/.local/bin/micromamba";
+export MAMBA_ROOT_PREFIX="$HOME/apps/micromamba";
 __mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__mamba_setup"

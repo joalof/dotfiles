@@ -11,26 +11,28 @@ vim.keymap.set("n", "^", "0")
 vim.keymap.set("n", "<c-l>", "i<space><esc>l")
 vim.keymap.set("n", "<c-j>", "o<esc>")
 vim.keymap.set("n", "<c-k>", "O<esc>")
--- Add empty lines before and after cursor line
 
+-- Add empty lines before and after cursor line
 -- vim.keymap.set('n', '[<space>', "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>")
 -- vim.keymap.set('n', ']<space>', "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>")
 
-vim.keymap.set("n", "]b", ":bnext<cr>")
-vim.keymap.set("n", "[b", ":bprevious<cr>")
-vim.keymap.set("n", "]B", ":blast<cr>")
-vim.keymap.set("n", "[B", ":bfirst<cr>")
+vim.keymap.set("n", "]b", ":bnext<cr>", { silent = true })
+vim.keymap.set("n", "[b", ":bprevious<cr>", { silent = true })
+vim.keymap.set("n", "]B", ":blast<cr>", { silent = true })
+vim.keymap.set("n", "[B", ":bfirst<cr>", { silent = true })
+vim.keymap.set("n", "<C-n>", ":bnext<cr>", { silent = true })
+vim.keymap.set("n", "<C-p>", ":bprevious<cr>", { silent = true })
 
 -- splitline
 vim.keymap.set('n', 'S',
-    function ()
+    function()
         return [[:keeppatterns substitute/\s*\%#\s*/\r/e <bar> normal! ==k$<CR>]]
     end,
-    {expr = true})
+    { expr = true })
 
 -- apply macro over visual range
 vim.keymap.set('x', '@',
-    function ()
+    function()
         return ':norm @' .. vim.fn.getcharstr() .. '<cr>'
     end,
-    {expr = true})
+    { expr = true })

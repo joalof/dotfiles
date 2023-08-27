@@ -50,9 +50,11 @@ return {
             )
         end
 
-        vim.keymap.set('n', '<leader>rr', function() run_and_autoclose() end,
-            { silent = true, noremap = true }
-        )
+        -- temporarily disable
+        -- vim.keymap.set('n', '<leader>rr', function() run_and_autoclose() end,
+        --     { silent = true, noremap = true }
+        -- )
+        vim.keymap.set('n', '<leader>rr', ':update | TerminatorRunFileInOutputBuffer<cr>')
 
         -- close output buffer if it's the last open buffer
         local function output_close_if_last()
