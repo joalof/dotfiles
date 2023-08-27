@@ -39,7 +39,7 @@ export PYTHONBREAKPOINT=ipdb.set_trace
 # }}}
 
 # rust {{{
-path_append ~/.cargo/bin
+. "$HOME/.cargo/env"
 # }}}
 
 # go {{{

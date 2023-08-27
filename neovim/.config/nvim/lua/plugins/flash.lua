@@ -1,7 +1,7 @@
 return {
     "folke/flash.nvim",
     event = "VeryLazy",
-    opts = {},
+    -- opts = {},
     config = function()
         local Util = require('flash.util')
         local opts = {
@@ -9,6 +9,7 @@ return {
                 [Util.t("<C-j>")] = function(state, char) state:jump() return false end
             }
         }
-        vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump(opts) end)
+        -- vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump(opts) end)
+        require("flash").setup(opts)
     end,
 }

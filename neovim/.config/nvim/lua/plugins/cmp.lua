@@ -8,7 +8,9 @@ return {
         'hrsh7th/cmp-nvim-lua',
         'hrsh7th/cmp-omni',
         'onsails/lspkind.nvim',
+        "hrsh7th/cmp-cmdline",
     },
+    commit = "6c84bc75c64f778e9f1dcb798ed41c7fcb93b639",
     event = "InsertEnter",
     config = function()
         local cmp = require('cmp')
@@ -16,7 +18,7 @@ return {
             sources = cmp.config.sources { { name = 'omni', }, }
         }
 
-        local function check_back_space ()
+        local function check_back_space()
             local col = vim.fn.col('.') - 1
             if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
                 return true
@@ -25,8 +27,6 @@ return {
             end
         end
 
-        local luasnip = require('luasnip')
-
         cmp.setup {
             completion = {
                 completeopt = 'menuone,noselect'
@@ -34,57 +34,83 @@ return {
             -- snippets
             snippet = {
                 expand = function(args)
-                    luasnip.lsp_expand(args.body)
+                    require("luasnip").lsp_expand(args.body)
                 end,
+            },
+            experimental = {
+                ghost_text = true,
             },
             -- key mappings
             mapping = {
-                ["<C-n>"] = cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Insert}),
-                ["<C-p>"] = cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Insert}),
+                ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+                ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
                 ['<C-u>'] = cmp.mapping.scroll_docs(-4),
                 ['<C-d>'] = cmp.mapping.scroll_docs(4),
                 -- ['<C-j'] = cmp.mapping.complete(),
                 ['<C-c>'] = cmp.mapping.abort(),
                 -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                ['<C-y>'] = cmp.mapping.confirm({select = true}),
+                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
                 -- ['<CR>'] = cmp.mapping.confirm({ select = true }),
                 -- tab mapping
                 ['<Tab>'] = cmp.mapping(function(fallback)
                     if cmp.visible() then
                         cmp.select_next_item()
-                    elseif luasnip.jumpable(1) then
-                        luasnip.jump(1)
+                    elseif require("luasnip").jumpable(1) then
+                        require("luasnip").jump(1)
                     elseif check_back_space() then
                         fallback()
                     else
                         cmp.complete()
                     end
-                end, {'i', 's'}),
-                -- reverse direction with shift-tab 
+                end, { 'i', 's' }),
+                -- reverse direction with shift-tab
                 ['<S-Tab>'] = cmp.mapping(function(fallback)
                     if cmp.visible() then
                         cmp.select_prev_item()
-                    elseif luasnip.jumpable(-1) then
-                        luasnip.jump(-1)
+                    elseif require("luasnip").jumpable(-1) then
+                        require("luasnip").jump(-1)
                     elseif check_back_space() then
                         fallback()
                     else
                         cmp.complete()
                     end
-                end, {'i', 's'}),
+                end, { 'i', 's' }),
             },
             sources = {
-                {name = 'nvim_lsp', max_item_count=10},
-                {name = 'buffer', max_item_count=10},
-                {name = 'luasnip'},
-                {name = 'nvim_lua'},
-                {name = 'path', max_item_count=10},
+                { name = 'nvim_lsp', max_item_count = 5 },
+                { name = "codeium",  max_item_count = 5 },
+                { name = 'buffer',   max_item_count = 5 },
+                { name = 'luasnip', max_item_count = 3 },
+                { name = 'nvim_lua' },
+                { name = 'path',     max_item_count = 3 },
             },
             formatting = {
                 format = require('lspkind').cmp_format {
                     mode = 'symbol_text',
+                    symbol_map = { Codeium = "", },
                 }
             },
         }
+        -- completion for search /
+        cmp.setup.cmdline('/', {
+            mapping = cmp.mapping.preset.cmdline(),
+            sources = {
+                { name = 'buffer' }
+            }
+        })
+        -- completion for commands :
+        cmp.setup.cmdline(':', {
+            mapping = cmp.mapping.preset.cmdline(),
+            sources = cmp.config.sources({
+                { name = 'path' }
+            }, {
+                {
+                    name = 'cmdline',
+                    option = {
+                        ignore_cmds = { 'Man', '!' }
+                    }
+                }
+            })
+        })
     end,
 }
