@@ -1,12 +1,13 @@
 return {
-    'nvim-telescope/telescope.nvim', tag = '0.1.2',
+    'nvim-telescope/telescope.nvim',
+    tag = '0.1.2',
     dependencies = {
         'nvim-lua/plenary.nvim',
-        {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
+        { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
         -- {"ahmedkhalf/project.nvim"},
     },
     cmd = 'Telescope',
-    keys = {'<leader>ff', '<leader>fn', '<leader>fh', '<leader>fg'},
+    keys = { '<leader>ff', '<leader>fn', '<leader>fh', '<leader>fg', '<leader>ff' },
     config = function()
         require('telescope').setup({
             defaults = {
@@ -44,12 +45,17 @@ return {
         vim.keymap.set(
             'n',
             '<leader>ff',
-            function() builtin.find_files({cwd = get_root_dir()}) end
+            function() builtin.find_files({ cwd = get_root_dir() }) end
+        )
+        vim.keymap.set(
+            'n',
+            '<leader>fa',
+            function() builtin.find_files({ cwd = "~" }) end
         )
         vim.keymap.set(
             'n',
             '<leader>fg',
-            function() builtin.live_grep({cwd = get_root_dir()}) end
+            function() builtin.live_grep({ cwd = get_root_dir() }) end
         )
         vim.keymap.set('n', '<leader>fh', builtin.help_tags)
         vim.keymap.set(
@@ -57,7 +63,7 @@ return {
             '<leader>fn',
             function()
                 builtin.find_files(
-                    {cwd = vim.fn.environ()['HOME'] .. '/.config/nvim', hidden=true}
+                    { cwd = vim.fn.environ()['HOME'] .. '/.config/nvim', hidden = true }
                 )
             end
         )
@@ -69,6 +75,5 @@ return {
         --     '<leader>fp',
         --     require('telescope').extensions.projects.projects
         -- )
-
     end,
 }

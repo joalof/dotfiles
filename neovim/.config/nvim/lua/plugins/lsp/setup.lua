@@ -23,6 +23,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         local bufnr = args.buf
+
         -- vim.api.nvim_create_augroup("lsp_autocmds", { clear = true })
         -- vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_autocmds" }
 
@@ -41,8 +42,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         --     })
         -- end
 
-        local opts = { silent = true, buffer = bufnr }
-        vim.keymap.set('n', '<leader>af', vim.lsp.buf.format, opts)
+        local opts = { silent = true, buffer = bufnr, noremap = true }
+        vim.keymap.set('n', '<leader>af', function() vim.lsp.buf.format { async = true } end, opts)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
@@ -51,6 +52,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
         vim.keymap.set('n', '<leader>ar', vim.lsp.buf.rename, opts)
+        vim.keymap.set('n', '<leader>aa', vim.lsp.buf.code_action, opts)
     end,
 })
 
@@ -97,10 +99,11 @@ lsp_settings()
 
 -- Set up individual language servers
 -- Pyright
-lspconfig['pyright'].setup({ settings = require('plugins.lsp.pyright') })
+lspconfig['pyright'].setup(require('plugins.lsp.pyright'))
+
 
 -- sumneko: lua
-lspconfig['lua_ls'].setup({ settings = require('plugins.lsp.lua_ls') })
+lspconfig['lua_ls'].setup(require('plugins.lsp.lua_ls'))
 
 -- R language server
 lspconfig['r_language_server'].setup({
@@ -109,3 +112,6 @@ lspconfig['r_language_server'].setup({
 
 -- json-lsp
 lspconfig['jsonls'].setup({})
+
+-- ruff
+-- lspconfig['ruff_lsp'].setup(require('plugins.lsp.ruff_lsp'))

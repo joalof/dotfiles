@@ -37,9 +37,9 @@ return {
                     require("luasnip").lsp_expand(args.body)
                 end,
             },
-            experimental = {
-                ghost_text = true,
-            },
+            -- experimental = {
+            --     ghost_text = true,
+            -- },
             -- key mappings
             mapping = {
                 ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
