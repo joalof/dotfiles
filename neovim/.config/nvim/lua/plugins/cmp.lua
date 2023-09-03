@@ -80,9 +80,9 @@ return {
                 { name = 'nvim_lsp', max_item_count = 5 },
                 { name = "codeium",  max_item_count = 5 },
                 { name = 'buffer',   max_item_count = 5 },
-                { name = 'luasnip', max_item_count = 3 },
+                { name = 'luasnip', max_item_count = 5 },
                 { name = 'nvim_lua' },
-                { name = 'path',     max_item_count = 3 },
+                { name = 'path',     max_item_count = 10 },
             },
             formatting = {
                 format = require('lspkind').cmp_format {

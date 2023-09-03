@@ -9,7 +9,6 @@ return {
         local bufferline = require('bufferline')
         bufferline.setup({
             options = {
-                close_command = function(n) require("mini.bufremove").delete(n, false) end,
                 diagnostics = "nvim_lsp",
                 always_show_bufferline = false,
                 separator_style = 'slant',

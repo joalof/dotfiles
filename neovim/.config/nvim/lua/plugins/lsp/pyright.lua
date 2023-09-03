@@ -9,7 +9,7 @@ return {
             analysis = {
                 typeCheckingMode = "basic",
                 useLibraryCodeForTypes = true,
-                -- diagnosticMode = 'openFilesOnly',
+                diagnosticMode = 'openFilesOnly',
                 autoSearchPaths = true,
                 stubPath = '/home/joalof/.local/share/typings',
                 -- diagnosticSeverityOverrides = {
