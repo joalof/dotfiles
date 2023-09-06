@@ -16,5 +16,11 @@ return {
             map = "<C-l>",
             hopout = true,
         },
+        fastwarp = {
+           enable = false,
+        },
+        extensions = {
+            alpha = {after = true},
+        }
     },
 }

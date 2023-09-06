@@ -45,6 +45,9 @@ dependencies:
   - pynvim
   - pandas-stubs
 
+  # other
+  - rsa
+
   # magma nvim
   - pip:
     - pnglatex
