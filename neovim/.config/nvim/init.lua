@@ -19,6 +19,7 @@ require("lazy").setup(
   {
     ui = {border = 'rounded'},
     dev = {path = "~/code"},
+    concurrency = 5,
   }
 )
 

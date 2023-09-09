@@ -1,14 +1,38 @@
 return {
-    'linty-org/readline.nvim',
-    event = 'VeryLazy',
-    config = function()
-        vim.keymap.set('!', '<M-f>', function() require('readline').forward_word() end)
-        vim.keymap.set('!', '<M-b>', require('readline').backward_word)
-        vim.keymap.set('!', '<C-a>', require('readline').beginning_of_line)
-        vim.keymap.set('!', '<C-e>', require('readline').end_of_line)
-        vim.keymap.set('!', '<C-w>', require('readline').unix_word_rubout)
-        vim.keymap.set('!', '<C-u>', require('readline').backward_kill_line)
-        vim.keymap.set('!', '<C-f>', '<Right>')
-        vim.keymap.set('!', '<C-b>', '<Left>')
-    end,
+    "linty-org/readline.nvim",
+    event = "VeryLazy",
+    keys = {
+        -- {{"!"},'<M-f>', function() require('readline').forward_word() end},
+        -- {{"!"},'<M-b>', function() require('readline').backward_word() end},
+        {
+            mode = { "!" },
+            "<C-a>",
+            function()
+                require("readline").beginning_of_line()
+            end,
+        },
+        {
+            mode = { "!" },
+            "<C-e>",
+            function()
+                require("readline").end_of_line()
+            end,
+        },
+        {
+            mode = { "!" },
+            "<C-w>",
+            function()
+                require("readline").unix_word_rubout()
+            end,
+        },
+        {
+            mode = { "!" },
+            "<C-u>",
+            function()
+                require("readline").backward_kill_line()
+            end,
+        },
+        { mode = { "!" }, "<C-f>", "<Right>" },
+        { mode = { "!" }, "<C-b>", "<Left>" },
+    },
 }

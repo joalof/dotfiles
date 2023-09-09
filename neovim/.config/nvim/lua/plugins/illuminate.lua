@@ -13,6 +13,10 @@ return {
             'help',
         },
     },
+    keys = {
+        { "]r", desc = "Next Reference" },
+        { "[r", desc = "Prev Reference" },
+    },
     config = function(_, opts)
         require("illuminate").configure(opts)
 
@@ -34,8 +38,4 @@ return {
             end,
         })
     end,
-    keys = {
-        { "]r", desc = "Next Reference" },
-        { "[r", desc = "Prev Reference" },
-    },
 }

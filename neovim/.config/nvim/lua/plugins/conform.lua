@@ -12,6 +12,6 @@ return {
                 },
             },
         })
-        vim.keymap.set('n', '<leader>af', function() require("conform").format() end)
+        vim.keymap.set('n', '<leader>af', function() require("conform").format({async = true}) end)
     end
 }

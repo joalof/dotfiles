@@ -10,7 +10,6 @@ return {
         'onsails/lspkind.nvim',
         "hrsh7th/cmp-cmdline",
     },
-    commit = "6c84bc75c64f778e9f1dcb798ed41c7fcb93b639",
     event = "InsertEnter",
     config = function()
         local cmp = require('cmp')
