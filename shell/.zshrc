@@ -1,9 +1,39 @@
 # Basics {{{
-export SHELL=/bin/bash
+setopt histignorealldups sharehistory
+
+# Use emacs keybindings even if our EDITOR is set to vi
+bindkey -e
+
+# Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
+HISTSIZE=1000
+SAVEHIST=1000
+HISTFILE=~/.zsh_history
+
+# Use modern completion system
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select=2
+eval "$(dircolors -b)"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+export SHELL=/bin/zsh
 export PLATFORM=$(uname -s)
 
-# Disable CTRL-S and CTRL-Q
-[[ $- =~ i ]] && stty -ixoff -ixon
 # }}}
 
 # Enviroment {{{
@@ -214,112 +244,35 @@ else
 fi
 unset __mamba_setup
 
-# . "/home/joalof/apps/mambaforge/etc/profile.d/mamba.sh"
 mamba_last_env=~/.cache/mamba_last_env
 if [[ -f $mamba_last_env ]]; then
     read -r env_name < $mamba_last_env
     micromamba activate $env_name
 fi
 
-# eval "original_$(declare -f mamba)" 2> /dev/null
-# if [ $? -ne 0 ]; then
-#     original_mamba () {
-#       command mamba "$@"
-#     }
-# fi
-# Redefine conda command, part b: Add new functionality related to items (i) and (ii).
+# Define mamba command to activate/save env and run micromamba
 mamba () {
-  # Run the regular conda
   micromamba "$@"
   if [[ $1 == "activate" || $1 == "deactivate" ]]; then
       echo $CONDA_DEFAULT_ENV > ~/.cache/mamba_last_env
   fi
 }
 
-# -----
-# Activate conda envs in tmux splits/new windows
-# (see https://stackoverflow.com/questions/58482113/keeping-the-old-conda-env-activated-upon-splitting-panes-in-tmux)
-# Redefine conda command, part a: Keep copy of original conda command/function
-
-# eval "original_$(declare -f conda)" 2> /dev/null
-# if [ $? -ne 0 ]; then
-#     original_conda () {
-#       command conda "$@"
-#     }
-# fi
-# # Redefine conda command, part b: Add new functionality related to items (i) and (ii).
-# conda () {
-#   # Run the regular conda
-#   original_conda "$@"
-#   local CONDA_RTN_CODE=$?
-#
-#   # Keep a copy of CONDA_DEFAULT_ENV to restore the environment if, e.g.,
-#   # 'source ~/.bashrc' is run
-#   CONDA_DEFAULT_ENV_COPY=$CONDA_DEFAULT_ENV
-#
-#   # Stop and return original_conda's return code if it fails
-#   [ $CONDA_RTN_CODE -ne 0 ] && return $CONDA_RTN_CODE
-#
-#   # Do tmux-related stuff, but only if tmux is running and "$@" contains substring "activate"
-#   if [[ -n "$TMUX" ]] && [[ "$@" =~ .*"activate".* ]]; then
-#     # Create/update the *tmux* session env var "TMUX_SESSION_CONDA_ENVS"
-#     local TMUX_SESSION_CONDA_ENVS=$(tmux showenv TMUX_SESSION_CONDA_ENVS 2>/dev/null)
-#     if [[ $? -eq 0 ]]; then
-#       # Get list of conda envs for all panes except the current one
-#       local OLD_VALUES=$(echo $TMUX_SESSION_CONDA_ENVS | sed "s/TMUX_SESSION_CONDA_ENVS=//")
-#       local CONDA_ENV_OTHER_PANES=$(echo $OLD_VALUES | sed "s/$TMUX_PANE:\w*[[:space:]]*//g")
-#     fi
-#     # Include current pane's conda env info
-#     tmux setenv TMUX_SESSION_CONDA_ENVS "$TMUX_PANE:$CONDA_DEFAULT_ENV $CONDA_ENV_OTHER_PANES"
-#   fi
-# }
-#
-# if [[ -n "$TMUX_PARENT_PANE_ID" ]]; then
-#     # Remember: "TMUX_SESSION_CONDA_ENVS", as per our redefined "conda" command, carries
-#     # info about changes in the the conda environments in all the session's panes.
-#     # TMUX_PARENT_PANE_ID makes it thus possible to query, from any child
-#     # pane, its parent's conda environment at the time the child was created.
-#     # This is exactly what will be done now.
-#     TMUX_SESSION_CONDA_ENVS=$(tmux showenv TMUX_SESSION_CONDA_ENVS 2>/dev/null)
-#     if [ $? -eq 0 ]; then
-#         PATT="(?<=${TMUX_PARENT_PANE_ID}:).*?(?=([[:space:]]|$))"
-#         PARENT_CONDA_ENV=$(echo $TMUX_SESSION_CONDA_ENVS | grep -oP "$PATT" | head -1)
-#         echo "Activate conda env '$PARENT_CONDA_ENV' of parent tmux pane '$TMUX_PARENT_PANE_ID'"
-#         conda activate $PARENT_CONDA_ENV
-#     fi
-#     # Clean up the pane's env (TMUX_SESSION_CONDA_ENVS remains in the tmux session env)
-#     unset TMUX_SESSION_CONDA_ENVS PATT PARENT_CONDA_ENV
-#     # Erase memory of parent tmux pane's ID so that the 'else' block below
-#     # is run if we re-source bashrc
-#     unset TMUX_PARENT_PANE_ID
-# else
-#     # Triger update of TMUX_SESSION_CONDA_ENVS and CONDA_DEFAULT_ENV_COPY
-#     # when the pane has no parent (very first pane or a pane where bashrc was
-#     # re-sourced after creation).
-#     [[ -n "$CONDA_DEFAULT_ENV_COPY" ]] && echo "Activate previous conda env '$CONDA_DEFAULT_ENV_COPY'"
-#     conda activate $CONDA_DEFAULT_ENV_COPY
-# fi
-
 # ----
 # }}}
 
 # other apps {{{
 # smart cd
-eval "$(zoxide init --cmd j bash)"
-# for https://github.com/gsamokovarov/jump
-# eval "$(jump shell)"
-# alias jb='cd -'
+eval "$(zoxide init --cmd j zsh)"
 
 # fzf and ripgrep
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!**/{.git,node_modules,__pycache__}/*" 2> /dev/null'
 export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 
-# activate dircolors
-# test -r "~/.dircolors" && eval $(dircolors ~/.dircolors)
-
 # starship
-eval "$(starship init bash)"
+eval "$(starship init zsh)"
+
 # }}}
 
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
-# vim: set filetype=bash:
+# vim: set filetype=zsh:

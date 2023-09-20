@@ -1,12 +1,13 @@
 return {
+    -- {
+    --     "jcdickinson/http.nvim",
+    --     build = "cargo build --workspace --release"
+    -- },
     {
-        "jcdickinson/http.nvim",
-        build = "cargo build --workspace --release"
-    },
-    {
+        -- TODO find something that is maintained
         "jcdickinson/codeium.nvim",
         dependencies = {
-            "jcdickinson/http.nvim",
+            -- "jcdickinson/http.nvim",
             "nvim-lua/plenary.nvim",
             "hrsh7th/nvim-cmp",
         },

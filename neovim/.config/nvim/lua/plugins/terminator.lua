@@ -7,7 +7,7 @@ return {
         vim.g.terminator_runfile_map = {
             python = "python -u",
             julia = "julia",
-            lua = "luajit",
+            -- lua = "luajit",
             R = 'Rscript',
         }
         vim.g.terminator_split_fraction = 0.3

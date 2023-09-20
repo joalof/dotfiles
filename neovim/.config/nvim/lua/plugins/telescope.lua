@@ -14,6 +14,7 @@ return {
                 mappings = {
                     i = {
                         ['<C-j>'] = require('telescope.actions').select_default,
+                        ['<C-c>'] = require('telescope.actions').close,
                     },
                     n = {
                         ['<C-j>'] = require('telescope.actions').select_default,

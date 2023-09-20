@@ -59,24 +59,27 @@ return {
         },
     },
     keys = {
-        { "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = "Breakpoint Condition" },
+        {
+            "<leader>dB",
+            function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end,
+            desc = "DAP: Breakpoint Condition"
+        },
         { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
         -- { "<leader>dg", function() require("dap").goto_() end, desc = "Go to line (no execute)" },
 
-        { "<leader>dj", function() require("dap").step_over() end, desc = "Step over" },
-        { "<leader>dk", function() require("dap").step_back() end, desc = "Step back" },
-        { "<leader>dl", function() require("dap").step_into() end, desc = "Step into" },
-        { "<leader>dh", function() require("dap").step_out() end, desc = "Step out" },
-        { "<leader>dn", function() require("dap").down() end, desc = "Frame Down"},
-        { "<leader>dp", function() require("dap").up() end, desc = "Up" },
-        { "<leader>dx", function() require("dap").terminate() end, desc = "Terminate" },
+        { "<leader>dj", function() require("dap").step_over() end, desc = "DAP: Step over" },
+        { "<leader>dk", function() require("dap").step_back() end, desc = "DAP: Step back" },
+        { "<leader>dl", function() require("dap").step_into() end, desc = "DAP: Step into" },
+        { "<leader>dh", function() require("dap").step_out() end, desc = "DAP: Step out" },
+        { "<leader>dn", function() require("dap").down() end, desc = "DAP: Frame Down"},
+        { "<leader>dp", function() require("dap").up() end, desc = "DAP: Up" },
+        { "<leader>dx", function() require("dap").terminate() end, desc = "DAP: Terminate" },
 
-        { "<leader>dc", function() require("dap").continue() end, desc = "Continue" },
-        { "<leader>dr", function() require("dap").restart() end, desc = "Toggle REPL" },
+        { "<leader>dc", function() require("dap").continue() end, desc = "DAP: Continue" },
+        { "<leader>dr", function() require("dap").restart() end, desc = "DAP: Toggle REPL" },
 
         -- { "<leader>dp", function() require("dap").pause() end, desc = "Pause" },
         -- { "<leader>ds", function() require("dap").session() end, desc = "Session" },
-        
         -- { "<leader>dl", function() require("dap").run_last() end, desc = "Run Last" },
         -- { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
     },

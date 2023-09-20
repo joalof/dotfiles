@@ -19,6 +19,7 @@ vim.keymap.set("n", "<c-k>", "O<esc>")
 vim.keymap.set("n", "]t", ":tabnext<cr>", { silent = true })
 vim.keymap.set("n", "[t", ":tabprevious<cr>", { silent = true })
 
+ 
 vim.keymap.set("n", "]b", ":bnext<cr>", { silent = true })
 vim.keymap.set("n", "[b", ":bprevious<cr>", { silent = true })
 vim.keymap.set("n", "]B", ":blast<cr>", { silent = true })

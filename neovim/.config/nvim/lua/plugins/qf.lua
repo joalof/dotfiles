@@ -1,15 +1,22 @@
 return {
-    'ten3roberts/qf.nvim',
+    "ten3roberts/qf.nvim",
+    event = "VeryLazy",
     config = function()
-        require('qf').setup({
+        require("qf").setup({
             pretty = true,
             c = {
                 auto_follow = false,
             },
         })
-        vim.keymap.set("n", "]q", function() require('qf').next('c', true) end)
-        vim.keymap.set("n", "[q", function() require('qf').prev('c', true) end)
-        vim.keymap.set("n", "<leader>qq", function() require('qf').toggle('c', true) end)
+        vim.keymap.set("n", "]q", function()
+            require("qf").next("c", true)
+        end)
+        vim.keymap.set("n", "[q", function()
+            require("qf").prev("c", true)
+        end)
+        vim.keymap.set("n", "<leader>qq", function()
+            require("qf").toggle("c", true)
+        end)
 
         -- general qf stuff
         vim.keymap.set("n", "]Q", ":clast<cr>")
@@ -22,7 +29,7 @@ return {
             if winfo.loclist == 1 then
                 return "l"
             elseif winfo.quickfix == 1 then
-                return 'c'
+                return "c"
             end
         end
 
@@ -40,5 +47,5 @@ return {
                 list_autoclose()
             end,
         })
-    end
+    end,
 }
