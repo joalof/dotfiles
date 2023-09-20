@@ -31,118 +31,7 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
-export SHELL=/bin/zsh
-export PLATFORM=$(uname -s)
 
-# }}}
-
-# Enviroment {{{
-
-# append indempotently to PATH
-path_append () {
-  for d; do
-    d=$({ cd -- "$d" && { pwd -P || pwd; } } 2>/dev/null)  # canonicalize symbolic links
-    if [ -z "$d" ]; then continue; fi  # skip nonexistent directory
-    case ":$PATH:" in
-      *":$d:"*) :;;
-      *) PATH=$PATH:$d;;
-    esac
-  done
-}
-
-export EDITOR=nvim
-export BROWSER=chrome
-export PATH=~/.local/bin:$PATH
-path_append /usr/local/bin
-path_append $HOME/go/bin
-
-export LIBRARY_PATH=$HOME/.local/lib
-export LD_LIBRARY_PATH=$HOME/.local/lib
-export CPLUS_INCLUDE_PATH=$HOME/.local/include
-
-export GOOGLE_API_KEY="no"
-export GOOGLE_DEFAULT_CLIENT_ID="no"
-export GOOGLE_DEFAULT_CLIENT_SECRET="no"
-
-# Python {{{
-export PYTHONBREAKPOINT=ipdb.set_trace
-# }}}
-
-# rust {{{
-. "$HOME/.cargo/env"
-# }}}
-
-# go {{{
-# export GOPATH=~/.local/go
-# path_append $HOME/.local/go/bin
-# }}}
-
-# vcpkg {{{
-export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/apps/vcpkg/installed/x64-linux/include
-export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/apps/vcpkg/installed/x64-linux-dynamic/include
-
-export LIBRARY_PATH=$LIBRARY_PATH:$HOME/apps/vcpkg/installed/x64-linux/lib
-export LIBRARY_PATH=$LIBRARY_PATH:$HOME/apps/vcpkg/installed/x64-linux-dynamic/lib
-
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/vcpkg/installed/x64-linux-dynamic/lib
-# }}}
-
-# PGI compilers {{{
-# export PGI=$HOME/apps/pgi
-# export PATH=$PGI/linux86-64/18.4/bin:$PATH
-# export MANPATH=$MANPATH:$PGI/linux86-64/18.4/man
-# export LM_LICENSE_FILE=$LM_LICENSE_FILE:$HOME/apps/pgi/license.dat
-# export LD_LIBRARY_PATH=$HOME/apps/pgi/linux86-64/18.4/lib
-# export PATH=$PATH:$PGI/linux86-64/18.4/lib
-# }}}
-
-# ASE {{{
-# export VASP_COMMAND=~/apps/vasp/bin/vasp_std
-# export VASP_PP_PATH=~/apps/vasp/setups
-# export ASE_VASP_VDW=$HOME/apps/vasp
-# }}}
-
-# }}}
-
-# Aliases {{{
-
-if [[ -f $(command -v eza) ]] ; then
-    alias ll='eza -alF'
-    alias ls='eza'
-else
-    alias ll='ls -alF --color=auto'
-    alias ls='ls --color=auto'
-fi
-
-# if we have nvim use it over vim
-if [ -f $(command -v nvim) ] ; then
-    alias vi='nvim'
-fi
-
-# quality of life
-alias rd='rm -rf'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias ......='cd ../../../../..'
-
-# python
-alias python='python3 -u'
-alias r='python3 -u'
-alias ir='ipython3'
-alias jr='jupyter-lab'
-alias pipdev='pip install --no-deps -e'
-
-# latex make
-alias lmk='latexmk'
-alias lmkpdf='latexmk -pdf'
-alias lmkxet='latexmk -xelatex'
-alias lmklua='latexmk -lualatex'
-
-
-# other
-# alias se='setxkbmap -I"$HOME"/.config/xkb -rules evdev-local -layout se'
 # }}}
 
 # Functions {{{
@@ -224,9 +113,122 @@ function stow_app ()
     stow -d $HOME/apps -t $HOME/.local $del_flag $1
 }
 
+# append indempotently to PATH
+path_append () {
+  for d; do
+    d=$({ cd -- "$d" && { pwd -P || pwd; } } 2>/dev/null)  # canonicalize symbolic links
+    if [ -z "$d" ]; then continue; fi  # skip nonexistent directory
+    case ":$PATH:" in
+      *":$d:"*) :;;
+      *) PATH=$PATH:$d;;
+    esac
+  done
+}
+
+# }}}
+
+# Defaults {{{
+export SHELL=/bin/zsh
+export PLATFORM=$(uname -s)
+export EDITOR=nvim
+export BROWSER=chrome
+
+export PATH=~/.local/bin:$PATH
+export LIBRARY_PATH=$HOME/.local/lib
+export LD_LIBRARY_PATH=$HOME/.local/lib
+export CPLUS_INCLUDE_PATH=$HOME/.local/include
+# }}}
+
+# Apps {{{
+
+# Chromium {{{
+export GOOGLE_API_KEY="no"
+export GOOGLE_DEFAULT_CLIENT_ID="no"
+export GOOGLE_DEFAULT_CLIENT_SECRET="no"
+# }}}
+#
+# Python {{{
+export PYTHONBREAKPOINT=ipdb.set_trace
+# }}}
+
+# Rust {{{
+export CARGO_HOME=$HOME/apps/rust/cargo
+export RUSTUP_HOME=$HOME/apps/rust/rustup
+
+if [[ -f "$HOME/apps/rust/cargo/env" ]]; then
+    . "$HOME/apps/rust/cargo/env"
+fi
+
+# }}}
+
+# Vcpkg {{{
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/apps/vcpkg/installed/x64-linux/include
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/apps/vcpkg/installed/x64-linux-dynamic/include
+
+export LIBRARY_PATH=$LIBRARY_PATH:$HOME/apps/vcpkg/installed/x64-linux/lib
+export LIBRARY_PATH=$LIBRARY_PATH:$HOME/apps/vcpkg/installed/x64-linux-dynamic/lib
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/vcpkg/installed/x64-linux-dynamic/lib
+# }}}
+
+# PGI compilers {{{
+# export PGI=$HOME/apps/pgi
+# export PATH=$PGI/linux86-64/18.4/bin:$PATH
+# export MANPATH=$MANPATH:$PGI/linux86-64/18.4/man
+# export LM_LICENSE_FILE=$LM_LICENSE_FILE:$HOME/apps/pgi/license.dat
+# export LD_LIBRARY_PATH=$HOME/apps/pgi/linux86-64/18.4/lib
+# export PATH=$PATH:$PGI/linux86-64/18.4/lib
+# }}}
+
+# ASE {{{
+# export vasp_command=~/apps/vasp/bin/vasp_std
+# export VASP_PP_PATH=~/apps/vasp/setups
+# export ASE_VASP_VDW=$HOME/apps/vasp
+# }}}
+
+# Aliases {{{
+
+if [[ -f $(command -v eza) ]] ; then
+    alias ll='eza -alF'
+    alias ls='eza'
+else
+    alias ll='ls -alF --color=auto'
+    alias ls='ls --color=auto'
+fi
+
+# if we have nvim use it over vim
+if [ -f $(command -v nvim) ] ; then
+    alias vi='nvim'
+fi
+
+# quality of life
+alias rd='rm -rf'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+# python
+alias python='python3 -u'
+alias py='python3 -u'
+alias ir='ipython3'
+alias jr='jupyter-lab'
+alias pipdev='pip install --no-deps -e'
+
+# latex make
+alias lmk='latexmk'
+alias lmkpdf='latexmk -pdf'
+alias lmkxet='latexmk -xelatex'
+alias lmklua='latexmk -lualatex'
+
+# other
+# alias se='setxkbmap -I"$HOME"/.config/xkb -rules evdev-local -layout se'
 # }}}
 
 # WSL {{{
+
+
 if [[ `has_wsl` == true ]] ; then
     export WDESK=/mnt/c/Users/lofgr/Desktop
     export WHOME=/mnt/c/Users/lofgr
@@ -261,18 +263,32 @@ mamba () {
 # ----
 # }}}
 
-# other apps {{{
-# smart cd
-eval "$(zoxide init --cmd j zsh)"
-
-# fzf and ripgrep
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!**/{.git,node_modules,__pycache__}/*" 2> /dev/null'
-export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
-
-# starship
-eval "$(starship init zsh)"
-
+# Node version manager {{{
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 # }}}
+
+# FZF {{{
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!**/{.git,node_modules,__pycache__}/*" 2> /dev/null'
+# export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
+# }}}
+
+# Lua version manager {{{
+[ -s ~/.luaver/luaver ] && . ~/.luaver/luaver
+[ -s ~/.luaver/completions/luaver.bash ] && . ~/.luaver/completions/luaver.bash
+# }}}
+
+# Zoxide {{{
+eval "$(zoxide init --cmd j zsh)"
+# }}}
+
+# Starship {{{
+eval "$(starship init zsh)"
+# }}}
+
+# end apps }}}
 
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=zsh:
