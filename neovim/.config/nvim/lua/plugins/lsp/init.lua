@@ -1,25 +1,22 @@
 -- plugins that have to be set up before lspconfig
 require("mason").setup({
-    ui = { border = 'rounded' },
+    ui = { border = "rounded" },
 })
 
 require("mason-lspconfig").setup({})
 require("neodev").setup({})
 
 -- lspconfig
-local lspconfig = require('lspconfig')
+local lspconfig = require("lspconfig")
 
 -- update default capabilities
 local lsp_defaults = lspconfig.util.default_config
-lsp_defaults.capabilities = vim.tbl_deep_extend(
-    'force',
-    lsp_defaults.capabilities,
-    require('cmp_nvim_lsp').default_capabilities()
-)
+lsp_defaults.capabilities =
+    vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 -- define autocmds and mappings on lsp attach
-vim.api.nvim_create_autocmd('LspAttach', {
-    desc = 'LSP mappings and autocmds',
+vim.api.nvim_create_autocmd("LspAttach", {
+    desc = "LSP mappings and autocmds",
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         local bufnr = args.buf
@@ -44,15 +41,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
         local opts = { silent = true, buffer = bufnr, noremap = true }
         -- vim.keymap.set('n', '<leader>af', function() vim.lsp.buf.format { async = true } end, opts)
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', 'gK', vim.lsp.buf.signature_help, opts)
-        vim.keymap.set('n', '[e', vim.diagnostic.goto_prev, opts)
-        vim.keymap.set('n', ']e', vim.diagnostic.goto_next, opts)
-        vim.keymap.set('n', '<leader>ar', vim.lsp.buf.rename, opts)
-        vim.keymap.set('n', '<leader>aa', vim.lsp.buf.code_action, opts)
+        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, opts)
+        vim.keymap.set("n", "[e", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "]e", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "<leader>ar", vim.lsp.buf.rename, opts)
+        vim.keymap.set("n", "<leader>aa", vim.lsp.buf.code_action, opts)
     end,
 })
 
@@ -74,20 +71,18 @@ local function lsp_settings()
 
     vim.api.nvim_create_autocmd("CursorHold", {
         callback = function()
-            vim.diagnostic.open_float({ scope = 'cursor' })
+            vim.diagnostic.open_float({ scope = "cursor" })
         end,
         desc = "Show diagnostics on hover",
     })
 
     -- handlers
-    vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-        vim.lsp.diagnostic.on_publish_diagnostics, {
-            virtual_text = false,
-            underline = true,
-            signs = true,
-            update_in_insert = true,
-        }
-    )
+    vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+        virtual_text = false,
+        underline = true,
+        signs = true,
+        update_in_insert = true,
+    })
 
     vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
         border = "rounded",
@@ -97,21 +92,10 @@ end
 -- load lsp settings
 lsp_settings()
 
--- Set up individual language servers
--- Pyright
-lspconfig['pyright'].setup(require('plugins.lsp.pyright'))
+local sever_list = { "pyright", "lus_ls", "r_language_server", "jsonls", "marksman", "yamlls", "ltex" }
+local server_configs = require("plugins.lsp.server_configs")
 
-
--- sumneko: lua
-lspconfig['lua_ls'].setup(require('plugins.lsp.lua_ls'))
-
--- R language server
-lspconfig['r_language_server'].setup({
-    flags = { debounce_text_changes = 150 },
-})
-
--- json-lsp
-lspconfig['jsonls'].setup({})
-
--- ruff
--- lspconfig['ruff_lsp'].setup(require('plugins.lsp.ruff_lsp'))
+for _, server in ipairs(sever_list) do
+    local config = server_configs[server] or {}
+    lspconfig[server].setup(config)
+end

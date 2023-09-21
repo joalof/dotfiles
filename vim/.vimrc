@@ -3,7 +3,6 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-" Plug 'nathanaelkane/vim-indent-guides'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
@@ -12,9 +11,6 @@ Plug 'tpope/vim-repeat'
 Plug 'machakann/vim-sandwich'
 Plug 'wellle/targets.vim'
 Plug 'justinmk/vim-sneak'
-Plug 'michaeljsmith/vim-indent-object'
-Plug 'lervag/vimtex'
-Plug 'janko/vim-test'
 Plug 'ryvnf/readline.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'romainl/vim-cool'
@@ -22,28 +18,20 @@ Plug 'romainl/vim-qf'
 Plug 'machakann/vim-highlightedyank'
 Plug 'ghifarit53/tokyonight-vim'
 
-" colorschemes
-Plug 'altercation/vim-colors-solarized'
-
-if empty($SSH_CLIENT)
-    Plug 'junegunn/goyo.vim'
-    Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    Plug 'christoomey/vim-tmux-navigator'
-    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-    Plug 'junegunn/fzf.vim'
-    " Plug 'jesseleite/vim-agriculture'
-    Plug 'JoshMcguigan/estream', { 'do': 'bash install.sh v0.2.0' }
-    Plug 'skywind3000/asyncrun.vim'
-    Plug 'KabbAmine/zeavim.vim'
-    Plug 'erietz/vim-terminator', { 'branch' : 'main' }
-    " Plug 'honza/vim-snippets'
-    " Plug 'ludovicchabant/vim-gutentags'
-    " Plug 'Valloric/YouCompleteMe', { 'do': 'python3 install.py --clang-completer' }
-    " Plug 'dense-analysis/ale'
-    " Plug 'axvr/zepl.vim'
-    " Plug 'SirVer/ultisnips'
-endif
+" if empty($SSH_CLIENT)
+"     Plug 'lervag/vimtex'
+"     Plug 'janko/vim-test'
+"     Plug 'junegunn/goyo.vim'
+"     Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+"     Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"     Plug 'christoomey/vim-tmux-navigator'
+"     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+"     Plug 'junegunn/fzf.vim'
+"     Plug 'JoshMcguigan/estream', { 'do': 'bash install.sh v0.2.0' }
+"     Plug 'skywind3000/asyncrun.vim'
+"     Plug 'KabbAmine/zeavim.vim'
+"     Plug 'erietz/vim-terminator', { 'branch' : 'main' }
+" endif
 
 call plug#end()
 " }}}

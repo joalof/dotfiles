@@ -9,6 +9,7 @@ return {
         "hrsh7th/cmp-omni",
         "onsails/lspkind.nvim",
         "hrsh7th/cmp-cmdline",
+        "octaltree/cmp-look",
     },
     event = "InsertEnter",
     config = function()
@@ -80,12 +81,12 @@ return {
                 end, { "i", "s" }),
             },
             sources = {
-                { name = "nvim_lsp", max_item_count = 8},
-                { name = "codeium", max_item_count = 5},
-                { name = "buffer", max_item_count = 5 },
-                { name = "luasnip", max_item_count = 5 },
-                { name = "nvim_lua", max_item_count = 5},
-                { name = "path", max_item_count = 5 },
+                { name = "nvim_lsp", max_item_count = 8, group_index = 1 },
+                { name = "codeium", max_item_count = 5, group_index = 1 },
+                { name = "buffer", max_item_count = 5, group_index = 1 },
+                { name = "luasnip", max_item_count = 5, group_index = 1 },
+                { name = "nvim_lua", max_item_count = 5, group_index = 1 },
+                { name = "path", max_item_count = 5, group_index = 1 },
             },
             formatting = {
                 format = require("lspkind").cmp_format({
@@ -95,7 +96,7 @@ return {
             },
         })
         -- completion for search /
-        cmp.setup.cmdline("/", {
+        cmp.setup.cmdline({ "/", "?" }, {
             mapping = cmp.mapping.preset.cmdline(),
             sources = {
                 { name = "buffer" },
@@ -105,15 +106,60 @@ return {
         cmp.setup.cmdline(":", {
             mapping = cmp.mapping.preset.cmdline(),
             sources = cmp.config.sources({
-                { name = "path" },
-            }, {
+                { name = "path", group_index = 1 },
                 {
                     name = "cmdline",
                     option = {
                         ignore_cmds = { "Man", "!" },
                     },
+                    group_index = 2,
                 },
             }),
+        })
+
+        -- File-specific sources: these will override the default sources declared above
+        local look_source = {
+            name = 'look',
+            keyword_length = 2,
+            option = {
+                convert_case = true,
+                loud = true
+                --dict = '/usr/share/dict/words'
+            },
+            max_item_count = 5
+        }
+
+        -- Markup files
+        local filetypes_markup = {"markdown", "rst"}
+        for _, ft in ipairs(filetypes_markup) do
+            cmp.setup.filetype(ft, {
+                sources = cmp.config.sources({
+                    { name = "nvim_lsp", max_item_count = 8},
+                    { name = "luasnip", max_item_count = 5},
+                    { name = 'buffer', max_item_count = 5 },
+                    look_source,
+                })
+            })
+        end
+
+        -- Tex
+        cmp.setup.filetype("tex", {
+            formatting = {
+                format = function(entry, vim_item)
+                    vim_item.menu = ({
+                        omni = (vim.inspect(vim_item.menu):gsub('%"', "")),
+                        buffer = "[Buffer]",
+                        -- formatting for other sources
+                    })[entry.source.name]
+                    return vim_item
+                end,
+            },
+            sources = {
+                { name = 'omni', max_item_count = 8},
+                { name = "luasnip", max_item_count = 5},
+                { name = 'buffer', max_item_count = 5},
+                look_source,
+            },
         })
     end,
 }
