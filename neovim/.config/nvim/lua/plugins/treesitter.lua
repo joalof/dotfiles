@@ -2,7 +2,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     version = false,
     build = ":TSUpdate",
-    event = {"BufReadPost", "BufNewFile"},
+    event = { "BufReadPost", "BufNewFile" },
     dependencies = {
         {
             "nvim-treesitter/nvim-treesitter-textobjects",
@@ -17,11 +17,12 @@ return {
         -- {
         --     'nvim-treesitter/playground',
         -- },
+        -- { "RRethy/nvim-treesitter-endwise" },
     },
-    cmd = {"TSUpdateSync"},
+    cmd = { "TSUpdateSync" },
     opts = {
-        highlight = {enable = true},
-        indent = {enable = true, disable = {'python'}},
+        highlight = { enable = true },
+        indent = { enable = true, disable = { "python" } },
         ensure_installed = {
             "bash",
             "c",
@@ -40,7 +41,7 @@ return {
             "vimdoc",
             "yaml",
         },
-        -- playground = {enable = true},
+        playground = { enable = true },
     },
     config = function(_, opts)
         if type(opts.ensure_installed) == "table" then
@@ -53,6 +54,11 @@ return {
                 return true
             end, opts.ensure_installed)
         end
+
+        -- endwise
+        -- TODO: fix collision with ultimate autopairs cr mapping
+        -- opts["endwise"] = { enable = true }
+
         require("nvim-treesitter.configs").setup(opts)
 
         if load_textobjects then

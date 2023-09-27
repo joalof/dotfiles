@@ -92,7 +92,7 @@ end
 -- load lsp settings
 lsp_settings()
 
-local sever_list = { "pyright", "lus_ls", "r_language_server", "jsonls", "marksman", "yamlls", "ltex" }
+local sever_list = { "pyright", "lua_ls", "r_language_server", "jsonls", "marksman", "yamlls"}
 local server_configs = require("plugins.lsp.server_configs")
 
 for _, server in ipairs(sever_list) do

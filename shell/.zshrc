@@ -139,6 +139,47 @@ export LD_LIBRARY_PATH=$HOME/.local/lib
 export CPLUS_INCLUDE_PATH=$HOME/.local/include
 # }}}
 
+# Aliases {{{
+
+if [[ -f $(command -v eza) ]] ; then
+    alias ll='eza -alF'
+    alias ls='eza'
+else
+    alias ll='ls -alF --color=auto'
+    alias ls='ls --color=auto'
+fi
+
+# if we have nvim use it over vim
+if [ -f $(command -v nvim) ] ; then
+    alias vi='nvim'
+fi
+
+# quality of life
+alias rd='rm -rf'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+# python
+alias python='python3 -u'
+alias py='python3 -u'
+alias ir='ipython3'
+alias jr='jupyter-lab'
+alias pipdev='pip install --no-deps -e'
+
+# latex make
+alias lmk='latexmk'
+alias lmkpdf='latexmk -pdf'
+alias lmkxet='latexmk -xelatex'
+alias lmklua='latexmk -lualatex'
+
+# other
+alias vdp="vd -f pandas"
+
+# }}}
+
 # Apps {{{
 
 # Chromium {{{
@@ -184,46 +225,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/vcpkg/installed/x64-linux-dyn
 # export vasp_command=~/apps/vasp/bin/vasp_std
 # export VASP_PP_PATH=~/apps/vasp/setups
 # export ASE_VASP_VDW=$HOME/apps/vasp
-# }}}
-
-# Aliases {{{
-
-if [[ -f $(command -v eza) ]] ; then
-    alias ll='eza -alF'
-    alias ls='eza'
-else
-    alias ll='ls -alF --color=auto'
-    alias ls='ls --color=auto'
-fi
-
-# if we have nvim use it over vim
-if [ -f $(command -v nvim) ] ; then
-    alias vi='nvim'
-fi
-
-# quality of life
-alias rd='rm -rf'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias ......='cd ../../../../..'
-
-# python
-alias python='python3 -u'
-alias py='python3 -u'
-alias ir='ipython3'
-alias jr='jupyter-lab'
-alias pipdev='pip install --no-deps -e'
-
-# latex make
-alias lmk='latexmk'
-alias lmkpdf='latexmk -pdf'
-alias lmkxet='latexmk -xelatex'
-alias lmklua='latexmk -lualatex'
-
-# other
-# alias se='setxkbmap -I"$HOME"/.config/xkb -rules evdev-local -layout se'
 # }}}
 
 # WSL {{{

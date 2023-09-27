@@ -86,7 +86,7 @@ return {
                 { name = "buffer", max_item_count = 5, group_index = 1 },
                 { name = "luasnip", max_item_count = 5, group_index = 1 },
                 { name = "nvim_lua", max_item_count = 5, group_index = 1 },
-                { name = "path", max_item_count = 5, group_index = 1 },
+                { name = "path", max_item_count = 20, group_index = 1 },
             },
             formatting = {
                 format = require("lspkind").cmp_format({

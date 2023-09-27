@@ -9,8 +9,8 @@ vim.keymap.set("n", "0", "^")
 vim.keymap.set("n", "^", "0")
 
 vim.keymap.set("n", "<c-l>", "i<space><esc>l")
-vim.keymap.set("n", "<c-j>", "o<esc>")
 vim.keymap.set("n", "<c-k>", "O<esc>")
+vim.keymap.set("n", "<c-j>", "o<esc>")
 
 -- Add empty lines before and after cursor line
 -- vim.keymap.set('n', '[<space>', "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>")

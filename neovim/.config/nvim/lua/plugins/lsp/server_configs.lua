@@ -1,7 +1,3 @@
-local runtime_path = vim.split(package.path, ";")
-table.insert(runtime_path, "lua/?.lua")
-table.insert(runtime_path, "lua/?/init.lua")
-
 local M = {
     ruff_lsp = {
         on_attach = function(client, _)
@@ -36,31 +32,32 @@ local M = {
         },
     },
     lua_ls = {
-        settings = {
-            Lua = {
-                runtime = {
-                    version = "LuaJIT",
-                    -- Setup your lua path
-                    path = runtime_path,
-                },
-                diagnostics = {
-                    -- Get the language server to recognize the `vim` global
-                    globals = { "vim" },
-                },
-                workspace = {
-                    -- Make the server aware of Neovim runtime files
-                    library = vim.api.nvim_get_runtime_file("", true),
-                    checkThirdParty = false,
-                },
-                telemetry = {
-                    enable = false,
-                },
-                completion = {
-                    callSnippet = "Disable", -- Disable, Both, Replace
-                },
-            },
-        },
+        on_init = function(client)
+            local path = client.workspace_folders[1].name
+            if not vim.loop.fs_stat(path .. "/.luarc.json") and not vim.loop.fs_stat(path .. "/.luarc.jsonc") then
+                client.config.settings = vim.tbl_deep_extend("force", client.config.settings, {
+                    Lua = {
+                        runtime = {
+                            version = "LuaJIT",
+                        },
+                        workspace = {
+                            checkThirdParty = false,
+                            library = vim.api.nvim_get_runtime_file("", true),
+                        },
+                        completion = {
+                            callSnippet = "Disable",
+                        },
+                        diagnostics = {
+                            globals = { "vim" },
+                        },
+                    },
+                })
+                client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+            end
+            return true
+        end,
     },
+
     r_language_server = {
         flags = { debounce_text_changes = 150 },
     },

@@ -2,8 +2,6 @@ return {
     "linty-org/readline.nvim",
     event = "VeryLazy",
     keys = {
-        -- {{"!"},'<M-f>', function() require('readline').forward_word() end},
-        -- {{"!"},'<M-b>', function() require('readline').backward_word() end},
         {
             mode = { "!" },
             "<C-a>",
