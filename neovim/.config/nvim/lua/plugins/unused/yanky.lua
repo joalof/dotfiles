@@ -1,5 +1,11 @@
+-- return {
+--     "gbprod/yanky.nvim",
+--     commit = "51dfc7721cfa4bb5b1baf5f365b8a39394d89eb2",
+--     opts = {},
+-- }
 return {
     "gbprod/yanky.nvim",
+    commit = "51dfc7721cfa4bb5b1baf5f365b8a39394d89eb2",
     dependencies = {
         { "kkharji/sqlite.lua", enabled = not jit.os:find("Windows") }
     },

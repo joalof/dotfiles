@@ -4,21 +4,24 @@ return {
     dependencies = {
         "nvim-lua/plenary.nvim",
         { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-        -- {"ahmedkhalf/project.nvim"},
     },
     cmd = "Telescope",
-    keys = { "<leader>ff", "<leader>fn", "<leader>fh", "<leader>fg", "<leader>ff", "<leader>fa" },
+    keys = { "<leader>ff", "<leader>fn", "<leader>fh", "<leader>fg", "<leader>fa" },
     config = function()
+        local builtin = require("telescope.builtin")
+        local actions = require("telescope.actions")
+
         require("telescope").setup({
             defaults = {
                 mappings = {
                     i = {
-                        ["<C-j>"] = require("telescope.actions").select_default,
-                        ["<C-c>"] = require("telescope.actions").close,
+                        ["<C-j>"] = actions.select_default,
+                        ["<C-c>"] = actions.close,
                     },
                     n = {
-                        ["<C-j>"] = require("telescope.actions").select_default,
-                        ["<C-c>"] = require("telescope.actions").close,
+                        ["<C-j>"] = actions.select_default,
+                        ["<C-c>"] = actions.close,
+                        ["<C-q>"] = actions.smart_add_to_qflist + actions.open_qflist, -- add grep to quickfix
                     },
                 },
             },
@@ -42,7 +45,6 @@ return {
             end
         end
 
-        local builtin = require("telescope.builtin")
         vim.keymap.set("n", "<leader>ff", function()
             builtin.find_files({ cwd = get_root_dir() })
         end)
@@ -57,12 +59,15 @@ return {
             builtin.find_files({ cwd = vim.fn.environ()["HOME"] .. "/.config/nvim", hidden = true })
         end)
 
-        -- require('project_nvim').setup({})
-        -- require('telescope').load_extension('projects')
-        -- vim.keymap.set(
-        --     'n',
-        --     '<leader>fp',
-        --     function() require('telescope').extensions.projects.projects() end
-        -- )
+        -- custom action for cding to dir of selected file
+        -- local transform_mod = require('telescope.actions.mt').transform_mod
+        -- local custom_actions = transform_mod({
+        --     tcd = function(prompt_bufnr)
+        --         local selection = require("telescope.actions.state").get_selected_entry()
+        --         local dir = vim.fn.fnamemodify(selection.path, ":p:h")
+        --         require("telescope.actions").close(prompt_bufnr)
+        --         vim.cmd(string.format("silent tcd %s", dir))
+        --     end,
+        -- })
     end,
 }

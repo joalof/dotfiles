@@ -1,16 +1,17 @@
 return {
     "numToStr/Comment.nvim",
     keys = {
-        { "gcc", "gcb", "gcO", "gco", "gcA", "gcp" },
+        { "gcc", "gcb", "gcO", "gco", "gcA"},
         { "gc", mode = { "n", "x" } },
         { "gb", mode = { "n", "x" } },
+        { "gy", mode = { "v" } },
     },
-    opts = {},
     config = function()
+        require("Comment").setup()
         -- Define a mapping that pastes the current selection
         -- below and then comments the original text
         -- https://www.reddit.com/r/neovim/comments/16s5azh/how_to_comment_selected_lines_and_paste_them/
-        vim.keymap.set({ "v" }, "gcp", function()
+        vim.keymap.set({ "v" }, "gy", function()
             local win = vim.api.nvim_get_current_win()
             local cur = vim.api.nvim_win_get_cursor(win)
             local vstart = vim.fn.getpos("v")[2]

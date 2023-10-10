@@ -4,6 +4,9 @@ return {
     config = function()
         require("flash").setup({
             modes = {
+                search = {
+                    enabled = false,
+                },
                 char = {
                     config = function(opts)
                         -- autohide flash when in operator-pending mode

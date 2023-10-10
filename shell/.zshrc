@@ -139,47 +139,6 @@ export LD_LIBRARY_PATH=$HOME/.local/lib
 export CPLUS_INCLUDE_PATH=$HOME/.local/include
 # }}}
 
-# Aliases {{{
-
-if [[ -f $(command -v eza) ]] ; then
-    alias ll='eza -alF'
-    alias ls='eza'
-else
-    alias ll='ls -alF --color=auto'
-    alias ls='ls --color=auto'
-fi
-
-# if we have nvim use it over vim
-if [ -f $(command -v nvim) ] ; then
-    alias vi='nvim'
-fi
-
-# quality of life
-alias rd='rm -rf'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias ......='cd ../../../../..'
-
-# python
-alias python='python3 -u'
-alias py='python3 -u'
-alias ir='ipython3'
-alias jr='jupyter-lab'
-alias pipdev='pip install --no-deps -e'
-
-# latex make
-alias lmk='latexmk'
-alias lmkpdf='latexmk -pdf'
-alias lmkxet='latexmk -xelatex'
-alias lmklua='latexmk -lualatex'
-
-# other
-alias vdp="vd -f pandas"
-
-# }}}
-
 # Apps {{{
 
 # Chromium {{{
@@ -291,5 +250,45 @@ eval "$(starship init zsh)"
 
 # end apps }}}
 
+# Aliases {{{
+
+if [[ -f $(command -v eza) ]] ; then
+    alias ll='eza -alF'
+    alias ls='eza'
+else
+    alias ll='ls -alF --color=auto'
+    alias ls='ls --color=auto'
+fi
+
+# if we have nvim use it over vim
+if [ -f $(command -v nvim) ] ; then
+    alias vi='nvim'
+fi
+
+# quality of life
+alias rd='rm -rf'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+# python
+alias python='python3 -u'
+alias py='python3 -u'
+alias ir='ipython3'
+alias jr='jupyter-lab'
+alias pipdev='pip install --no-deps -e'
+
+# latex make
+alias lmk='latexmk'
+alias lmkpdf='latexmk -pdf'
+alias lmkxet='latexmk -xelatex'
+alias lmklua='latexmk -lualatex'
+
+# other
+alias vdp="vd -f pandas"
+
+# }}}
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=zsh:

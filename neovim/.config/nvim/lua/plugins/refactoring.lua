@@ -7,19 +7,26 @@ return {
     cmd = { "Refactor" },
     keys = {
         {
-            "<leader>ap",
+            "<leader>apv",
             function()
                 require("refactoring").debug.print_var()
             end,
             mode = { "x", "n" },
-            desc = "Insert print var",
+            desc = "Print variable",
         },
         {
-            "<leader>ac",
+            "<leader>apc",
             function()
                 require("refactoring").debug.cleanup({})
             end,
             desc = "Clean inserted prints",
+        },
+        {
+            "<leader>apf",
+            function()
+                require("refactoring").debug.printf({})
+            end,
+            desc = "Print to mark calls",
         },
     },
     opts = {

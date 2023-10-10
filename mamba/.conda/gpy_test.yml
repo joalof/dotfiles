@@ -1,0 +1,12 @@
+name: gpytest
+
+dependencies:
+  #  basics
+  - python=3.10
+  - pip
+  - cython
+  - scipy
+  - numpy=1.26.0
+
+  # visualisation
+  - matplotlib

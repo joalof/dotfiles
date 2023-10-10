@@ -1,8 +1,14 @@
--- Filter things we don't want to get notified about
 local routes = {
+    -- route various messages to mini view instead of notification
     -- buffer write messages
     { filter = { event = "msg_show", find = "%d+B written$" }, view = "mini" },
     { filter = { event = "msg_show", find = "%d+L, %d+B$" }, view = "mini" },
+
+    -- undo
+    { filter = { event = "msg_show", find = "%d+ more line" }, view = "mini" },
+    { filter = { event = "msg_show", find = "1 line less" }, view = "mini" },
+    { filter = { event = "msg_show", find = "%d+ fewer lines" }, view = "mini" },
+    { filter = { event = "msg_show", find = "%d+ lines yanked" }, view = "mini" },
 
     { -- nvim-early-retirement
         filter = {

@@ -18,8 +18,8 @@ require("lazy").setup(
   'plugins',
   {
     ui = {border = 'rounded'},
-    dev = {path = "~/code"},
-    concurrency = 5,
+    dev = {path = "~/code/nvim"},
+    concurrency = 10,
   }
 )
 
