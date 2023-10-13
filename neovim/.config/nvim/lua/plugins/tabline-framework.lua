@@ -61,18 +61,18 @@ return {
             local current_file = normalize_path(vim.api.nvim_buf_get_name(0))
             local items = get_marks()
 
-            local found = false
-            for _, item in ipairs(items) do
-                if current_file == item.filename then
-                    found = true
-                    break
-                end
-            end
+            -- local found = false
+            -- for _, item in ipairs(items) do
+            --     if current_file == item.filename then
+            --         found = true
+            --         break
+            --     end
+            -- end
 
             -- if current file is not a mark add it
-            if not found then
-                create_pane(f, current_file, true)
-            end
+            -- if not found then
+            --     create_pane(f, current_file, true)
+            -- end
 
             -- add all marks
             for _, item in ipairs(items) do
@@ -89,10 +89,28 @@ return {
             -- end )
         end
 
+        local toggle_tabline = function()
+            local items = get_marks()
+            if #items > 0 then
+                vim.o.showtabline = 2
+            else
+                vim.o.showtabline = 0
+            end
+        end
+
         require("tabline_framework").setup({
             render = render,
             hl_fill = { fg = hls.fill.fg, bg = hls.fill.bg },
         })
-        vim.o.showtabline = 2
+
+        toggle_tabline()
+
+        vim.api.nvim_create_augroup("TablineGroup", { clear = true })
+        vim.api.nvim_create_autocmd("DirChanged", {
+            callback = toggle_tabline,
+            group = "TablineGroup",
+            desc = "Toggle tabline",
+        })
+
     end,
 }

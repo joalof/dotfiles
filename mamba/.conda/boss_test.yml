@@ -1,0 +1,23 @@
+name: bosstest
+
+dependencies:
+  #  basics
+  - python=3.8
+  - pip
+  - cython
+  - scipy
+  - numpy=1.23.5
+  - GPy
+
+  # visualisation
+  - matplotlib
+
+  # doc
+  - sphinx
+  - sphinx_rtd_theme
+  - nbsphinx
+  - numpydoc
+
+  # dev
+  - pytest
+  - pytest-xdist

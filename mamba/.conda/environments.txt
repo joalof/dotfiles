@@ -1,2 +1,2 @@
 /home/joalof/apps/micromamba/envs/bossdev
-/home/joalof/apps/micromamba/envs/gpytest
+/home/joalof/apps/micromamba/envs/bosstest

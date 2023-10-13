@@ -258,6 +258,8 @@ alias lmklua='latexmk -lualatex'
 
 # other
 alias vdp="vd -f pandas"
+alias act="mamba activate"
+alias deact="mamba deactivate"
 
 # }}}
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
