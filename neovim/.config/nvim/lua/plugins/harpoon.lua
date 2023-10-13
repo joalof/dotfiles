@@ -3,6 +3,7 @@ return {
     dependencies = {
         "nvim-lua/plenary.nvim",
     },
+    -- stylua: ignore
     keys = {
         {
             "M",
@@ -12,18 +13,8 @@ return {
                 mark.toggle_file(i)
             end,
         },
-        {
-            "L",
-            function()
-                require("harpoon.ui").nav_next()
-            end,
-        },
-        {
-            "H",
-            function()
-                require("harpoon.ui").nav_prev()
-            end,
-        },
+        { "L", function() require("harpoon.ui").nav_next() end,  },
+        { "H", function() require("harpoon.ui").nav_prev() end,  },
     },
     opts = {
         global_settings = {

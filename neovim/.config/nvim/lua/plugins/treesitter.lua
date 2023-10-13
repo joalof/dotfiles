@@ -14,9 +14,9 @@ return {
                 load_textobjects = true
             end,
         },
-        -- {
-        --     'nvim-treesitter/playground',
-        -- },
+        {
+            'nvim-treesitter/playground',
+        },
         -- { "RRethy/nvim-treesitter-endwise" },
     },
     cmd = { "TSUpdateSync" },

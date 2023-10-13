@@ -8,15 +8,10 @@ return {
                 auto_follow = false,
             },
         })
-        vim.keymap.set("n", "]q", function()
-            require("qf").next("c", true)
-        end)
-        vim.keymap.set("n", "[q", function()
-            require("qf").prev("c", true)
-        end)
-        vim.keymap.set("n", "<leader>qq", function()
-            require("qf").toggle("c", true)
-        end)
+        -- stylua: ignore
+        vim.keymap.set("n", "]q", function() require("qf").next("c", true) end)
+        vim.keymap.set("n", "[q", function() require("qf").prev("c", true) end)
+        vim.keymap.set("n", "<leader>qq", function() require("qf").toggle("c", true) end)
 
         -- general qf stuff
         vim.keymap.set("n", "]Q", ":clast<cr>")

@@ -1,17 +1,16 @@
 return {
     "rafcamlet/tabline-framework.nvim",
-    dev = true,
+    -- dev = true,
     dependencies = {
-        {"nvim-tree/nvim-web-devicons"},
+        { "nvim-tree/nvim-web-devicons" },
         { "ThePrimeagen/harpoon", dependencies = { "nvim-lua/plenary.nvim" } },
     },
     -- event = "VeryLazy",
     config = function()
-
-        -- From https://github.com/ThePrimeagen/harpoon/issues/206#issuecomment-1538132132
+        -- Adapted from https://github.com/ThePrimeagen/harpoon/issues/206#issuecomment-1538132132
         local function get_marks()
-            local h = require("harpoon")
-            local config = h.get_mark_config()
+            local harpoon = require("harpoon")
+            local config = harpoon.get_mark_config()
             return config.marks
         end
 
@@ -20,65 +19,80 @@ return {
             return Path:new(item):make_relative(vim.loop.cwd())
         end
 
-        local colors = {
-            black = "#000000",
-            white = "#ffffff",
-            bg = "#181A1F",
-            bg_sel = "#282c34",
-            temp = "#287c34",
-            fg = "#696969",
+        -- define colors
+        local colors = require("lib.colors")
+
+        local normal_fg = colors.get_hl("Normal", "fg")
+        local normal_fg_dark = colors.get_shade(normal_fg, -55)
+        local normal_bg = colors.get_hl("Normal", "bg")
+        local normal_bg_dark = colors.get_shade(normal_bg, -50)
+
+        local hls = {
+            fill = {
+                fg = normal_fg_dark,
+                bg = normal_bg_dark,
+            },
+            wedge = {
+                fg = normal_bg_dark,
+                bg = normal_bg,
+            },
+            text = {
+                fg_active = normal_fg,
+                fg_inactive = normal_fg_dark,
+                bg = normal_bg,
+            },
         }
 
-        local function make_row(text, opts)
-            local row = { text }
-            for k, v in pairs(opts) do
-                row[k] = v
-            end
-            return row
-        end
-
-        local function create_pane(f, filename, opts)
-            f.set_fg(colors.fg)
-            f.add({ "", fg = colors.black, bg = colors.bg_sel })
+        local function create_pane(f, filename, active)
+            f.add({ "", fg = hls.wedge.fg, bg = hls.wedge.bg })
             if filename then
-                f.add(make_row(f.icon(filename) .. " ", opts))
-                f.add(make_row(vim.fn.fnamemodify(filename, ":t"), opts))
+                f.add({ f.icon(filename) .. " ", fg = f.icon_color(filename), bg = hls.text.bg })
+                local text_fg = hls.text.fg_inactive
+                if active  then
+                    text_fg = hls.text.fg_active
+                end
+                f.add({ vim.fn.fnamemodify(filename, ":t"), fg = text_fg, bg = hls.text.bg })
             end
-            f.add({ "", bg = colors.bg_sel, fg = colors.black })
+            f.add({ "", fg = hls.wedge.fg, bg = hls.wedge.bg })
         end
 
         local render = function(f)
-            local items = get_marks()
-            local found = false
+
             local current_file = normalize_path(vim.api.nvim_buf_get_name(0))
+            local items = get_marks()
+
+            local found = false
             for _, item in ipairs(items) do
-                local selected = current_file == item.filename
-                if not found and selected then
+                if current_file == item.filename then
                     found = true
+                    break
                 end
-                local fg = selected and f.icon_color(item.filename) or nil
-                create_pane(f, item.filename, { fg = fg, bg = colors.bg_sel })
             end
-        
+
+            -- if current file is not a mark add it
             if not found then
-                create_pane(f, current_file, { fg = colors.temp, bg = colors.bg_sel, gui = "italic" })
+                create_pane(f, current_file, true)
             end
-        
+
+            -- add all marks
+            for _, item in ipairs(items) do
+                local active = current_file == item.filename
+                create_pane(f, item.filename, active)
+            end
+
             f.add_spacer()
-        
-            f.make_tabs(function(info)
-                f.add({ "", fg = colors.black, bg = colors.bg_sel })
-                f.add({ " " .. info.index .. " ", fg = info.current and colors.white or nil })
-                f.add({ "", bg = colors.bg_sel, fg = colors.black })
-            end)
+            --
+            -- f.make_tabs(function(info)
+            --     f.add({ "", fg = colors_tmp.black, bg = colors_tmp.bg_sel })
+            --     f.add({ " " .. info.index .. " ", fg = info.current and colors_tmp.white or nil })
+            --     f.add({ "", bg = colors_tmp.bg_sel, fg = colors_tmp.black })
+            -- end )
         end
 
-        -- require("tabline_framework").setup({
-        --     render = render,
-        --     hl = { fg = "#abb2bf", bg = "#181A1F" },
-        --     hl_sel = { fg = "#abb2bf", bg = "#282c34" },
-        --     hl_fill = { fg = "#ffffff", bg = "#000000" },
-        -- })
-        -- vim.o.showtabline = 2
+        require("tabline_framework").setup({
+            render = render,
+            hl_fill = { fg = hls.fill.fg, bg = hls.fill.bg },
+        })
+        vim.o.showtabline = 2
     end,
 }
