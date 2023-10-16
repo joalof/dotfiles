@@ -15,9 +15,9 @@ return {
             end,
         },
         {
-            'nvim-treesitter/playground',
+            "RRethy/nvim-treesitter-endwise",
+            dev = true,
         },
-        -- { "RRethy/nvim-treesitter-endwise" },
     },
     cmd = { "TSUpdateSync" },
     opts = {
@@ -41,7 +41,6 @@ return {
             "vimdoc",
             "yaml",
         },
-        playground = { enable = true },
     },
     config = function(_, opts)
         if type(opts.ensure_installed) == "table" then
@@ -56,8 +55,8 @@ return {
         end
 
         -- endwise
-        -- TODO: fix collision with ultimate autopairs cr mapping
-        -- opts["endwise"] = { enable = true }
+        -- TODO: disable for languages that don't support it?
+        opts["endwise"] = { enable = true }
 
         require("nvim-treesitter.configs").setup(opts)
 

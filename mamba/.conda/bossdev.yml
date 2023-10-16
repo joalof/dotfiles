@@ -21,10 +21,11 @@ dependencies:
   - jupyter
   - jupyterlab
   - jupytext
+  - jupyter_client
 
   # Spreadsheets etc
   - openpyxl
-  # - visidata
+  - visidata
 
   # doc
   - sphinx
@@ -43,6 +44,7 @@ dependencies:
   - debugpy
   - pynvim
   - pandas-stubs
+  - pyperclip
 
   # other
   - rsa
@@ -50,4 +52,3 @@ dependencies:
   # magma nvim
   - pip:
     - pnglatex
-    # - ueberzug

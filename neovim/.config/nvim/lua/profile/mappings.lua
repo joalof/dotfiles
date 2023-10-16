@@ -15,7 +15,7 @@ vim.keymap.set("n", "<c-j>", "o<esc>")
 -- Add empty lines before and after cursor line
 -- vim.keymap.set('n', '[<space>', "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>")
 -- vim.keymap.set('n', ']<space>', "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>")
---
+
 vim.keymap.set("n", "]t", ":tabnext<cr>", { silent = true })
 vim.keymap.set("n", "[t", ":tabprevious<cr>", { silent = true })
 
