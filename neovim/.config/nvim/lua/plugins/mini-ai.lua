@@ -16,17 +16,7 @@ return {
             },
         })
 
-        -- configs for cells
-        -- local cells = require('lib.cells')
-        -- cells.setup('%%')
-        -- vim.keymap.set('n', ']d', cells.cursor_to_next_cell, {silent=true})
-        -- vim.keymap.set('n', '[d', cells.cursor_to_previous_cell, {silent=true})
-        -- mini_ai.setup({
-        --     custom_textobjects = {
-        --         d = cells.get_cell_region
-        --     }
-        -- })
-        -- vim.keymap.del({'o', 'x', 'n'}, 'g]')
-        -- vim.keymap.del({'o', 'x', 'n'}, 'g[')
+        vim.keymap.del({'o', 'x', 'n'}, 'g]')
+        vim.keymap.del({'o', 'x', 'n'}, 'g[')
     end,
 }
