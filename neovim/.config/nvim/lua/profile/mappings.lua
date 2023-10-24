@@ -18,12 +18,14 @@ vim.keymap.set("n", "<c-j>", "o<esc>")
 
 vim.keymap.set("n", "]t", ":tabnext<cr>", { silent = true })
 vim.keymap.set("n", "[t", ":tabprevious<cr>", { silent = true })
-
  
 vim.keymap.set("n", "]b", ":bnext<cr>", { silent = true })
 vim.keymap.set("n", "[b", ":bprevious<cr>", { silent = true })
 vim.keymap.set("n", "]B", ":blast<cr>", { silent = true })
 vim.keymap.set("n", "[B", ":bfirst<cr>", { silent = true })
+
+-- terminal
+vim.keymap.set("t", "jk", "<C-\\><C-n>")
 
 -- splitline
 vim.keymap.set("n", "S", function()

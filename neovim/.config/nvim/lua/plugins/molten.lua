@@ -43,6 +43,11 @@ return {
             with_init()
         end, { bar = true })
 
+        vim.keymap.set("n", "rs", function()
+            with_init()
+        end, { silent = true, desc = "Initialize kernel if necessary" })
+
+
         vim.keymap.set("n", "gr", function()
             with_init({ cmd = "MoltenEvaluateOperator" })
         end, { silent = true, desc = "Run operator selection" })
