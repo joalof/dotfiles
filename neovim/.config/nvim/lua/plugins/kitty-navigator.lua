@@ -5,20 +5,27 @@ return {
         vim.g.kitty_navigator_no_mappings = 1
     end,
     config = function()
+        local direction_cmds = {
+            l = "KittyNavigateRight",
+            h = "KittyNavigateLeft",
+            j = "KittyNavigateDown",
+            k = "KittyNavigateUp",
+        }
+        -- automatically enter terminal mode if we navigate
+        -- to a terminal type buffer
+        local function navigate_terminal_aware(direction)
+            local cmd = direction_cmds[direction]
+            vim.api.nvim_cmd({ cmd = cmd }, {})
+            if vim.api.nvim_buf_get_option(0, "buftype") == "terminal" then
+                vim.cmd.normal("i")
+            end
+        end
+
         local opts = { silent = true }
-        vim.keymap.set({ "n" }, "<C-s>l", ":KittyNavigateRight<cr>", opts)
-        vim.keymap.set({ "n" }, "<C-s>h", ":KittyNavigateLeft<cr>", opts)
-        vim.keymap.set({ "n" }, "<C-s>k", ":KittyNavigateUp<cr>", opts)
-        vim.keymap.set({ "n" }, "<C-s>j", ":KittyNavigateDown<cr>", opts)
-
-        vim.keymap.set({ "i" }, "<C-s>l", "<Esc>:KittyNavigateRight<cr>", opts)
-        vim.keymap.set({ "i" }, "<C-s>h", "<Esc>:KittyNavigateLeft<cr>", opts)
-        vim.keymap.set({ "i" }, "<C-s>k", "<Esc>:KittyNavigateUp<cr>", opts)
-        vim.keymap.set({ "i" }, "<C-s>j", "<Esc>:KittyNavigateDown<cr>", opts)
-
-        vim.keymap.set({ "t" }, "<C-s>l", "<C-\\><C-n>:KittyNavigateRight<cr>", opts)
-        vim.keymap.set({ "t" }, "<C-s>h", "<C-\\><C-n>:KittyNavigateLeft<cr>", opts)
-        vim.keymap.set({ "t" }, "<C-s>k", "<C-\\><C-n>:KittyNavigateUp<cr>", opts)
-        vim.keymap.set({ "t" }, "<C-s>j", "<C-\\><C-n>:KittyNavigateDown<cr>", opts)
+        for key, _ in pairs(direction_cmds) do
+            vim.keymap.set({ "n", "i", "t" }, "<C-s>" .. key, function()
+                navigate_terminal_aware(key)
+            end, opts)
+        end
     end,
 }

@@ -23,7 +23,7 @@ dependencies:
   - jupytext
   - jupyter_client
 
-  # Spreadsheets etc
+  # Spreadsheets
   - openpyxl
   - visidata
 
@@ -45,10 +45,10 @@ dependencies:
   - pynvim
   - pandas-stubs
   - pyperclip
-
-  # other
+  - tomli
+  - tomli-w
   - rsa
 
-  # magma nvim
+  # molten nvim
   - pip:
     - pnglatex

@@ -6,7 +6,7 @@ return {
         { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
     },
     cmd = "Telescope",
-    keys = { "<leader>ff", "<leader>fn", "<leader>fh", "<leader>fg", "<leader>fa", "<leader>fs"},
+    keys = { "<leader>ff", "<leader>fn", "<leader>fh", "<leader>fg", "<leader>fa"},
     config = function()
         local builtin = require("telescope.builtin")
         local actions = require("telescope.actions")
