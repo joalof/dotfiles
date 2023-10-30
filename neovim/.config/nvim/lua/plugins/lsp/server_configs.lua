@@ -1,21 +1,17 @@
+-- local lsp_defaults = require("lspconfig").util.default_config
+-- local pyright_capabilities = vim.tbl_deep_extend("force", {}, lsp_defaults.capabilities)
+-- -- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- pyright_capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
+
+
 local M = {
     ruff_lsp = {
         on_attach = function(client, _)
             client.server_capabilities.hoverProvider = false
         end,
-        init_options = {
-            settings = {
-                args = {},
-            },
-        },
     },
-
     pyright = {
-        -- capabilities = (function()
-        --     local capabilities = vim.lsp.protocol.make_client_capabilities()
-        --     capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
-        --     return capabilities
-        -- end)(),
+        -- capabilities = pyright_capabilities,
         settings = {
             python = {
                 analysis = {
@@ -57,7 +53,6 @@ local M = {
             return true
         end,
     },
-
     r_language_server = {
         flags = { debounce_text_changes = 150 },
     },

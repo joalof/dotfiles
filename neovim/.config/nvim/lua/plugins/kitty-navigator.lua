@@ -11,20 +11,15 @@ return {
             j = "KittyNavigateDown",
             k = "KittyNavigateUp",
         }
-        -- automatically enter terminal mode if we navigate
-        -- to a terminal type buffer
-        local function navigate_terminal_aware(direction)
+        local function navigate(direction)
             local cmd = direction_cmds[direction]
             vim.api.nvim_cmd({ cmd = cmd }, {})
-            if vim.api.nvim_buf_get_option(0, "buftype") == "terminal" then
-                vim.cmd.normal("i")
-            end
         end
 
         local opts = { silent = true }
         for key, _ in pairs(direction_cmds) do
             vim.keymap.set({ "n", "i", "t" }, "<C-s>" .. key, function()
-                navigate_terminal_aware(key)
+                navigate(key)
             end, opts)
         end
     end,

@@ -1,6 +1,7 @@
 return {
-    "linty-org/readline.nvim",
+    "joalof/readline.nvim",
     event = "VeryLazy",
+    dev = true,
     keys = {
         {
             mode = { "!" },

@@ -4,6 +4,7 @@ return {
     dependencies = {
         "nvim-lua/plenary.nvim",
         { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+        "joalof/readline.nvim"
     },
     cmd = "Telescope",
     keys = { "<leader>ff", "<leader>fn", "<leader>fh", "<leader>fg", "<leader>fa"},
@@ -17,6 +18,7 @@ return {
                     i = {
                         ["<C-j>"] = actions.select_default,
                         ["<C-c>"] = actions.close,
+                        ["<C-u>"] = function() require("readline").backward_kill_line() end,
                     },
                     n = {
                         ["<C-j>"] = actions.select_default,
