@@ -119,26 +119,26 @@ return {
 
         -- File-specific sources: these will override the default sources declared above
         local look_source = {
-            name = 'look',
+            name = "look",
             keyword_length = 2,
             option = {
                 convert_case = true,
-                loud = true
+                loud = true,
                 --dict = '/usr/share/dict/words'
             },
-            max_item_count = 5
+            max_item_count = 5,
         }
 
         -- Markup files
-        local filetypes_markup = {"markdown", "rst"}
+        local filetypes_markup = { "markdown", "rst" }
         for _, ft in ipairs(filetypes_markup) do
             cmp.setup.filetype(ft, {
                 sources = cmp.config.sources({
-                    { name = "nvim_lsp", max_item_count = 8},
-                    { name = "luasnip", max_item_count = 5},
-                    { name = 'buffer', max_item_count = 5 },
+                    { name = "nvim_lsp", max_item_count = 8 },
+                    { name = "luasnip", max_item_count = 5 },
+                    { name = "buffer", max_item_count = 5 },
                     look_source,
-                })
+                }),
             })
         end
 
@@ -155,11 +155,25 @@ return {
                 end,
             },
             sources = {
-                { name = 'omni', max_item_count = 8},
-                { name = "luasnip", max_item_count = 5},
-                { name = 'buffer', max_item_count = 5},
+                { name = "omni", max_item_count = 8 },
+                { name = "luasnip", max_item_count = 5 },
+                { name = "buffer", max_item_count = 5 },
                 look_source,
             },
+        })
+
+        local augrp_cmdwin = vim.api.nvim_create_augroup("augrp_cmdwin", { clear = true })
+        vim.api.nvim_create_autocmd({ "CmdwinEnter" }, {
+            group = augrp_cmdwin,
+            callback = function()
+                cmp.setup.buffer({
+                    sources = {
+                        { name = "buffer", max_item_count = 5, group_index = 1 },
+                        { name = "nvim_lua", max_item_count = 5, group_index = 1 },
+                        { name = "path", max_item_count = 20, group_index = 1 },
+                    },
+                })
+            end,
         })
     end,
 }

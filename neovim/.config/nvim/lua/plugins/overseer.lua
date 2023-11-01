@@ -15,26 +15,19 @@ return {
             julia = "julia",
         }
 
-        local tasks_list = {}
-        
+        -- cache run_script tasks per filename so we can delete an existing
+        -- terminal if we rerun the script
+        local task_list = {}
+
         local run_script = function()
             local file = vim.fn.expand("%:p")
             local name = "run_script"
 
-            -- If there's already a run_script task for the file, dispose it
-            -- local task_list = require("overseer.task_list").list_tasks()
-            -- for _, task in pairs(task_list) do
-            --     if task.cmd[2] == file then
-            --         task.strategy:dispose()
-            --         break
-            --     end
-            -- end
-            
-            local task_old = tasks_list[file]
+            local task_old = task_list[file]
             if task_old then
                 task_old:dispose()
                 task_old.strategy.term:shutdown()
-                tasks_list[file] = nil
+                task_list[file] = nil
             end
 
             -- Runs file in a toggleterm, sending errors to quickfix
@@ -48,12 +41,9 @@ return {
                     "default",
                 },
             })
-
-            tasks_list[file] = task
-
+            task_list[file] = task
             task:start()
-            -- overseer.run_action(task, "open hsplit")
-            -- Don't focus terminal
+            -- Don't focus terminal immediately
             vim.api.nvim_cmd({ cmd = "KittyNavigateUp" }, {})
         end
 
