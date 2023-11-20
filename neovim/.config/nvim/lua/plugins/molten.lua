@@ -49,7 +49,7 @@ return {
             vim.api.nvim_cmd({ cmd = "MoltenInit", args = { kern } }, {})
         end
 
-        vim.keymap.set("n", "rs", function()
+        vim.keymap.set("n", "<leader>rs", function()
             auto_init()
         end, { silent = true, desc = "Initialize kernel if necessary" })
 
