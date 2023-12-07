@@ -48,6 +48,7 @@ return {
         end
 
         vim.keymap.set("n", "<leader>rr", function()
+            vim.cmd.update()
             run_script()
         end, { silent = true })
     end,

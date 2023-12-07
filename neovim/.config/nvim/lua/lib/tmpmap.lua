@@ -78,7 +78,7 @@ function tmpmap.del(modes, lhs)
 
     for _, mode in ipairs(modes) do
         local dq = deques[mode][lhs]
-        assert(dq ~= nil and dq:lengthY() > 0, string.format("Mapping %s not found", lhs))
+        assert(dq ~= nil and dq:length() > 0, string.format("Mapping %s not found", lhs))
 
         -- remove current map from queue and activate old map
         dq:pop_left()
