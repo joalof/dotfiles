@@ -49,41 +49,43 @@ function tmpmap.set(modes, lhs, rhs, opts)
     end
 
     local dq = nil
+
     for _, mode in ipairs(modes) do
+
         -- initialize a deque at (mode, lhs) if there is none
         if deques[mode][lhs] == nil then
             dq = Deque:new()
-            -- add current mapping at (mode, lhs) to deque
-            local maps_all = vim.api.nvim_get_keymap(mode)
-            local map_curr = to_shortform(find_map(maps_all, lhs))
-            if map_curr ~= nil then
-                dq:push_left(map_curr)
-            end
             deques[mode][lhs] = dq
         else
             dq = deques[mode][lhs]
         end
+        -- add current mapping at (mode, lhs) to deque
+        local map = vim.fn.maparg(lhs, mode, nil, true)
+        if not vim.tbl_isempty(map) then
+            local map_short = to_shortform(map)
+            dq:push_left(map_short)
+        end
 
-        -- push the new mapping
-        local map_new = { ["lhs"] = lhs, ["rhs"] = rhs, ["opts"] = opts }
-        dq:push_left(map_new)
-        vim.keymap.set(mode, lhs, rhs, opts)
     end
+    vim.keymap.set(modes, lhs, rhs, opts)
 end
 
-function tmpmap.del(modes, lhs)
+
+function tmpmap.del(modes, lhs, opts)
+
     if type(modes) == "string" then
         modes = { modes }
     end
 
     for _, mode in ipairs(modes) do
+        vim.keymap.del(modes, lhs, opts)
         local dq = deques[mode][lhs]
-        assert(dq ~= nil and dq:length() > 0, string.format("Mapping %s not found", lhs))
-
-        -- remove current map from queue and activate old map
-        dq:pop_left()
-        local map_old = dq:peek_left()
-        vim.keymap.set(map_old.mode, map_old.lhs, map_old.rhs, map_old.opts)
+        if dq ~= nil and dq:length() > 0 then
+            local map_old = dq:pop_left()
+            -- TODO expr causes issues?
+            map_old.opts.expr = nil
+            vim.keymap.set(map_old.mode, map_old.lhs, map_old.rhs, map_old.opts)
+        end
     end
 end
 

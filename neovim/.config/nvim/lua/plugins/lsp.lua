@@ -1,7 +1,7 @@
 return {
     "neovim/nvim-lspconfig",
     dependencies = {
-        "onsails/lspkind-nvim",
+        "onsails/lspkind.nvim",
         {
             "folke/neodev.nvim",
             opts = {

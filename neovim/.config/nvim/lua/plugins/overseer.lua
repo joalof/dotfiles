@@ -27,6 +27,7 @@ return {
             if task_old then
                 task_old:dispose()
                 task_old.strategy.term:shutdown()
+                vim.cmd('cclose')
                 task_list[file] = nil
             end
 

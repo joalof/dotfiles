@@ -12,6 +12,11 @@ vim.keymap.set("n", "<c-l>", "i<space><esc>l")
 vim.keymap.set("n", "<c-k>", "O<esc>")
 vim.keymap.set("n", "<c-j>", "o<esc>")
 
+-- vim.keymap.set("n", "gh", "^")
+-- vim.keymap.set("n", "gl", "$")
+-- vim.keymap.set({"n", "x", "o"}, "gj", "}")
+-- vim.keymap.set({"n", "x", "o"}, "gk", "{")
+
 -- Add empty lines before and after cursor line
 -- vim.keymap.set('n', '[<space>', "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>")
 -- vim.keymap.set('n', ']<space>', "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>")

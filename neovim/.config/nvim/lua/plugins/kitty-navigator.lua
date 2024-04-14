@@ -1,5 +1,6 @@
 return {
     "knubie/vim-kitty-navigator",
+    commit = '2aafc20a0a4eb3efa757db51868a2ab181e88690',
     build = "cp ./*.py ~/.config/kitty/",
     init = function()
         vim.g.kitty_navigator_no_mappings = 1

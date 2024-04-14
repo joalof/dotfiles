@@ -13,8 +13,8 @@ return {
                 mark.toggle_file(i)
             end,
         },
-        { "L", function() require("harpoon.ui").nav_next() end,  },
-        { "H", function() require("harpoon.ui").nav_prev() end,  },
+        { "<leader>gl", function() require("harpoon.ui").nav_next() end,  },
+        { "<leader>gh", function() require("harpoon.ui").nav_prev() end,  },
     },
     opts = {
         global_settings = {

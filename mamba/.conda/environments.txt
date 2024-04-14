@@ -1,2 +1,3 @@
-/home/joalof/apps/micromamba/envs/bosstest
-/home/joalof/apps/micromamba/envs/bossdev
+/home/autarch/apps/micromamba/envs/bossdev
+/home/autarch/apps/micromamba/envs/lccopt
+/home/autarch/apps/micromamba/envs/boss-pareto

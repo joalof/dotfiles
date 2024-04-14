@@ -1,0 +1,12 @@
+#!/bin/bash
+cd ~
+
+setxkbmap -I"$HOME"/.config/xkb -rules evdev-local -layout us_mod -print \
+	| xkbcomp -I"$HOME"/.config/xkb - "$DISPLAY" &> /dev/null
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+xmodmap $DIR/swap_caps_shift
+xcape_space2ctrl
+
+eval `ssh-agent`
+ssh-add

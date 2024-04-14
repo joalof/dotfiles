@@ -18,7 +18,7 @@ require("lazy").setup(
   'plugins',
   {
     ui = {border = 'rounded'},
-    dev = {path = "~/code/nvim"},
+    dev = {path = "~/code/neovim"},
     concurrency = 10,
   }
 )

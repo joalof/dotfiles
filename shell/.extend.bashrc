@@ -96,11 +96,12 @@ path_append () {
 
 # }}}
 
-# Defaults {{{
+ # Defaults {{{
 export SHELL=/bin/bash
 export PLATFORM=$(uname -s)
 export EDITOR=nvim
-export BROWSER=chrome
+export BROWSER=firefox
+export XDG_CONFIG_HOME=$HOME/.config
 
 export PATH=~/.local/bin:$PATH
 export LIBRARY_PATH=$HOME/.local/lib
@@ -108,7 +109,7 @@ export LD_LIBRARY_PATH=$HOME/.local/lib
 export CPLUS_INCLUDE_PATH=$HOME/.local/include
 # }}}
 
-# Apps {{{
+#  Apps {{{
 
 # Chromium {{{
 export GOOGLE_API_KEY="no"
@@ -193,7 +194,7 @@ mamba () {
 # }}}
 
 # Node version manager {{{
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="$HOME/apps/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 # }}}
@@ -246,8 +247,8 @@ alias ......='cd ../../../../..'
 alias python='python3 -u'
 alias py='python3 -u'
 alias pyt='pytest --disable-warnings'
-alias ir='ipython3'
-alias jr='jupyter-lab'
+alias ipy='ipython3'
+alias jpy='jupyter-lab'
 alias pipdev='pip install --no-deps -e'
 
 # latex make
@@ -259,7 +260,7 @@ alias lmklua='latexmk -lualatex'
 # other
 alias vdp="vd -f pandas"
 alias act="mamba activate"
-alias deact="mamba deactivate"
+alias dea="mamba deactivate"
 alias feh="feh --zoom=50"
 
 # }}}

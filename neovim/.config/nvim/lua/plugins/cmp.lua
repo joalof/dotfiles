@@ -10,6 +10,7 @@ return {
         "onsails/lspkind.nvim",
         "hrsh7th/cmp-cmdline",
         "octaltree/cmp-look",
+        "micangl/cmp-vimtex",
     },
     event = "InsertEnter",
     config = function()
@@ -81,17 +82,17 @@ return {
                 end, { "i", "s" }),
             },
             sources = {
-                { name = "nvim_lsp", max_item_count = 8, group_index = 1 },
-                { name = "codeium", max_item_count = 5, group_index = 1 },
-                { name = "buffer", max_item_count = 5, group_index = 1 },
-                { name = "luasnip", max_item_count = 5, group_index = 1 },
+                -- { name = "codeium", max_item_count = 2, group_index = 1 },
+                { name = "nvim_lsp", max_item_count = 5, group_index = 1 },
+                { name = "luasnip", max_item_count = 4, group_index = 1 },
+                { name = "buffer", max_item_count = 4, group_index = 1 },
                 { name = "nvim_lua", max_item_count = 5, group_index = 1 },
                 { name = "path", max_item_count = 20, group_index = 1 },
             },
             formatting = {
                 format = require("lspkind").cmp_format({
                     mode = "symbol_text",
-                    symbol_map = { Codeium = "" },
+                    -- symbol_map = { Codeium = "" },
                 }),
             },
         })
@@ -142,26 +143,18 @@ return {
             })
         end
 
-        -- Tex
+        -- TeX
         cmp.setup.filetype("tex", {
-            formatting = {
-                format = function(entry, vim_item)
-                    vim_item.menu = ({
-                        omni = (vim.inspect(vim_item.menu):gsub('%"', "")),
-                        buffer = "[Buffer]",
-                        -- formatting for other sources
-                    })[entry.source.name]
-                    return vim_item
-                end,
-            },
             sources = {
-                { name = "omni", max_item_count = 8 },
+                { name = "vimtex", max_item_count = 8 },
                 { name = "luasnip", max_item_count = 5 },
                 { name = "buffer", max_item_count = 5 },
                 look_source,
             },
         })
 
+        -- special buffer local setup for the Cmdwin since
+        -- it can't handle codeium
         local augrp_cmdwin = vim.api.nvim_create_augroup("augrp_cmdwin", { clear = true })
         vim.api.nvim_create_autocmd({ "CmdwinEnter" }, {
             group = augrp_cmdwin,

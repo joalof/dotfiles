@@ -71,10 +71,10 @@ return {
             build = ":TSInstall dap_repl",
             opts = {},
         },
-        {
-            "HiPhish/debugpy.nvim",
-            cmd = { "Debugpy" },
-        },
+        -- {
+        --     "HiPhish/debugpy.nvim",
+        --     cmd = { "Debugpy" },
+        -- },
     },
     keys = {
         {
