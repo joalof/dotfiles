@@ -52,5 +52,16 @@ return {
             vim.cmd.update()
             run_script()
         end, { silent = true })
+
+        -- vim.api.nvim_create_autocmd("WinEnter", {
+        --     desc = "Auto-close toggle term if it is the last remaining window",
+        --     pattern = "*",
+        --     callback = function()
+        --         if vim.tbl_count(vim.api.nvim_list_wins()) == 1 and
+        --         end
+        --     end,
+        -- })
+
+
     end,
 }

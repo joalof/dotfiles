@@ -6,7 +6,7 @@ return {
     -- stylua: ignore
     keys = {
         {
-            "M",
+            "<leader>mm",
             function()
                 local mark = require("harpoon.mark")
                 local i = mark.get_current_index()
