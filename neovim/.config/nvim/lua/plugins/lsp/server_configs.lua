@@ -27,6 +27,24 @@ local M = {
             },
         },
     },
+    basedpyright = {
+        -- capabilities = pyright_capabilities,
+        settings = {
+            python = {
+                analysis = {
+                    autoImportCompletins = true,
+                    typeCheckingMode = "off",
+                    useLibraryCodeForTypes = true,
+                    diagnosticMode = "openFilesOnly",
+                    autoSearchPaths = true,
+                    stubPath = "/home/joalof/.local/share/typings",
+                    -- diagnosticSeverityOverrides = {
+                    --     reportUnusedVariable = "warning",
+                    -- },
+                },
+            },
+        },
+    },
     lua_ls = {
         on_init = function(client)
             local path = client.workspace_folders[1].name

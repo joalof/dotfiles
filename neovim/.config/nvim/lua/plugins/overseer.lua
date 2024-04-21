@@ -49,8 +49,12 @@ return {
         end
 
         vim.keymap.set("n", "<leader>rr", function()
-            vim.cmd.update()
-            run_script()
+            if vim.bo.filetype == 'lua' then
+                vim.cmd("luafile %")
+            else
+                vim.cmd.update()
+                run_script()
+            end
         end, { silent = true })
 
         -- vim.api.nvim_create_autocmd("WinEnter", {

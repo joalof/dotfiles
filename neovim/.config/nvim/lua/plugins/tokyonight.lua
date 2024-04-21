@@ -14,6 +14,7 @@ return {
                 hl["@constant.builtin"] = { fg = c.yellow }
                 hl["@variable.builtin"] = { fg = c.blue1 }
                 hl["@parameter"] = { fg = c.fg }
+                hl["@variable.parameter"] = { fg = c.fg }
                 hl["@variable.extra"] = { fg = c.fg }
                 -- python doctrings are captured as string.documentation
                 hl["@string.documentation"] = { fg = c.green }

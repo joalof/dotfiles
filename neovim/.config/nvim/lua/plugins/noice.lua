@@ -37,7 +37,6 @@ local routes = {
     },
 
     -- Searching
-    { filter = { event = "msg_show", find = "^[/?]." }, skip = true },
     { filter = { event = "msg_show", find = "^E486: Pattern not found" }, view = "mini" },
 
     -- code actions, especially annoying with ruff where the fixall code action
@@ -72,7 +71,7 @@ return {
         -- you can enable a preset for easier configuration
         presets = {
             bottom_search = false, -- use a classic bottom cmdline for search
-            long_message_to_split = true, -- long messages will be sent to a split
+            long_message_to_split = false, -- long messages will be sent to a split
             inc_rename = false, -- enables an input dialog for inc-rename.nvim
             lsp_doc_border = true, -- add a border to hover docs and signature help
         },
