@@ -32,6 +32,7 @@ return {
                 search = {
                     max_length = 2,
                     incremental = true,
+                    wrap = false,
                 },
                 actions = actions,
             })

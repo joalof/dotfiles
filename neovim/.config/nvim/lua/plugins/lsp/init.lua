@@ -21,6 +21,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         local bufnr = args.buf
 
+        -- disable semantic highlighting
+        client.server_capabilities.semanticTokensProvider = nil
+
         -- vim.api.nvim_create_augroup("lsp_autocmds", { clear = true })
         -- vim.api.nvim_clear_autocmds { buffer = bufnr, group = "lsp_autocmds" }
 
@@ -92,7 +95,7 @@ end
 -- load lsp settings
 lsp_settings()
 
-local sever_list = { "pyright", "lua_ls", "jsonls", "yamlls"}
+local sever_list = { "basedpyright", "lua_ls", "jsonls", "yamlls"}
 local server_configs = require("plugins.lsp.server_configs")
 
 for _, server in ipairs(sever_list) do

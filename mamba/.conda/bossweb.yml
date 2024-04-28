@@ -1,0 +1,36 @@
+name: bossweb
+
+dependencies:
+  #  basics
+  - python=3.11
+  - pip
+  - scipy
+  - numpy
+  - pandas
+  - streamlit
+
+  # visualisation
+  - matplotlib
+
+  # notebooks
+  - jupyter
+  - jupyterlab
+  - jupytext
+  - jupyter_client
+
+  # doc
+  - sphinx
+  - sphinx_rtd_theme
+  - nbsphinx
+  - numpydoc
+
+  # dev
+  - conda-build
+  - coverage
+  - pytest
+  - pytest-xdist
+  - black
+  - isort
+  - twine
+  - pynvim
+  - pandas-stubs
