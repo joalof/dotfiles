@@ -95,7 +95,7 @@ end
 -- load lsp settings
 lsp_settings()
 
-local sever_list = { "basedpyright", "lua_ls", "jsonls", "yamlls"}
+local sever_list = { "basedpyright", "lua_ls", "jsonls", "yamlls", "taplo"}
 local server_configs = require("plugins.lsp.server_configs")
 
 for _, server in ipairs(sever_list) do

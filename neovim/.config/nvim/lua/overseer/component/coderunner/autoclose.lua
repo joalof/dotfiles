@@ -42,7 +42,7 @@ local component = {
                 end
 
                 if status == STATUS.CANCELED or status == STATUS.SUCCESS then
-                    timer:start(0, 1000, vim.schedule_wrap(function() close_stale() end))
+                    timer:start(params.grace_time * 1000, 1000, vim.schedule_wrap(function() close_stale() end))
                 end
 
             end,

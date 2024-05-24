@@ -1,0 +1,14 @@
+name: r-bayesrules
+
+dependencies:
+  - r-essentials
+  - r-bayesplot
+  - r-janitor
+  - r-rstan
+  - r-rstanarm
+  - r-tidybayes
+  - r-broom.mixed
+  - r-modelr
+  - r-e1071
+  - r-forcats
+  - r-dplyr

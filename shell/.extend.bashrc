@@ -211,7 +211,7 @@ export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 # }}}
 
 # Zoxide {{{
-eval "$(zoxide init --cmd j bash)"
+eval "$(zoxide init --cmd f bash)"
 # }}}
 
 # Starship {{{

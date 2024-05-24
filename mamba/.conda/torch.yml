@@ -2,32 +2,41 @@ name: torch
 
 channels:
   - pytorch
+  - nvidia
+  - gpytorch
   - conda-forge
 
 dependencies:
   #  basics
+  - python=3.11
   - pip
   - cython
   - scipy
   - numpy
   - pandas
-  - mamba
 
   # ML
   - scikit-learn
   - scikit-image
-  - pytorch-gpu
-  - torchvision
+  - pytorch
+  - torchvision 
+  - torchaudio 
+  - pytorch-cuda=12.1
+  - botorch
 
   # visualisation
   - matplotlib
+  - seaborn
 
   # notebooks
   - jupyter
   - jupyterlab
+  - jupyter_client
 
   # dev
-  - ipdb
   - pytest
   - pytest-xdist
   - black
+  - pynvim
+  - tomli
+  - tomli-w

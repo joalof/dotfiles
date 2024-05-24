@@ -1,5 +1,0 @@
-name: renv
-
-dependencies:
-  - r-base
-  - r-essentials

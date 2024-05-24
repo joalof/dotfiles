@@ -1,3 +1,4 @@
 /home/autarch/apps/micromamba/envs/bossdev
 /home/autarch/apps/micromamba/envs/lccopt
-/home/autarch/apps/micromamba/envs/boss-pareto
+/home/autarch/apps/micromamba/envs/r-bayesrules
+/home/autarch/apps/micromamba/envs/torch
