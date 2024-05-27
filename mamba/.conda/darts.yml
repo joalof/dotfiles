@@ -1,0 +1,38 @@
+name: darts
+
+dependencies:
+  #  basics
+  - python=3.11
+  - pip
+  - cython
+  - scipy
+  - numpy
+  - pandas
+
+  # ML/stats
+  - scikit-learn
+  - darts
+
+  # visualisation
+  - matplotlib
+  - seaborn
+
+  # notebooks
+  - jupyter
+  - jupyterlab
+  - jupytext
+  - jupyter_client
+
+  # Spreadsheets
+  - visidata
+
+  # dev
+  - pytest
+  - pytest-xdist
+  - black
+  - isort
+  - pynvim
+  - pandas-stubs
+
+  - pip:
+    - pnglatex
