@@ -1,8 +1,6 @@
 vim.opt.scrolloff = 3
 vim.opt.sidescrolloff = 5
 
-vim.opt.swapfile = false
-vim.opt.backup = false
 
 vim.opt.listchars = {
     eol = "$",
@@ -37,13 +35,23 @@ vim.opt.smartcase = true
 -- highlight match
 vim.opt.showmatch = true
 
--- autosaving
+-- saving
 vim.opt.autowriteall = true
+vim.opt.swapfile = false
+vim.opt.backup = false
 
 -- wildmenu
 vim.opt.wildignore = {
     "*.o", "*.obj", "*~", "*.png", "*.jpg", "*.gif", "*.eps",
 }
 
--- termguicolors
+-- colors
 vim.opt.termguicolors = true
+
+ -- Sync with system clipboard
+vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus"
+
+ -- Allow cursor to move where there is no text in visual block mode
+vim.opt.virtualedit = "block"
+
+-- vim.opt.smoothscroll = true

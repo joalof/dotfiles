@@ -13,6 +13,7 @@ return {
         local interpreters = {
             python = "python",
             julia = "julia",
+            mojo = "mojo"
         }
 
         local run_script = function()
@@ -27,17 +28,22 @@ return {
                 end
             end
 
+            local components = {
+                    { "coderunner.autoclose", grace_time = 5 },
+                    "default",
+            }
+
+            if vim.bo.errorformat ~= "" then
+                components[#components + 1] = { "on_output_quickfix", errorformat = vim.bo.errorformat, open_on_match = true }
+            end
+
             -- Runs file in a toggleterm, sending errors to quickfix
             local task = overseer.new_task({
                 name = name,
                 cmd = { interpreters[vim.bo.filetype] },
                 args = { file },
                 strategy = { "toggleterm", open_on_start = true },
-                components = {
-                    { "on_output_quickfix", errorformat = vim.bo.errorformat, open_on_match = true },
-                    { "coderunner.autoclose", grace_time = 5 },
-                    "default",
-                },
+                components = components,
             })
             task:start()
             -- Don't focus toggleterminal immediately

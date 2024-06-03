@@ -1,0 +1,13 @@
+name: mojo
+
+dependencies:
+  - python=3.11
+  - pip
+  - cython
+  - scipy
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - black
+  - isort
