@@ -1,11 +1,13 @@
 return {
     "gnikdroy/projections.nvim",
+    branch = "pre_release",
     keys = { "<leader>fp" },
     config = function()
         require("projections").setup({
             workspaces = {
                 "~/projects",
-                "~/code",
+                "~/code/neovim",
+                "~/code/python",
             },
             patterns = {".git"}
         })

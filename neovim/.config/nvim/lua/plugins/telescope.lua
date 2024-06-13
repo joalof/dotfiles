@@ -34,6 +34,8 @@ return {
                         ["<C-j>"] = actions.select_default,
                         ["<C-c>"] = actions.close,
                         ["<C-u>"] = function() require("readline").backward_kill_line() end,
+                        ["<C-/>"] = actions.select_vertical,
+                        ["<C-->"] = actions.select_horizontal,
                     },
                     n = {
                         ["<C-j>"] = actions.select_default,

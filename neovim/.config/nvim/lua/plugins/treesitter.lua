@@ -14,10 +14,6 @@ return {
                 load_textobjects = true
             end,
         },
-        {
-            "RRethy/nvim-treesitter-endwise",
-            dev = true,
-        },
     },
     cmd = { "TSUpdateSync" },
     opts = {
@@ -53,10 +49,6 @@ return {
                 return true
             end, opts.ensure_installed)
         end
-
-        -- endwise
-        -- TODO: disable for languages that don't support it?
-        opts["endwise"] = { enable = true }
 
         require("nvim-treesitter.configs").setup(opts)
 
