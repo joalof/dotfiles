@@ -74,6 +74,12 @@ return {
             opts = {},
         },
     },
+    keys = {
+        '<leader>db',
+        '<leader>de',
+        '<leader>dtm',
+        '<leader>dtc',
+    },
     config = function()
         -- dap stuff
         vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })

@@ -1,4 +1,5 @@
 --- forked from https://github.com/LazyVim/LazyVim
+
 ---@class lsp_utils
 local M = {}
 

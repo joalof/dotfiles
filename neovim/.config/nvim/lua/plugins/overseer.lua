@@ -1,5 +1,6 @@
 return {
     "stevearc/overseer.nvim",
+    commit = '819bb88b47a6ec94c7fb6e0967fc7af617980d0b',
     dependencies = { "akinsho/toggleterm.nvim", version = "*", opts = {} },
     cmd = { "OverseerRun", "OverseerToggle" },
     keys = { "<leader>rr" },

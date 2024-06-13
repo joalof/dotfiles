@@ -7,11 +7,7 @@ return {
         { "gy", mode = { "v" } },
     },
     config = function()
-        require("Comment").setup(
-            {
-                ignore = '^$',
-            }
-        )
+        require("Comment").setup({ ignore = '^$',  })
         -- Define a mapping that pastes the current selection
         -- below and then comments the original text
         -- https://www.reddit.com/r/neovim/comments/16s5azh/how_to_comment_selected_lines_and_paste_them/

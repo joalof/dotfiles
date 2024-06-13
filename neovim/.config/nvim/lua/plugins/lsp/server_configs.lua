@@ -3,7 +3,6 @@
 -- -- local capabilities = vim.lsp.protocol.make_client_capabilities()
 -- pyright_capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
 
-
 local M = {
     ruff_lsp = {
         on_attach = function(client, _)

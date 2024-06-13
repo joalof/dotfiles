@@ -1,4 +1,4 @@
-local Deque = require("lib.deque")
+local Deque = require("lib.collections.deque")
 
 -- all options allowed by keymap.set (minus buffer) = vim map-arguments + noremap
 local MAP_OPTS = { "noremap", "nowait", "silent", "script", "unique", "expr", "cmd" }

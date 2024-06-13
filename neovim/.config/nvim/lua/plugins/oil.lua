@@ -1,6 +1,8 @@
 return {
     'stevearc/oil.nvim',
     dependencies = { "nvim-tree/nvim-web-devicons" },
+    -- keys = {'<leader>oo'},
+    -- cmd = {'Oil'},
     config = function()
         require('oil').setup(
             {

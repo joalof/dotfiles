@@ -20,6 +20,6 @@ return {
                 hl["@string.documentation"] = { fg = c.green }
             end
         })
-        vim.cmd [[colorscheme tokyonight]]
+        vim.cmd.colorscheme "tokyonight"
     end,
 }

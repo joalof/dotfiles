@@ -17,4 +17,19 @@ function M.wrap_index(list, ind)
     return ind
 end
 
+
+---@param t table
+function M.is_list(t)
+  local i = 0
+  ---@diagnostic disable-next-line: no-unknown
+  for _ in pairs(t) do
+    i = i + 1
+    if t[i] == nil then
+      return false
+    end
+  end
+  return true
+end
+
+
 return M
