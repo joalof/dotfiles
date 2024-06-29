@@ -4,7 +4,6 @@ require("mason").setup({
 })
 
 require("mason-lspconfig").setup({})
--- require("neodev").setup({})
 
 -- lspconfig
 local lspconfig = require("lspconfig")
@@ -95,7 +94,7 @@ end
 -- load lsp settings
 lsp_settings()
 
-local sever_list = { "basedpyright", "lua_ls", "jsonls", "yamlls", "taplo", "mojo"}
+local sever_list = { "basedpyright", "lua_ls", "jsonls", "yamlls", "taplo", "mojo", "julials"}
 local server_configs = require("plugins.lsp.server_configs")
 
 for _, server in ipairs(sever_list) do

@@ -11,7 +11,7 @@ return {
                     ["<C-->"] = "actions.select_split",
                     -- ["<C-p>"] = "actions.preview",
                     -- ["<C-l>"] = "actions.refresh",
-                    -- ["_"] = "actions.open_cwd",
+                    -- ["<leader>fe"] = "actions.open_cwd",
                     -- ["<C-l>"] = "actions.cd",
                     -- ["<C-t>"] = "actions.tcd",
                     ["<C-l>"] = "actions.select",

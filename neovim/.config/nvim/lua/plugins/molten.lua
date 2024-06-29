@@ -1,15 +1,15 @@
-local rocks_spec = {
-    "theHamsta/nvim_rocks",
-    build = "wget https://raw.githubusercontent.com/luarocks/hererocks/master/hererocks.py && python3 hererocks.py . -j2.1.0-beta3 -r3.9.2 && cp nvim_rocks.lua lua",
-    config = function()
-        local nvim_rocks = require("nvim_rocks")
-        nvim_rocks.ensure_installed("magick")
-    end,
-}
+-- local rocks_spec = {
+--     "theHamsta/nvim_rocks",
+--     build = "wget https://raw.githubusercontent.com/luarocks/hererocks/master/hererocks.py && python3 hererocks.py . -j2.1.0-beta3 -r3.9.2 && cp nvim_rocks.lua lua",
+--     config = function()
+--         local nvim_rocks = require("nvim_rocks")
+--         nvim_rocks.ensure_installed("magick")
+--     end,
+-- }
 
 local image_spec = {
     "3rd/image.nvim",
-    dependencies = { rocks_spec },
+    -- dependencies = { rocks_spec },
     opts = {
         backend = "kitty", -- Kitty will provide the best experience, but you need a compatible terminal
         integrations = {}, -- do whatever you want with image.nvim's integrations

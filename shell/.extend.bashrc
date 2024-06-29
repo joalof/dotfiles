@@ -224,6 +224,18 @@ export MODULAR_HOME=$HOME/.modular
 export PATH=$MOJO_PATH/bin:$PATH
 # }}}
 
+# Julia {{{
+case ":$PATH:" in
+    *:/home/autarch/.juliaup/bin:*)
+        ;;
+
+    *)
+        export PATH=/home/autarch/.juliaup/bin${PATH:+:${PATH}}
+        ;;
+esac
+
+# }}}
+
 # end apps }}}
 
 # Aliases {{{

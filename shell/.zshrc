@@ -292,3 +292,12 @@ alias vdp="vd -f pandas"
 # }}}
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=zsh:
+
+# >>> juliaup initialize >>>
+
+# !! Contents within this block are managed by juliaup !!
+
+path=('/home/autarch/.juliaup/bin' $path)
+export PATH
+
+# <<< juliaup initialize <<<

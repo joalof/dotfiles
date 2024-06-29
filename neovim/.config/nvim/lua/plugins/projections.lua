@@ -8,8 +8,9 @@ return {
                 "~/projects",
                 "~/code/neovim",
                 "~/code/python",
+                "~/code/julia",
             },
-            patterns = {".git"}
+            patterns = {".git", "Project.toml", "setup.py", "pyproject.toml"}
         })
         require("telescope").load_extension("projections")
         vim.keymap.set("n", "<leader>fp", function()

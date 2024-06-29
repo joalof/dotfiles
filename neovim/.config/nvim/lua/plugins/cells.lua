@@ -1,6 +1,7 @@
 return {
     "joalof/cells.nvim",
     dev = true,
+    filetype = {'python', 'julia', 'R'},
     config = function()
         require("cells").setup({
             textobject = "d",

@@ -36,6 +36,7 @@ return {
             "vim",
             "vimdoc",
             "yaml",
+            "julia",
         },
     },
     config = function(_, opts)
