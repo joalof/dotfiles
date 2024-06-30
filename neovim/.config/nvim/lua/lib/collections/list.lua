@@ -40,7 +40,7 @@ function List:new(data, copy)
     if copy then
         data = shallow_copy(data)
     end
-    data = setmetatable(data, self)
+    data = setmetatable(data, List)
     return data
 end
 
@@ -104,19 +104,16 @@ function List:sort(comp)
     table.sort(self, comp)
 end
 
-function List:clear()
-    self.data = {}
-end
-
 function List:copy()
     return List.new(self, true)
 end
 
 function List:__tostring()
-    local s = ""
+    local s = "["
     for _, x in ipairs(self) do
-        s = s .. ' ' .. tostring(x)
+        s = s .. tostring(x) .. ', '
     end
+    s = s:sub(1, -3) .. "]"
     return s
 end
 
