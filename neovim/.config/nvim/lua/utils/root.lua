@@ -1,5 +1,5 @@
 --- forked from https://github.com/LazyVim/LazyVim
-local lpath = require('lib.lpath')
+local lpath = require('lib.path')
 
 local M = {}
 

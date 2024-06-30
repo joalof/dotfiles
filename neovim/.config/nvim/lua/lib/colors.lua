@@ -1,81 +1,27 @@
+local std = require('lib.std')
 -- from https://github.com/akinsho/bufferline.nvim/blob/main/lua/bufferline/colors.lua
-local function hex_to_rgb(color)
-    local hex = color:gsub("#", "")
-    return tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5), 16)
-end
+-- local function hex_to_rgb(color)
+--     local hex = color:gsub("#", "")
+--     return tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5), 16)
+-- end
 
-local function is_bright(hex)
-    if not hex then
-        return false
-    end
-    local r, g, b = hex_to_rgb(hex)
-    -- If any of the colors are missing return false
-    if not r or not g or not b then
-        return false
-    end
-    -- Counting the perceptive luminance - human eye favors green color
-    local luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-    return luminance > 0.5 -- if > 0.5 Bright colors, black font, otherwise Dark colors, white font
-end
+-- local function alter(attr, percent)
+--     return math.floor(attr * (100 + percent) / 100)
+-- end
 
-
----@alias GetColorOpts { name: string, attribute: "fg" | "bg" | "sp", fallback: GetColorOpts?, not_match: string?, cterm: boolean? }
---- parses the GUI hex color code (or cterm color number) from the given hl_name
---- color number (0-255) is returned if cterm is set to true in opts
----@param opts GetColorOpts
----@return string? | number?
-local function get_hl(name, attribute, opts)
-    opts = opts or {}
-    local cterm = opts.cterm
-    -- try and get hl from name
-    hl = vim.api.nvim_get_hl(0, { name = name })
-    if cterm then
-        return hl[attribute]
-    else
-        local hex = ("#%06x"):format(hl[attribute])
-        return hex
-    end
-end
-
-local function alter(attr, percent)
-    return math.floor(attr * (100 + percent) / 100)
-end
-
-local function get_shade(color, percent)
-    local r, g, b = hex_to_rgb(color)
-    if not r or not g or not b then
-        return "NONE"
-    end
-    r, g, b = alter(r, percent), alter(g, percent), alter(b, percent)
-    r, g, b = math.min(r, 255), math.min(g, 255), math.min(b, 255)
-    return ("#%02x%02x%02x"):format(r, g, b)
-end
+-- local function get_shade(color, percent)
+--     local r, g, b = hex_to_rgb(color)
+--     if not r or not g or not b then
+--         return "NONE"
+--     end
+--     r, g, b = alter(r, percent), alter(g, percent), alter(b, percent)
+--     r, g, b = math.min(r, 255), math.min(g, 255), math.min(b, 255)
+--     return ("#%02x%02x%02x"):format(r, g, b)
+-- end
 
 
 --- Color library forked from nightfox theme
 --- https://github.com/EdenEast/nightfox.nvim/blob/main/lua/nightfox/lib/color.lua
-
----Round float to nearest int
----@param x number Float
----@return number
-local function round(x)
-    return x >= 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)
-end
-
----Clamp value between the min and max values.
----@param value number
----@param min number
----@param max number
-local function clamp(value, min, max)
-    if value < min then
-        return min
-    elseif value > max then
-        return max
-    end
-    return value
-end
-
-local M = {}
 
 --#region Types ----------------------------------------------------------------
 
@@ -125,13 +71,26 @@ local function calc_hue(r, g, b)
     return { hue = h, max = max, min = min, delta = delta }
 end
 
---#endregion
 
 local Color = setmetatable({}, {})
 Color.__index = Color
 
-function Color.__tostring(self)
-    return self:to_css()
+---@alias GetColorOpts { name: string, attribute: "fg" | "bg" | "sp", fallback: GetColorOpts?, not_match: string?, cterm: boolean? }
+--- parses the GUI hex color code (or cterm color number) from the given hl_name
+--- color number (0-255) is returned if cterm is set to true in opts
+---@param opts GetColorOpts
+---@return string? | number?
+function Color.get_hl(name, attribute, opts)
+    opts = opts or {}
+    local cterm = opts.cterm
+    -- try and get hl from name
+    local hl = vim.api.nvim_get_hl(0, { name = name })
+    if cterm then
+        return hl[attribute]
+    else
+        local hex = ("#%06x"):format(hl[attribute])
+        return hex
+    end
 end
 
 function Color.new(opts)
@@ -147,14 +106,21 @@ function Color.new(opts)
     if opts.lightness then
         return Color.from_hsv(opts.hue, opts.saturation, opts.lightness)
     end
+    if opts.name then
+        return Color.from_hl(opts.name, opts.attribute, opts.opts)
+    end
+end
+
+function Color.__tostring(self)
+    return self:to_css()
 end
 
 function Color.init(r, g, b, a)
     local self = setmetatable({}, Color)
-    self.red = clamp(r, 0, 1)
-    self.green = clamp(g, 0, 1)
-    self.blue = clamp(b, 0, 1)
-    self.alpha = clamp(a or 1, 0, 1)
+    self.red = std.clamp(r, 0, 1)
+    self.green = std.clamp(g, 0, 1)
+    self.blue = std.clamp(b, 0, 1)
+    self.alpha = std.clamp(a or 1, 0, 1)
     return self
 end
 
@@ -166,6 +132,7 @@ end
 ---@param b number Integer [0,255]
 ---@param a number Float [0,1]
 ---@return Color
+
 function Color.from_rgba(r, g, b, a)
     return Color.init(r / 0xff, g / 0xff, b / 0xff, a or 1)
 end
@@ -173,6 +140,7 @@ end
 ---Create a color from a hex number
 ---@param c number|string Either a literal number or a css-style hex string ('#RRGGBB[AA]')
 ---@return Color
+
 function Color.from_hex(c)
     local n = c
     if type(c) == "string" then
@@ -197,11 +165,12 @@ end
 ---@param v number Value. Float [0,100]
 ---@param a number (Optional) Alpha. Float [0,1]
 ---@return Color
+
 function Color.from_hsv(h, s, v, a)
     h = h % 360
-    s = clamp(s, 0, 100) / 100
-    v = clamp(v, 0, 100) / 100
-    a = clamp(a or 1, 0, 1)
+    s = std.clamp(s, 0, 100) / 100
+    v = std.clamp(v, 0, 100) / 100
+    a = std.clamp(a or 1, 0, 1)
 
     local function f(n)
         local k = (n + h / 60) % 6
@@ -217,11 +186,12 @@ end
 ---@param l number Lightness. Float [0,100]
 ---@param a number (Optional) Alpha. Float [0,1]
 ---@return Color
+
 function Color.from_hsl(h, s, l, a)
     h = h % 360
-    s = clamp(s, 0, 100) / 100
-    l = clamp(l, 0, 100) / 100
-    a = clamp(a or 1, 0, 1)
+    s = std.clamp(s, 0, 100) / 100
+    l = std.clamp(l, 0, 100) / 100
+    a = std.clamp(a or 1, 0, 1)
     local _a = s * math.min(l, 1 - l)
 
     local function f(n)
@@ -233,17 +203,21 @@ function Color.from_hsl(h, s, l, a)
     return Color.init(f(0), f(8), f(4), a)
 end
 
---#endregion
-
---#region to_* -----------------------------------------------------------------
+-- create a Color from vim hl
+---@param opts GetColorOpts
+---@return table
+function Color.from_hl(name, attribute, opts)
+    local hex = Color.get_hl(name, attribute, opts)
+    return Color.from_hex(hex)
+end
 
 ---Convert Color to RGBA
 ---@return RGBA
 function Color:to_rgba()
     return {
-        red = round(self.red * 0xff),
-        green = round(self.green * 0xff),
-        blue = round(self.blue * 0xff),
+        red = std.round(self.red * 0xff),
+        green = std.round(self.green * 0xff),
+        blue = std.round(self.blue * 0xff),
         alpha = self.alpha,
     }
 end
@@ -307,10 +281,6 @@ function Color:luminance()
     return 0.2126 * r + 0.7152 * g + 0.0722 * b
 end
 
---#endregion
-
---#region Manipulate -----------------------------------------------------------
-
 ---Returns a new color that a linear blend between two colors
 ---@param other Color
 ---@param f number Float [0,1]. 0 being this and 1 being other
@@ -345,7 +315,7 @@ end
 ---@return Color
 function Color:brighten(v)
     local hsv = self:to_hsv()
-    local value = clamp(hsv.value + v, 0, 100)
+    local value = std.clamp(hsv.value + v, 0, 100)
     return Color.from_hsv(hsv.hue, hsv.saturation, value)
 end
 
@@ -355,7 +325,7 @@ end
 ---@return Color
 function Color:lighten(v)
     local hsl = self:to_hsl()
-    local lightness = clamp(hsl.lightness + v, 0, 100)
+    local lightness = std.clamp(hsl.lightness + v, 0, 100)
     return Color.from_hsl(hsl.hue, hsl.saturation, lightness)
 end
 
@@ -365,7 +335,7 @@ end
 ---@return Color
 function Color:saturate(v)
     local hsv = self:to_hsv()
-    local saturation = clamp(hsv.saturation + v, 0, 100)
+    local saturation = std.clamp(hsv.saturation + v, 0, 100)
     return Color.from_hsv(hsv.hue, saturation, hsv.value)
 end
 
@@ -378,16 +348,15 @@ function Color:rotate(v)
     return Color.from_hsv(hue, hsv.saturation, hsv.value)
 end
 
---#endregion
-
---#region Constants ------------------------------------------------------------
 
 Color.WHITE = Color.init(1, 1, 1, 1)
 Color.BLACK = Color.init(0, 0, 0, 1)
 
---#endregion
-
---#region ty --------------------------------------------------------------
+function Color:is_bright()
+    -- Counting the perceptive luminance - human eye favors green color
+    local luminance = (0.299 * self.r + 0.587 * self.g + 0.114 * self.b) / 255
+    return luminance > 0.5 -- if > 0.5 Bright colors, black font, otherwise Dark colors, white font
+end
 
 ---Returns the contrast ratio of the other against another
 ---@param other Color
@@ -409,22 +378,10 @@ function Color:valid_wcag_aa(background)
     return ratio >= 4.5, ratio
 end
 
---#endregion
 
 local mt = getmetatable(Color)
 function mt.__call(_, opts)
-    if type(opts) == "string" or type(opts) == "number" then
-        return Color.from_hex(opts)
-    end
-    if opts.red then
-        return Color.from_rgba(opts.red, opts.green, opts.blue, opts.alpha)
-    end
-    if opts.value then
-        return Color.from_hsv(opts.hue, opts.saturation, opts.value)
-    end
-    if opts.lightness then
-        return Color.from_hsl(opts.hue, opts.saturation, opts.lightness)
-    end
+    return Color.new(opts)
 end
 
 return Color

@@ -1,35 +1,5 @@
 local M = {}
 
-function M.index(list, value)
-    for i, v in ipairs(list) do
-        if v == value then
-            return i
-        end
-    end
-    return nil
-end
-
-function M.wrap_index(list, ind)
-    ind = math.fmod(ind, #list)
-    if ind < 1 then
-        ind = ind + #list
-    end
-    return ind
-end
-
-
----@param t table
-function M.is_list(t)
-    local i = 0
-    for _ in pairs(t) do
-        i = i + 1
-        if t[i] == nil then
-            return false
-        end
-    end
-    return true
-end
-
 -- useful functions from https://github.com/mobily/.nvim/blob/main/lua/utils/fn.lua
 M.pack = table.pack or function(...)
   return { n = select("#", ...), ... }
@@ -245,7 +215,14 @@ function M.debounce(fn, ms)
     return wrapped_fn, timer
 end
 
+---Round float to nearest int
+---@param x number Float
+---@return number
+function M.round(x)
+    return x >= 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)
+end
 
+---Clamp value between the min and max values.
 function M.clamp(value, min, max)
     return math.min(math.max(value, min), max)
 end

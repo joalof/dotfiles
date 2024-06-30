@@ -20,26 +20,31 @@ return {
         end
 
         -- define colors
-        local colors = require("lib.colors")
+        local Color = require("lib.colors")
 
-        local normal_fg = colors.get_hl("Normal", "fg")
-        local normal_fg_dark = colors.get_shade(normal_fg, -55)
-        local normal_bg = colors.get_hl("Normal", "bg")
-        local normal_bg_dark = colors.get_shade(normal_bg, -50)
+        local norm_fg = Color.from_hl("Normal", "fg")
+        local norm_fg_dark = norm_fg:shade(-0.55)
+        local norm_bg = Color.from_hl("Normal", "bg")
+        local norm_bg_dark = norm_bg:shade(-0.5)
+
+        norm_fg = norm_fg:to_hex()
+        norm_fg_dark = norm_fg:to_hex()
+        norm_bg = norm_fg:to_hex()
+        norm_bg_dark = norm_fg:to_hex()
 
         local hls = {
             fill = {
-                fg = normal_fg_dark,
-                bg = normal_bg_dark,
+                fg = norm_fg_dark,
+                bg = norm_bg_dark,
             },
             wedge = {
-                fg = normal_bg_dark,
-                bg = normal_bg,
+                fg = norm_bg_dark,
+                bg = norm_bg,
             },
             text = {
-                fg_active = normal_fg,
-                fg_inactive = normal_fg_dark,
-                bg = normal_bg,
+                fg_active = norm_fg,
+                fg_inactive = norm_fg_dark,
+                bg = norm_bg,
             },
         }
 

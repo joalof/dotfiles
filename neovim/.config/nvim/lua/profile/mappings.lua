@@ -1,5 +1,4 @@
 vim.g.better_escape_shortcut = "jk"
-
 vim.keymap.set("n", "j", "gj")
 vim.keymap.set("n", "k", "gk")
 
@@ -8,8 +7,8 @@ vim.keymap.set("n", "`", "'")
 vim.keymap.set("n", "0", "^")
 vim.keymap.set("n", "^", "0")
 
-vim.keymap.set("n", "<c-l>", "i<space><esc>l")
-vim.keymap.set("n", "<c-k>", "O<esc>")
+-- vim.keymap.set("n", "<c-l>", "i<space><esc>l")
+-- vim.keymap.set("n", "<c-k>", "O<esc>")
 vim.keymap.set("n", "<c-j>", "o<esc>")
 
 -- vim.keymap.set("n", "gh", "^")
