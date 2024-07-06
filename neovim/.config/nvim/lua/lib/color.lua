@@ -94,8 +94,8 @@ function Color.get_hl(name, attribute, opts)
 end
 
 function Color.new(opts)
-    if type(opts) == "string" or type(opts) == "number" then
-        return Color.from_hex(opts)
+    if type(opts) == "string" then
+        return Color.from_css(opts)
     end
     if opts.red then
         return Color.from_rgba(opts.red, opts.green, opts.blue, opts.alpha)
@@ -132,7 +132,6 @@ end
 ---@param b number Integer [0,255]
 ---@param a number Float [0,1]
 ---@return Color
-
 function Color.from_rgba(r, g, b, a)
     return Color.init(r / 0xff, g / 0xff, b / 0xff, a or 1)
 end
@@ -140,8 +139,7 @@ end
 ---Create a color from a hex number
 ---@param c number|string Either a literal number or a css-style hex string ('#RRGGBB[AA]')
 ---@return Color
-
-function Color.from_hex(c)
+function Color.from_css(c)
     local n = c
     if type(c) == "string" then
         local s = c:lower():match("#?([a-f0-9]+)")
@@ -208,7 +206,7 @@ end
 ---@return table
 function Color.from_hl(name, attribute, opts)
     local hex = Color.get_hl(name, attribute, opts)
-    return Color.from_hex(hex)
+    return Color.from_css(hex)
 end
 
 ---Convert Color to RGBA

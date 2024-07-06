@@ -1,4 +1,5 @@
 /home/autarch/apps/micromamba/envs/bossdev
+/home/autarch/apps/micromamba/envs/mojo
 /home/autarch/apps/micromamba/envs/r-bayesrules
 /home/autarch/apps/micromamba/envs/torch
-/home/autarch/apps/micromamba/envs/mojo
+/home/autarch/apps/micromamba/envs/aiyarns

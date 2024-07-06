@@ -189,7 +189,7 @@ function Set:__eq(other)
 end
 
 function Set:__tostring()
-    local s = "{"
+    local s = "Set{"
     for elem in pairs(self) do
         s = s .. tostring(elem) .. ', '
     end

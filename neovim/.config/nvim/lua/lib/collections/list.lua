@@ -109,13 +109,23 @@ function List:copy()
 end
 
 function List:__tostring()
-    local s = "["
+    local s = "List["
     for _, x in ipairs(self) do
         s = s .. tostring(x) .. ', '
     end
     s = s:sub(1, -3) .. "]"
     return s
 end
+
+function List:__eq(other)
+    for i, x in ipairs(self) do
+        if x ~= other[i] then
+            return false
+        end
+    end
+    return true
+end
+
 
 local mt = getmetatable(List)
 function mt.__call(_, opts)

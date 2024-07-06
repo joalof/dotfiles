@@ -8,29 +8,29 @@ return {
     -- event = "VeryLazy",
     config = function()
         -- Adapted from https://github.com/ThePrimeagen/harpoon/issues/206#issuecomment-1538132132
-        local function get_marks()
+        local function get_harpoon_list()
             local harpoon = require("harpoon")
-            local config = harpoon.get_mark_config()
-            return config.marks
+            local harpoon_list = harpoon:list()
+            return harpoon_list
         end
 
-        local function normalize_path(item)
-            local Path = require("plenary.path")
-            return Path:new(item):make_relative(vim.loop.cwd())
-        end
+        -- local function normalize_path(item)
+        --     local Path = require("plenary.path")
+        --     return Path:new(item):make_relative(vim.loop.cwd())
+        -- end
 
         -- define colors
-        local Color = require("lib.colors")
+        local Color = require("lib.color")
 
         local norm_fg = Color.from_hl("Normal", "fg")
         local norm_fg_dark = norm_fg:shade(-0.55)
         local norm_bg = Color.from_hl("Normal", "bg")
         local norm_bg_dark = norm_bg:shade(-0.5)
 
-        norm_fg = norm_fg:to_hex()
-        norm_fg_dark = norm_fg:to_hex()
-        norm_bg = norm_fg:to_hex()
-        norm_bg_dark = norm_fg:to_hex()
+        norm_fg = norm_fg:to_css()
+        norm_fg_dark = norm_fg_dark:to_css()
+        norm_bg = norm_bg:to_css()
+        norm_bg_dark = norm_bg_dark:to_css()
 
         local hls = {
             fill = {
@@ -63,8 +63,9 @@ return {
 
         local render = function(f)
 
-            local current_file = normalize_path(vim.api.nvim_buf_get_name(0))
-            local items = get_marks()
+            -- local current_file = normalize_path(vim.api.nvim_buf_get_name(0))
+            local curr_file = vim.fn.expand('%:t')
+            local harp_list = get_harpoon_list()
 
             -- local found = false
             -- for _, item in ipairs(items) do
@@ -80,9 +81,9 @@ return {
             -- end
 
             -- add all marks
-            for _, item in ipairs(items) do
-                local active = current_file == item.filename
-                create_pane(f, item.filename, active)
+            for _, item in ipairs(harp_list.items) do
+                local active = curr_file == item.value
+                create_pane(f, item.value, active)
             end
 
             f.add_spacer()
@@ -95,8 +96,8 @@ return {
         end
 
         local toggle_tabline = function()
-            local items = get_marks()
-            if #items > 0 then
+            local harp_list = get_harpoon_list()
+            if harp_list:length() > 0 then
                 vim.o.showtabline = 2
             else
                 vim.o.showtabline = 0
