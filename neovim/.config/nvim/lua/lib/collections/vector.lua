@@ -210,6 +210,28 @@ function M.max(v)
     return math.max(unpack(v))
 end
 
+function M.argmin(v)
+    local ind = 1
+    local min = v[1]
+    for i = 2, #v do
+       if v[i] < min then
+           ind = i
+       end
+    end
+    return ind
+end
+
+function M.argmax(v)
+    local ind = 1
+    local min = v[1]
+    for i = 2, #v do
+       if v[i] > min then
+           ind = i
+       end
+    end
+    return ind
+end
+
 function M.arange(start, stop, step)
     step = step or 1
     local res = {}
