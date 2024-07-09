@@ -20,7 +20,6 @@ return {
             
             local item = harp_list:get_by_value(fname)
 
-            
             if item ~= nil then
                 harp_list:remove(item)
             else

@@ -6,6 +6,7 @@ local interpreters = {
     mojo = "mojo"
 }
 
+
 local M = {}
 
 local api = vim.api
@@ -54,29 +55,29 @@ function M.run_lua()
     local out_lines = lstr.split(out, '\n')
 
     -- clear OUTPUT buffer if it already exists 
-    local buf = nil
+    local bufnr = nil
     local buf_info = vim.fn.getbufinfo({bufloaded = 1, buflisted = 1})
     for _, info in ipairs(buf_info) do
         local path = Path:new(info.name)
         if path:make_relative() == 'OUTPUT' then
-            buf = info.bufnr
-            api.nvim_buf_set_lines(buf, 0, 100, false, {})
+            bufnr = info.bufnr
+            api.nvim_buf_set_lines(bufnr, 0, 100, false, {})
             break
         end
     end
     
     -- create new scratch buffer in split and write output
-    local split_size = math.max(5, #out_lines)
-    if buf == nil then
+    local split_size = math.min(math.max(5, #out_lines), 20)
+    if bufnr == nil then
         api.nvim_cmd({cmd = 'split', args = {'OUTPUT'}, range = {split_size}}, {})
-        buf = vim.api.nvim_get_current_buf()
+        bufnr = vim.api.nvim_get_current_buf()
         api.nvim_cmd({ cmd = "KittyNavigateUp" }, {})
         local opts = {bufhidden = 'delete', buflisted = true, buftype = 'nofile', swapfile = false}
         for name, val in pairs(opts) do
-            api.nvim_set_option_value(name, val, {buf=buf})
+            api.nvim_set_option_value(name, val, {buf=bufnr})
         end
     end
-    api.nvim_buf_set_lines(buf, 0, 0, false, out_lines)
+    api.nvim_buf_set_lines(bufnr, 0, 0, false, out_lines)
 end
 
 function M.run()

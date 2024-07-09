@@ -10,6 +10,7 @@
 local image_spec = {
     "3rd/image.nvim",
     -- dependencies = { rocks_spec },
+    dependencies = { "leafo/magick" },
     opts = {
         backend = "kitty", -- Kitty will provide the best experience, but you need a compatible terminal
         integrations = {}, -- do whatever you want with image.nvim's integrations
