@@ -46,13 +46,13 @@ function M.run_script()
 end
 
 function M.run_lua()
-    local lstr = require('lib.string')
+    local strings = require('lib.strings')
     local Path = require('plenary.path')
 
     -- run lua file and capture output
     local run_file = vim.fn.expand('%')
     local out = api.nvim_cmd({cmd='luafile', args={run_file}}, {output = true})
-    local out_lines = lstr.split(out, '\n')
+    local out_lines = strings.split(out, '\n')
 
     -- clear OUTPUT buffer if it already exists 
     local bufnr = nil

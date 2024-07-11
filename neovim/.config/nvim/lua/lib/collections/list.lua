@@ -83,7 +83,7 @@ function List:slice(start, stop, step)
     for i = start, stop, step do
         data[i] = self[i]
     end
-    return List:new(data)
+    return List.new(data)
 end
 
 function List:count(item)

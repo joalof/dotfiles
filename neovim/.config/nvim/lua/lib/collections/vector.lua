@@ -29,7 +29,6 @@ local M = {}
 
 Vector.__index = Vector
 
-
 function Vector:new(data, copy)
     data = data or {}
     if not is_listlike(data) then

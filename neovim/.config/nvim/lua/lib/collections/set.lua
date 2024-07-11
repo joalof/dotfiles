@@ -65,10 +65,10 @@ function Set:union(other)
     return res
 end
 
--- not supported in luajit
--- function Set:__bor(other)
---     return Set.union(self, other)
--- end
+-- bor not supported in luajit
+function Set:__add(other)
+    return Set.union(self, other)
+end
 
 
 -- s & t
