@@ -3,6 +3,9 @@ return {
     lazy = false,
     priority = 1000,
     config = function()
+
+        Color = require('lib.color')
+        
         require("tokyonight").setup({
             style = "moon",
             on_highlights = function(hl, c)
@@ -18,6 +21,7 @@ return {
                 hl["@variable.extra"] = { fg = c.fg }
                 -- python doctrings are captured as string.documentation
                 hl["@string.documentation"] = { fg = c.green }
+                hl.Visual = { bg = Color.from_css(c.magenta):shade(-0.65):to_css() }
             end
         })
         vim.cmd.colorscheme "tokyonight"

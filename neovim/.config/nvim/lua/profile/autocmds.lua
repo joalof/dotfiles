@@ -18,3 +18,18 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 --         -- end
 --     end
 -- })
+
+
+local augroup = vim.api.nvim_create_augroup("augroup_cursorline", { clear = true })
+vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
+    group = augroup,
+    callback = function()
+        vim.opt_local.cursorline = true
+    end
+})
+vim.api.nvim_create_autocmd({ "WinLeave" }, {
+    group = augroup,
+    callback = function()
+        vim.opt_local.cursorline = false
+    end
+})

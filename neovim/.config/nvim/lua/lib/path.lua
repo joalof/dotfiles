@@ -708,7 +708,17 @@ function Path:cwd()
     return Path:new(vim.uv.cwd())
 end
 
+
+local proj_root_names = {".git", "Project.toml", "setup.py", "pyproject.toml"}
+
 function Path:project_root()
+    for _, name in ipairs(proj_root_names) do
+        local root_path = vim.fn.finddir(name, ".;")
+        if root_path then
+            root_path = root_path:sub(1, #root_path - #name)
+            return Path(root_path)
+        end
+    end
 end
 
 function Path:iterdir()

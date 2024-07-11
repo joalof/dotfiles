@@ -1,6 +1,8 @@
 vim.opt.scrolloff = 3
 vim.opt.sidescrolloff = 5
 
+vim.opt.cursorline = true
+
 
 vim.opt.listchars = {
     eol = "$",
