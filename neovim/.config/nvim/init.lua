@@ -24,7 +24,7 @@ require("lazy").setup(
     }
 )
 
-require('profile.options')
-require('profile.mappings')
-require('profile.commands')
-require('profile.autocmds')
+require('config.options')
+require('config.mappings')
+require('config.commands')
+require('config.autocmds')

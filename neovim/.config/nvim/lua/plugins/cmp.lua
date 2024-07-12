@@ -111,7 +111,7 @@ return {
                 {
                     name = "cmdline",
                     option = {
-                        ignore_cmds = { "Man", "!" },
+                        ignore_cmds = { "Man", "!", "Redir" },
                     },
                     group_index = 2,
                 },

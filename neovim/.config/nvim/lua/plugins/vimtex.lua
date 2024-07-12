@@ -18,7 +18,7 @@ return {
         local function view_zathura()
             local fname = vim.fn.expand('%:r') .. '.pdf'
             local cmd = '!zathura ' .. fname
-            vim.api.nvim_exec(cmd, {})
+            vim.api.nvim_command(cmd)
         end
         vim.keymap.set('n', '<leader>lv', view_zathura)
     end,

@@ -29,7 +29,7 @@ local function cmp_source(name, icon)
 
     return {
         function()
-            return icon or require("profile.icons").kinds[name:sub(1, 1):upper() .. name:sub(2)]
+            return icon or require("utils.icons").kinds[name:sub(1, 1):upper() .. name:sub(2)]
         end,
         cond = function()
             return status() ~= nil
