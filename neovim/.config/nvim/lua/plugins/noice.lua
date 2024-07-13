@@ -49,8 +49,8 @@ local routes = {
     { filter = { event = "notify", find = "^Session terminated$" }, view = "mini" },
 
     -- { filter = { event = "msg_show", find = "E5108" }, view = "split" },
-    { filter = { event = "msg_show", min_height = 10 }, view = "popup" },
-    { filter = { event = "notify", min_height = 10 }, view = "popup" },
+    -- { filter = { event = "msg_show", min_height = 10 }, view = "popup" },
+    -- { filter = { event = "notify", min_height = 10 }, view = "popup" },
 }
 
 return {
