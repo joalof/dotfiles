@@ -111,10 +111,10 @@ return {
 
         toggle_tabline()
 
-        vim.api.nvim_create_augroup("TablineGroup", { clear = true })
+        vim.api.nvim_create_augroup("tabline_", { clear = true })
         vim.api.nvim_create_autocmd("DirChanged", {
             callback = toggle_tabline,
-            group = "TablineGroup",
+            group = "tabline_",
             desc = "Toggle tabline",
         })
 

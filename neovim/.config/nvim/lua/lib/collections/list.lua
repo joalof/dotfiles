@@ -1,3 +1,5 @@
+require('table.new')
+
 ---@param t table
 local function is_listlike(t)
     local i = 0
@@ -12,7 +14,7 @@ end
 
 
 local function shallow_copy(t)
-    local t_new = {}
+    local t_new = table.new(#t, 0)
     for i, x in ipairs(t) do
         t_new[i] = x
     end
@@ -79,7 +81,7 @@ end
 
 function List:slice(start, stop, step)
     step = step or 1
-    local data = {}
+    local data = table.new(1 + math.floor((stop - start)/step), 0)
     for i = start, stop, step do
         data[i] = self[i]
     end
@@ -97,11 +99,11 @@ function List:count(item)
 end
 
 function List:reverse()
-    table.sort(self, function(a, b) return a > b end)
+    self:sort(function(a, b) return a > b end)
 end
 
 function List:sort(comp)
-    table.sort(self, comp)
+    self:sort(comp)
 end
 
 function List:copy()
@@ -133,5 +135,6 @@ function mt.__call(_, opts)
         return List:new(opts)
     end
 end
+
 
 return List

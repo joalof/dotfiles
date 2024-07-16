@@ -1,3 +1,5 @@
+require('table.new')
+
 ---@param t table
 local function is_listlike(t)
     local i = 0
@@ -12,7 +14,7 @@ end
 
 
 local function shallow_copy(t)
-    local t_new = {}
+    local t_new = table.new(#t, 0)
     for i, x in ipairs(t) do
         t_new[i] = x
     end
@@ -49,29 +51,34 @@ function mt.__call(_, opts)
     end
 end
 
+
 function Vector:len()
     return #self
 end
 
+
 function Vector:slice(start, stop, step)
     step = step or 1
-    local data = {}
+    local data = table.new(1 + math.floor((stop - start)/step), 0)
     for i = start, stop, step do
         data[i] = self[i]
     end
     return Vector:new(data)
 end
 
+
 function Vector:sort(comp)
     table.sort(self, comp)
 end
+
 
 function Vector:copy()
     return Vector.new(self, true)
 end
 
+
 function Vector:__add(other)
-    local res = {}
+    local res = table.new(#self, 0)
     for i, x in ipairs(self) do
         res[i] = x + other[i]
     end
@@ -79,8 +86,15 @@ function Vector:__add(other)
 end
 
 
+function Vector:add(other)
+    for i, x in ipairs(self) do
+        self[i] = x + other[i]
+    end
+end
+
+
 function Vector:__unm()
-    local res = {}
+    local res = table.new(#self, 0)
     for i, x in ipairs(self) do
         res[i] = -x
     end
@@ -88,44 +102,82 @@ function Vector:__unm()
 end
 
 function Vector:__sub(other)
-    local res = {}
+    local res = table.new(#self, 0)
     for i, x in ipairs(self) do
         res[i] = x - other[i]
     end
     return Vector(res)
 end
 
-function Vector:__mul(other)
-    local res = {}
+
+function Vector:sub(other)
     for i, x in ipairs(self) do
-        res[i] = x * other[i]
+        self[i] = x - other[i]
+    end
+end
+
+
+function Vector:__mul(other)
+    local res = table.new(#self, 0)
+    if type(other) == 'number' then
+        for i, x in ipairs(self) do
+            res[i] = x * other
+        end
+    else
+        for i, x in ipairs(self) do
+            res[i] = x * other[i]
+        end
     end
     return Vector(res)
 end
 
+
+function Vector:mul(other)
+    for i, x in ipairs(self) do
+        self[i] = x - other[i]
+    end
+end
+
+
 function Vector:__div(other)
-    local res = Vector()
+    local res = table.new(#self, 0)
     for i, x in ipairs(self) do
         res[i] = x / other[i]
     end
     return res
 end
 
+
+function Vector:div(other)
+    for i, x in ipairs(self) do
+        self[i] = x / other[i]
+    end
+end
+
+
 function Vector:__pow(a)
-    local res = {}
+    local res = table.new(#self, 0)
     for i, x in ipairs(self) do
         res[i] = x ^ a
     end
     return Vector(res)
 end
 
-function Vector:__tostring()
-    local s = "Vector["
-    for _, x in ipairs(self) do
-        s = s .. tostring(x) .. ', '
+
+function Vector:pow(a)
+    for i, x in ipairs(self) do
+        self[i] = x ^ a
     end
-    s = s:sub(1, -3) .. "]"
-    return s
+end
+
+
+function Vector:__tostring()
+    local left = "Vector["
+    local middle = ''
+    for _, x in ipairs(self) do
+        middle = middle .. tostring(x) .. ', '
+    end
+    return left .. middle:sub(1, -3) .. "]"
 end
 
 function Vector:__eq(other)
@@ -138,7 +190,7 @@ function Vector:__eq(other)
 end
 
 function M.zeros(n)
-    local data = {}
+    local data = table.new(n, 0)
     for i = 1, n do
         data[i] = 0
     end
@@ -150,7 +202,7 @@ function M.zeros_like(v)
 end
 
 function M.ones(n)
-    local data = {}
+    local data = table.new(n, 0)
     for i = 1, n do
         data[i] = 1
     end
@@ -233,7 +285,7 @@ end
 
 function M.arange(start, stop, step)
     step = step or 1
-    local res = {}
+    local res = table.new(1 + math.floor((stop - start)/step), 0)
     local i = 1
     for x = start, stop, step do
         res[i] = x
@@ -241,6 +293,7 @@ function M.arange(start, stop, step)
     end
     return Vector(res)
 end
+
 
 M.Vector = Vector
 return M

@@ -22,3 +22,5 @@ function M.join(sep, list)
     end
     return s
 end
+
+return M

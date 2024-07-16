@@ -55,31 +55,17 @@ return {
         })
 
         require("telescope").load_extension("fzf")
+        local project = require('utils.project')
 
-        local function get_git_root()
-            local dot_git_path = vim.fn.finddir(".git", ".;")
-            return vim.fn.fnamemodify(dot_git_path, ":h")
-        end
-
-        -- get the project root dir or fallback to cwd
-        local function get_root_dir()
-            -- local root = require('project_nvim.project').get_project_root()
-            local root = get_git_root()
-            if root ~= nil then
-                return root
-            else
-                return vim.fn.getcwd()
-            end
-        end
 
         vim.keymap.set("n", "<leader>ff", function()
-            builtin.find_files({ cwd = get_root_dir() })
+            builtin.find_files({ cwd = tostring(project.get_root('cwd')) })
         end)
         vim.keymap.set("n", "<leader>fa", function()
             builtin.find_files({ cwd = "~" })
         end)
         vim.keymap.set("n", "<leader>fg", function()
-            builtin.live_grep({ cwd = get_root_dir() })
+            builtin.live_grep({ cwd = tostring(project.get_root('cwd')) })
         end)
         vim.keymap.set("n", "<leader>fh", builtin.help_tags)
         vim.keymap.set("n", "<leader>fn", function()
