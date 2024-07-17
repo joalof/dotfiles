@@ -10,13 +10,11 @@ return {
     config = function()
         local harpoon = require('harpoon')
         local project = require('utils.project')
-        local harp_utils = require('utils.harpoon')
 
         harpoon:setup({
             settings = {
                 key = function()
-                    local res = project.get_root('cwd')
-                    return res
+                    return project.get_root('cwd')
                 end
             },
             default = {
@@ -38,29 +36,54 @@ return {
             }
         })
 
-        vim.keymap.set("n", "M", function()
-            harpoon:list(harp_utils.curr_branch_list):add()
-            -- harpoon:list():add()
+        -- local function toggle(list_name)
+        --     local harp_list = harpoon:list(list_name)
+        --     local fname = vim.fn.expand('%')
+        --     local item = harp_list:get_by_value(fname)
+        --     if item ~= nil then
+        --         harp_list:remove(item)
+        --     else
+        --         harp_list:add()
+        --     end
+        -- end
+
+        local function notify_mark(action)
+            local pos = vim.api.nvim_win_get_cursor(0)
+            local pos_disp = string.format('%d:%d', pos[1], pos[2])
+            local msg = string.format('Harpoon mark %s at %s', action, pos_disp)
+            vim.notify(msg)
+        end
+
+        local tabline = require('utils.tabline')
+
+        vim.keymap.set("n", "ma", function()
+            local branch = project.get_git_branch()
+            harpoon:list(branch):add()
+            notify_mark('added')
+            tabline.cache_display_marks(branch)
+            tabline.toggle_tabline()
         end)
+
+        vim.keymap.set("n", "md", function()
+            local branch = project.get_git_branch()
+            harpoon:list(branch):remove()
+            notify_mark('removed')
+            tabline.cache_display_marks(branch)
+            tabline.toggle_tabline()
+        end)
+        
         -- Toggle previous & next buffers stored within Harpoon list
         vim.keymap.set(
             "n",
             "<c-l>",
-            function() harpoon:list(harp_utils.curr_branch_list):next() end
+            function() harpoon:list(project.get_git_branch()):next() end
             -- function() harpoon:list():next() end
         )
         vim.keymap.set(
             "n",
             "<c-h>",
-            function() harpoon:list(harp_utils.curr_branch_list):prev() end
+            function() harpoon:list(project.get_git_branch()):prev() end
             -- function() harpoon:list():prev() end
         )
-
-        vim.api.nvim_create_augroup("harpoon_config", { clear = true })
-        vim.api.nvim_create_autocmd({"DirChanged", "TabEnter"}, {
-            group = "harpoon_config",
-            desc = "Update the current project list",
-            callback = harp_utils.update_current_list,
-        })
     end
 }
