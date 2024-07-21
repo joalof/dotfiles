@@ -60,16 +60,14 @@ return {
             local branch = project.get_git_branch()
             harpoon:list(branch):add()
             notify_mark('added')
-            tabline.cache_display_marks(branch)
-            tabline.toggle_tabline()
+            tabline.update_marks(branch)
         end)
 
         vim.keymap.set("n", "md", function()
             local branch = project.get_git_branch()
             harpoon:list(branch):remove()
             notify_mark('removed')
-            tabline.cache_display_marks(branch)
-            tabline.toggle_tabline()
+            tabline.update_marks(branch)
         end)
         
         -- Toggle previous & next buffers stored within Harpoon list

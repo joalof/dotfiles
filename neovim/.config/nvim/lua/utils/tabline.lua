@@ -102,4 +102,10 @@ M.toggle_tabline = function()
     end
 end
 
+M.update_marks = function(branch)
+    branch = branch or require('utils.project').get_git_branch()
+    M.cache_display_marks(branch)
+    M.toggle_tabline()
+end
+
 return M

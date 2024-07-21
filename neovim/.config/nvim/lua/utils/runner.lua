@@ -3,7 +3,8 @@ local overseer = require("overseer")
 local interpreters = {
     python = "python",
     julia = "julia",
-    mojo = "mojo"
+    mojo = "mojo",
+    markdown = "glow",
 }
 
 
