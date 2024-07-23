@@ -1,5 +1,5 @@
 local Color = require("lib.color").Color
-local Path = require("lib.path")
+local Path = require("lib.path").Path
 
 local M = {}
 
