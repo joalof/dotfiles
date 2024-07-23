@@ -1,24 +1,10 @@
 local tablex = require("lib.tablex")
 require("table.new")
 
-local function shallow_copy(t)
-    local t_new = table.new(#t, 0)
-    for i, x in ipairs(t) do
-        t_new[i] = x
-    end
-    return t_new
-end
-
 local List = setmetatable({}, {})
+local M = { List = List }
 
 List.__index = List
--- List.__index = function(data, key)
---     if type(key) == "number" then
---         return data[wrap_index(data, key)]
---     else
---         return List[key]
---     end
--- end
 
 function List:new(data, copy)
     data = data or {}
@@ -26,7 +12,7 @@ function List:new(data, copy)
         error("Failed to create list, table contains non-integer keys")
     end
     if copy then
-        data = shallow_copy(data)
+        data = table.shallow_copy(data)
     end
     data = setmetatable(data, List)
     return data
@@ -123,4 +109,4 @@ function mt.__call(_, opts)
     end
 end
 
-return List
+return M

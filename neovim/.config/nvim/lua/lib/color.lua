@@ -1,29 +1,10 @@
 local mathx = require('lib.mathx')
--- from https://github.com/akinsho/bufferline.nvim/blob/main/lua/bufferline/colors.lua
--- local function hex_to_rgb(color)
---     local hex = color:gsub("#", "")
---     return tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5), 16)
--- end
-
--- local function alter(attr, percent)
---     return math.floor(attr * (100 + percent) / 100)
--- end
-
--- local function get_shade(color, percent)
---     local r, g, b = hex_to_rgb(color)
---     if not r or not g or not b then
---         return "NONE"
---     end
---     r, g, b = alter(r, percent), alter(g, percent), alter(b, percent)
---     r, g, b = math.min(r, 255), math.min(g, 255), math.min(b, 255)
---     return ("#%02x%02x%02x"):format(r, g, b)
--- end
-
-
 --- Color library forked from nightfox theme
 --- https://github.com/EdenEast/nightfox.nvim/blob/main/lua/nightfox/lib/color.lua
 
---#region Types ----------------------------------------------------------------
+-- holds top-level functions and Color class
+local M = {}
+
 
 ---RGBA color representation stored in float [0,1]
 ---@class RGBA
@@ -382,4 +363,6 @@ function mt.__call(_, opts)
     return Color.new(opts)
 end
 
-return Color
+M['Color'] = Color
+
+return M

@@ -14,7 +14,7 @@ end
 local Vector = setmetatable({}, {})
 
 -- functions on vectors
-local M = {}
+local M = { Vector = Vector }
 
 Vector.__index = Vector
 
@@ -266,5 +266,4 @@ function M.arange(start, stop, step)
     return Vector(res)
 end
 
-M.Vector = Vector
 return M

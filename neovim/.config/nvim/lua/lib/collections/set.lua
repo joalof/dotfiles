@@ -1,6 +1,7 @@
-local tablex = require('lib.tablex')
+local tablex = require("lib.tablex")
 
 local Set = setmetatable({}, {})
+local M = { Set = Set }
 
 Set.__index = Set
 
@@ -196,4 +197,4 @@ function mt.__call(_, opts)
     return Set:new(opts)
 end
 
-return Set
+return M
