@@ -1,16 +1,5 @@
-require('table.new')
-
----@param t table
-local function is_listlike(t)
-    local i = 0
-    for _ in pairs(t) do
-        i = i + 1
-        if t[i] == nil then
-            return false
-        end
-    end
-    return true
-end
+require("table.new")
+local tablex = require('lib.tablex')
 
 
 local function shallow_copy(t)
@@ -21,20 +10,18 @@ local function shallow_copy(t)
     return t_new
 end
 
-
 -- vector class
 local Vector = setmetatable({}, {})
 
 -- functions on vectors
 local M = {}
 
-
 Vector.__index = Vector
 
 function Vector:new(data, copy)
     data = data or {}
-    if not is_listlike(data) then
-       error('List-like table required to create Vector')
+    if not tablex.is_listlike(data) then
+        error("List-like table required to create Vector")
     end
     if copy then
         data = shallow_copy(data)
@@ -51,31 +38,26 @@ function mt.__call(_, opts)
     end
 end
 
-
 function Vector:len()
     return #self
 end
 
-
 function Vector:slice(start, stop, step)
     step = step or 1
-    local data = table.new(1 + math.floor((stop - start)/step), 0)
+    local data = table.new(1 + math.floor((stop - start) / step), 0)
     for i = start, stop, step do
         data[i] = self[i]
     end
     return Vector:new(data)
 end
 
-
 function Vector:sort(comp)
     table.sort(self, comp)
 end
 
-
 function Vector:copy()
     return Vector.new(self, true)
 end
-
 
 function Vector:__add(other)
     local res = table.new(#self, 0)
@@ -85,13 +67,11 @@ function Vector:__add(other)
     return Vector(res)
 end
 
-
 function Vector:add(other)
     for i, x in ipairs(self) do
         self[i] = x + other[i]
     end
 end
-
 
 function Vector:__unm()
     local res = table.new(#self, 0)
@@ -109,17 +89,15 @@ function Vector:__sub(other)
     return Vector(res)
 end
 
-
 function Vector:sub(other)
     for i, x in ipairs(self) do
         self[i] = x - other[i]
     end
 end
 
-
 function Vector:__mul(other)
     local res = table.new(#self, 0)
-    if type(other) == 'number' then
+    if type(other) == "number" then
         for i, x in ipairs(self) do
             res[i] = x * other
         end
@@ -131,13 +109,11 @@ function Vector:__mul(other)
     return Vector(res)
 end
 
-
 function Vector:mul(other)
     for i, x in ipairs(self) do
         self[i] = x - other[i]
     end
 end
-
 
 function Vector:__div(other)
     local res = table.new(#self, 0)
@@ -147,13 +123,11 @@ function Vector:__div(other)
     return res
 end
 
-
 function Vector:div(other)
     for i, x in ipairs(self) do
         self[i] = x / other[i]
     end
 end
-
 
 function Vector:__pow(a)
     local res = table.new(#self, 0)
@@ -163,19 +137,17 @@ function Vector:__pow(a)
     return Vector(res)
 end
 
-
 function Vector:pow(a)
     for i, x in ipairs(self) do
         self[i] = x ^ a
     end
 end
 
-
 function Vector:__tostring()
     local left = "Vector["
-    local middle = ''
+    local middle = ""
     for _, x in ipairs(self) do
-        middle = middle .. tostring(x) .. ', '
+        middle = middle .. tostring(x) .. ", "
     end
     return left .. middle:sub(1, -3) .. "]"
 end
@@ -216,7 +188,7 @@ end
 function M.full(n, fill_value)
     return fill_value * M.ones(n)
 end
-    
+
 function M.full_like(v, fill_value)
     return fill_value * M.ones_like(v)
 end
@@ -240,7 +212,7 @@ end
 function M.norm(v)
     local res = 0
     for _, x in ipairs(v) do
-        res = res + x^2
+        res = res + x ^ 2
     end
     return math.sqrt(res)
 end
@@ -248,7 +220,7 @@ end
 function M.dot(v, w)
     local res = 0
     for i, x in ipairs(v) do
-        res = res + x*w[i]
+        res = res + x * w[i]
     end
     return res
 end
@@ -265,9 +237,9 @@ function M.argmin(v)
     local ind = 1
     local min = v[1]
     for i = 2, #v do
-       if v[i] < min then
-           ind = i
-       end
+        if v[i] < min then
+            ind = i
+        end
     end
     return ind
 end
@@ -276,16 +248,16 @@ function M.argmax(v)
     local ind = 1
     local min = v[1]
     for i = 2, #v do
-       if v[i] > min then
-           ind = i
-       end
+        if v[i] > min then
+            ind = i
+        end
     end
     return ind
 end
 
 function M.arange(start, stop, step)
     step = step or 1
-    local res = table.new(1 + math.floor((stop - start)/step), 0)
+    local res = table.new(1 + math.floor((stop - start) / step), 0)
     local i = 1
     for x = start, stop, step do
         res[i] = x
@@ -293,7 +265,6 @@ function M.arange(start, stop, step)
     end
     return Vector(res)
 end
-
 
 M.Vector = Vector
 return M

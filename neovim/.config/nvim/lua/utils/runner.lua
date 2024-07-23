@@ -5,28 +5,29 @@ local interpreters = {
     julia = "julia",
     mojo = "mojo",
     markdown = "glow",
+    r = 'R',
 }
-
 
 local M = {}
 
 local api = vim.api
 
-function M.run_script()
+function M.run_script(opts)
     local file = vim.fn.expand("%:p")
     local name = "run_script"
+    opts = opts or {grace_time = 10}
 
     for _, task in ipairs(overseer.list_tasks()) do
         if task.name == name then
             task:dispose()
             task.strategy.term:shutdown()
-            vim.cmd('cclose')
+            vim.cmd("cclose")
         end
     end
 
     local components = {
-            { "coderunner.autoclose", grace_time = 5 },
-            "default",
+        { "coderunner.autoclose", grace_time = opts.grace_time },
+        "default",
     }
 
     if vim.bo.errorformat ~= "" then
@@ -47,8 +48,8 @@ function M.run_script()
 end
 
 function M.run_lua()
-    api.nvim_cmd({cmd = 'Redir', args={'luafile', '%'}}, {})
-    -- old approach 
+    api.nvim_cmd({ cmd = "Redir", args = { "luafile", "%" } }, {})
+    -- old approach
     -- local strings = require('lib.strings')
     -- local Path = require('plenary.path')
 
@@ -57,7 +58,7 @@ function M.run_lua()
     -- local out = api.nvim_cmd({cmd='luafile', args={run_file}}, {output = true})
     -- local out_lines = strings.split(out, '\n')
 
-    -- -- clear OUTPUT buffer if it already exists 
+    -- -- clear OUTPUT buffer if it already exists
     -- local bufnr = nil
     -- local buf_info = vim.fn.getbufinfo({bufloaded = 1, buflisted = 1})
     -- for _, info in ipairs(buf_info) do
@@ -68,7 +69,7 @@ function M.run_lua()
     --         break
     --     end
     -- end
-    -- 
+    --
     -- -- create new scratch buffer in split and write output
     -- local split_size = math.min(math.max(5, #out_lines), 20)
     -- if bufnr == nil then
@@ -81,12 +82,11 @@ function M.run_lua()
     --     end
     -- end
     -- api.nvim_buf_set_lines(bufnr, 0, 0, false, out_lines)
-     
 end
 
 function M.run()
     vim.cmd.update()
-    if vim.bo.filetype == 'lua' then
+    if vim.bo.filetype == "lua" then
         M.run_lua()
     else
         M.run_script()

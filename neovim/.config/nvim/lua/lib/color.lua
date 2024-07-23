@@ -1,4 +1,4 @@
-local maths = require('lib.maths')
+local mathx = require('lib.mathx')
 -- from https://github.com/akinsho/bufferline.nvim/blob/main/lua/bufferline/colors.lua
 -- local function hex_to_rgb(color)
 --     local hex = color:gsub("#", "")
@@ -117,10 +117,10 @@ end
 
 function Color.init(r, g, b, a)
     local self = setmetatable({}, Color)
-    self.red = maths.clamp(r, 0, 1)
-    self.green = maths.clamp(g, 0, 1)
-    self.blue = maths.clamp(b, 0, 1)
-    self.alpha = maths.clamp(a or 1, 0, 1)
+    self.red = mathx.clamp(r, 0, 1)
+    self.green = mathx.clamp(g, 0, 1)
+    self.blue = mathx.clamp(b, 0, 1)
+    self.alpha = mathx.clamp(a or 1, 0, 1)
     return self
 end
 
@@ -166,9 +166,9 @@ end
 
 function Color.from_hsv(h, s, v, a)
     h = h % 360
-    s = maths.clamp(s, 0, 100) / 100
-    v = maths.clamp(v, 0, 100) / 100
-    a = maths.clamp(a or 1, 0, 1)
+    s = mathx.clamp(s, 0, 100) / 100
+    v = mathx.clamp(v, 0, 100) / 100
+    a = mathx.clamp(a or 1, 0, 1)
 
     local function f(n)
         local k = (n + h / 60) % 6
@@ -187,9 +187,9 @@ end
 
 function Color.from_hsl(h, s, l, a)
     h = h % 360
-    s = maths.clamp(s, 0, 100) / 100
-    l = maths.clamp(l, 0, 100) / 100
-    a = maths.clamp(a or 1, 0, 1)
+    s = mathx.clamp(s, 0, 100) / 100
+    l = mathx.clamp(l, 0, 100) / 100
+    a = mathx.clamp(a or 1, 0, 1)
     local _a = s * math.min(l, 1 - l)
 
     local function f(n)
@@ -213,9 +213,9 @@ end
 ---@return RGBA
 function Color:to_rgba()
     return {
-        red = maths.round(self.red * 0xff),
-        green = maths.round(self.green * 0xff),
-        blue = maths.round(self.blue * 0xff),
+        red = mathx.round(self.red * 0xff),
+        green = mathx.round(self.green * 0xff),
+        blue = mathx.round(self.blue * 0xff),
         alpha = self.alpha,
     }
 end
@@ -313,7 +313,7 @@ end
 ---@return Color
 function Color:brighten(v)
     local hsv = self:to_hsv()
-    local value = maths.clamp(hsv.value + v, 0, 100)
+    local value = mathx.clamp(hsv.value + v, 0, 100)
     return Color.from_hsv(hsv.hue, hsv.saturation, value)
 end
 
@@ -323,7 +323,7 @@ end
 ---@return Color
 function Color:lighten(v)
     local hsl = self:to_hsl()
-    local lightness = maths.clamp(hsl.lightness + v, 0, 100)
+    local lightness = mathx.clamp(hsl.lightness + v, 0, 100)
     return Color.from_hsl(hsl.hue, hsl.saturation, lightness)
 end
 
@@ -333,7 +333,7 @@ end
 ---@return Color
 function Color:saturate(v)
     local hsv = self:to_hsv()
-    local saturation = maths.clamp(hsv.saturation + v, 0, 100)
+    local saturation = mathx.clamp(hsv.saturation + v, 0, 100)
     return Color.from_hsv(hsv.hue, saturation, hsv.value)
 end
 

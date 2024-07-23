@@ -1,5 +1,5 @@
 local Color = require("lib.color")
-local Path = require('lib.path')
+local Path = require("lib.path")
 
 local M = {}
 
@@ -44,26 +44,23 @@ local function create_pane(f, name, active)
     f.add({ "", fg = hls.wedge.fg, bg = hls.wedge.bg })
 end
 
-
 M.display_marks = {}
 
 -- cache marks for display with tabline
 -- this will not be called frequently
 function M.cache_display_marks(list_name)
-    local harp_list = require('harpoon'):list(list_name)
+    local harp_list = require("harpoon"):list(list_name)
     -- M.display_marks = harp_list.items
-    -- only use filenames and not the full path 
+    -- only use filenames and not the full path
     M.display_marks = {}
     for i, item in ipairs(harp_list.items) do
         M.display_marks[i] = Path(item.value):name()
     end
 end
 
-
 -- This will be called a million times so we don't do expensive stuff here
 M.render = function(f)
-
-    local curr_file = vim.fn.expand('%:t')
+    local curr_file = vim.fn.expand("%:t")
 
     -- local found = false
     -- for _, item in ipairs(items) do
@@ -77,7 +74,6 @@ M.render = function(f)
     -- if not found then
     --     create_pane(f, current_file, true)
     -- end
-
 
     -- add all marks
     for _, item in ipairs(M.display_marks) do
@@ -103,7 +99,7 @@ M.toggle_tabline = function()
 end
 
 M.update_marks = function(branch)
-    branch = branch or require('utils.project').get_git_branch()
+    branch = branch or require("utils.project").get_git_branch()
     M.cache_display_marks(branch)
     M.toggle_tabline()
 end

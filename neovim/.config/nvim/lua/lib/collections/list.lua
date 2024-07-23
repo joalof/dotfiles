@@ -1,17 +1,5 @@
-require('table.new')
-
----@param t table
-local function is_listlike(t)
-    local i = 0
-    for _ in pairs(t) do
-        i = i + 1
-        if t[i] == nil then
-            return false
-        end
-    end
-    return true
-end
-
+local tablex = require("lib.tablex")
+require("table.new")
 
 local function shallow_copy(t)
     local t_new = table.new(#t, 0)
@@ -20,7 +8,6 @@ local function shallow_copy(t)
     end
     return t_new
 end
-
 
 local List = setmetatable({}, {})
 
@@ -33,11 +20,10 @@ List.__index = List
 --     end
 -- end
 
-
 function List:new(data, copy)
     data = data or {}
-    if not is_listlike(data) then
-       error('Failed to create list, table contains non-integer keys')
+    if not tablex.is_listlike(data) then
+        error("Failed to create list, table contains non-integer keys")
     end
     if copy then
         data = shallow_copy(data)
@@ -81,7 +67,7 @@ end
 
 function List:slice(start, stop, step)
     step = step or 1
-    local data = table.new(1 + math.floor((stop - start)/step), 0)
+    local data = table.new(1 + math.floor((stop - start) / step), 0)
     for i = start, stop, step do
         data[i] = self[i]
     end
@@ -99,7 +85,9 @@ function List:count(item)
 end
 
 function List:reverse()
-    self:sort(function(a, b) return a > b end)
+    self:sort(function(a, b)
+        return a > b
+    end)
 end
 
 function List:sort(comp)
@@ -113,7 +101,7 @@ end
 function List:__tostring()
     local s = "List["
     for _, x in ipairs(self) do
-        s = s .. tostring(x) .. ', '
+        s = s .. tostring(x) .. ", "
     end
     s = s:sub(1, -3) .. "]"
     return s
@@ -128,13 +116,11 @@ function List:__eq(other)
     return true
 end
 
-
 local mt = getmetatable(List)
 function mt.__call(_, opts)
     if type(opts) == "table" then
         return List:new(opts)
     end
 end
-
 
 return List

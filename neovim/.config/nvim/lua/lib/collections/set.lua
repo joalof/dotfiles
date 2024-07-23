@@ -1,14 +1,4 @@
----@param t table
-local function is_listlike(t)
-    local i = 0
-    for _ in pairs(t) do
-        i = i + 1
-        if t[i] == nil then
-            return false
-        end
-    end
-    return true
-end
+local tablex = require('lib.tablex')
 
 local Set = setmetatable({}, {})
 
@@ -17,7 +7,7 @@ Set.__index = Set
 function Set:new(data)
     data = data or {}
     local data_new = {}
-    if is_listlike(data) then
+    if tablex.is_listlike(data) then
         for _, elem in ipairs(data) do
             data_new[elem] = true
         end
@@ -52,8 +42,6 @@ function Set:__le(other)
     return Set:is_subset(other)
 end
 
-
--- s | t
 function Set:union(other)
     local res = Set()
     for elem in pairs(self) do
@@ -70,7 +58,6 @@ function Set:__add(other)
     return Set.union(self, other)
 end
 
-
 -- s & t
 function Set:intersection(other)
     local res = Set()
@@ -82,10 +69,10 @@ function Set:intersection(other)
     return res
 end
 
--- not supported in luajit
--- function Set:__band(other)
---     return Set:intersection(other)
--- end
+-- band not supported in luajit
+function Set:__div(other)
+    return Set:intersection(other)
+end
 
 -- s - t
 function Set:difference(other)
@@ -122,7 +109,6 @@ function Set:__pow(other)
     return Set.symmetric_difference(self, other)
 end
 
-
 function Set:update(other)
     for elem in pairs(other) do
         self[elem] = true
@@ -136,11 +122,11 @@ function Set:intersection_update(other)
         end
     end
 end
-    
+
 function Set:difference_update(other)
     for elem in pairs(self) do
         if other[elem] then
-           self[elem] = nil
+            self[elem] = nil
         end
     end
 end
@@ -191,9 +177,9 @@ end
 function Set:__tostring()
     local s = "Set{"
     for elem in pairs(self) do
-        s = s .. tostring(elem) .. ', '
+        s = s .. tostring(elem) .. ", "
     end
-    s = s:sub(1, -3) .. '}'
+    s = s:sub(1, -3) .. "}"
     return s
 end
 

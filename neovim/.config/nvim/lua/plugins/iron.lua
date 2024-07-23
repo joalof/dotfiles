@@ -15,6 +15,8 @@ return {
                 scratch_repl = true,
                 repl_definition = {
                     python = { command = { "ipython" } },
+                    r = { command = { "R" } },
+                    julia = { command = { "julia" } },
                 },
                 repl_open_cmd = require("iron.view").split("20%"),
             },

@@ -13,8 +13,9 @@ return {
             patterns = {".git", "Project.toml", "setup.py", "pyproject.toml"}
         })
         require("telescope").load_extension("projections")
+
         vim.keymap.set("n", "<leader>fp", function()
             vim.cmd("Telescope projections")
         end)
-    end,
+    end
 }

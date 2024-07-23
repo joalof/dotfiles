@@ -1,16 +1,16 @@
 local M = {}
 
 local units = {
-    ['seconds'] = 1,
-    ['milliseconds'] = 1000,
-    ['microseconds'] = 1000000,
-    ['nanoseconds'] = 1000000000
+    ["seconds"] = 1,
+    ["milliseconds"] = 1000,
+    ["microseconds"] = 1000000,
+    ["nanoseconds"] = 1000000000,
 }
 
 function M.benchmark(f, opts)
-    local defaults = {unit='seconds', repeats=1, decimals=5, args=nil}
+    local defaults = { unit = "seconds", repeats = 1, decimals = 5, args = nil }
     opts = opts or {}
-    opts = vim.tbl_extend('keep', opts, defaults)
+    opts = vim.tbl_extend("keep", opts, defaults)
     local elapsed = 0
     local multiplier = units[opts.unit]
     for _ = 1, opts.repeats do
@@ -18,7 +18,20 @@ function M.benchmark(f, opts)
         f(opts.args)
         elapsed = elapsed + (os.clock() - now)
     end
-    print(string.format('Benchmark results:\n  - %d function calls\n  - %.'.. opts.decimals ..'f %s elapsed\n  - %.'.. opts.decimals ..'f %s avg execution time.', opts.repeats, elapsed * multiplier, opts.unit, (elapsed / opts.repeats) * multiplier, opts.unit))
+    print(
+        string.format(
+            "Benchmark results:\n  - %d function calls\n  - %."
+                .. opts.decimals
+                .. "f %s elapsed\n  - %."
+                .. opts.decimals
+                .. "f %s avg execution time.",
+            opts.repeats,
+            elapsed * multiplier,
+            opts.unit,
+            (elapsed / opts.repeats) * multiplier,
+            opts.unit
+        )
+    )
 end
 
 function M.bind_args(func, ...)
@@ -57,13 +70,24 @@ function M.debounce(fn, ms)
     return wrapped_fn, timer
 end
 
-function M.isinstance(object, class)
-    local mt = getmetatable(object)
-
-    if mt and object then
-        return type(object) == "table" and mt.__index == class
+function M.isinstance(object, classes)
+    if type(classes) == "string" then
+        classes = { classes }
     end
-
+    for _, class in ipairs(classes) do
+        if type(object) == "table" then
+            if class == "table" then
+                return true
+            else
+                local mt = getmetatable(object)
+                if mt then
+                    return type(object) == "table" and mt.__index == class
+                end
+            end
+        elseif type(object) == class then
+            return true
+        end
+    end
     return false
 end
 
