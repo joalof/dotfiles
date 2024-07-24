@@ -1,28 +1,61 @@
 local api = vim.api
+local oop = require("lib.oop")
 
 local Window = setmetatable({}, {})
 
 local M = { Window = Window }
 
 local property_getters = {
-    buffer = function() end,
-    config = function() end,
-    number = function() end,
-    position = function() end,
-    tabpage = function() end,
-    width = function() end,
-    height = function() end,
-    cursor = function() end,
-    valid = function() end,
+    buffer = function(win)
+        local Buffer = require("lib.vim.buffer").Buffer
+        return Buffer(api.nvim_win_get_buf(win.handle))
+    end,
+    config = function(win)
+        return api.nvim_win_get_config(win.handle)
+    end,
+    number = function(win)
+        return api.nvim_win_get_number(win.handle)
+    end,
+    position = function(win)
+        return api.nvim_win_get_position(win.handle)
+    end,
+    tabpage = function(win)
+        return api.nvim_win_get_tabpage(win.handle)
+    end,
+    width = function(win)
+        return api.nvim_win_get_width(win.handle)
+    end,
+    height = function(win)
+        return api.nvim_win_get_height(win.handle)
+    end,
+    valid = function(win)
+        return api.nvim_win_is_valid(win.handle)
+    end,
+    float = function(win)
+        return vim.api.nvim_win_get_config(win.handle).relative ~= ""
+    end,
 }
 
 local property_setters = {
-    buffer = function() end,
-    config = function() end,
-    width = function() end,
-    height = function() end,
-    cursor = function() end,
-    hl_ns = function() end,
+    buffer = function(win, val)
+        local Buffer = require("lib.vim.buffer").Buffer
+        if oop.is_instance(val, Buffer) then
+            val = val.handle
+        end
+        api.nvim_win_set_buf(win.handle, val)
+    end,
+    config = function(win, val)
+        api.nvim_win_set_config(win.handle, val)
+    end,
+    width = function(win, val)
+        api.nvim_win_set_width(win.handle, val)
+    end,
+    height = function(win, val)
+        api.nvim_win_set_height(win.handle, val)
+    end,
+    cursor = function(win, val)
+        api.nvim_win_set_cursor(win.handle, val)
+    end,
 }
 
 Window.__index = function(tbl, key)
@@ -37,7 +70,7 @@ Window.__index = function(tbl, key)
     end
 end
 
-Window.__indexnew = function(tbl, key, value)
+Window.__newindex = function(tbl, key, value)
     local setter = property_setters[key]
     if setter then
         setter(tbl, value)
@@ -71,13 +104,20 @@ end
 
 -- Opens a new window on given buffer
 function Window:open(buffer, enter, config)
+    local Buffer = require("lib.vim.buffer").Buffer
     enter = enter or true
     config = config or {}
+    if oop.is_instance(buffer, Buffer) then
+        buffer = buffer.handle
+    end
     local handle = api.nvim_open_win(buffer, enter, config)
     return Window:_new(handle)
 end
 
-function Window:close()
+function Window:open_float(buffer, enter, config)
+end
+
+function Window:split(buffer, enter, config)
 end
 
 local mt = getmetatable(Window)
@@ -92,12 +132,67 @@ function mt.__call(_, ...)
     end
 end
 
-function M.set_current(win) end
+function Window:close(force)
+    force = force or false
+    api.nvim_win_close(self.handle, force)
+    self = nil
+end
 
-function M.list(opts)
+function Window:hide()
+    api.nvim_win_hide(self.handle)
+    self = nil
+end
+
+function Window:focus()
+    M.set_current(self)
+end
+
+function Window:set_var(name, value)
+    api.nvim_win_set_var(self.handle, name, value)
+end
+
+function Window:get_var(name)
+    api.nvim_win_get_var(self.handle, name)
+end
+
+function Window:del_var(name)
+    api.nvim_win_del_var(self.handle, name)
+end
+
+function Window:call(fun)
+    local res = api.nvim_win_call(self.handle, fun)
+    return res
+end
+
+function Window:text_height(opts)
+    local info = api.nvim_win_text_height(self.handle, opts)
+    return info
+end
+
+--
+-- Module level functions
+--
+function M.set_current(win)
+    if oop.is_instance(win, Window) then
+        win = win.handle
+    end
+    api.nvim_set_current_win(win)
+end
+
+function M.list()
+    local wins = {}
+    local handles = api.nvim_list_wins()
+    for i, handle in ipairs(handles) do
+        local win = Window:_new(handle)
+        wins[i] = win
+    end
+    return wins
+end
+
+function M.find(opts)
     opts = opts or {}
     local wins = {}
-    local handles = api.nvim_list_bufs()
+    local handles = api.nvim_list_wins()
     for i, handle in ipairs(handles) do
         local win = Window:_new(handle)
         wins[i] = win

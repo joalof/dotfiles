@@ -22,7 +22,7 @@ local component = {
             on_complete = function(self, task, status, result)
                 -- Called when the task has reached a completed state.
                 --
-                local timer = vim.loop.new_timer()
+                local timer = vim.uv.new_timer()
 
                 local function close_stale()
                     local term = task.strategy.term

@@ -17,9 +17,6 @@ local property_getters = {
     valid = function(buf)
         return api.nvim_buf_is_valid(buf.handle)
     end,
-    number = function(buf)
-        return buf.handle
-    end,
     changedtick = function(buf)
         return api.nvim_buf_get_changedtick(buf.handle)
     end,
@@ -33,14 +30,15 @@ local property_getters = {
 
 local property_setters = {
     name = function(buf, name)
-        return api.nvim_buf_set_name(buf.handle, name)
+        api.nvim_buf_set_name(buf.handle, name)
     end,
     readonly = function(buf, value)
-        return buf:set_option({ readonly = value })
+        buf:set_option({ readonly = value })
     end,
 }
 
 Buffer.__index = function(tbl, key)
+
     local raw = rawget(Buffer, key)
     if raw then
         return raw
@@ -52,7 +50,7 @@ Buffer.__index = function(tbl, key)
     end
 end
 
-Buffer.__indexnew = function(tbl, key, value)
+Buffer.__newindex = function(tbl, key, value)
     local setter = property_setters[key]
     if setter then
         setter(tbl, value)
@@ -111,10 +109,11 @@ end
 
 local mt = getmetatable(Buffer)
 function mt.__call(_, ...)
+    arg = {...}
     if #arg == 0 then
-        arg = { 0, n = 1 }
+        return Buffer:create()
     end
-    if arg["n"] == 1 then
+    if #arg == 1 then
         if type(arg[1]) == "number" then
             return Buffer:from_handle(arg[1])
         elseif type(arg[1]) == "string" then
@@ -293,7 +292,17 @@ end
 --
 -- Module level functions
 --
-M.list = function(opts)
+function M.list()
+    local bufs = {}
+    local handles = api.nvim_list_bufs()
+    for i, handle in ipairs(handles) do
+        local buf = Buffer:_new(handle)
+        bufs[i] = buf
+    end
+    return bufs
+end
+
+function M.find(opts)
     opts = opts or {}
     local bufs = {}
     local handles = api.nvim_list_bufs()

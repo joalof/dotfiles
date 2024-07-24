@@ -1,10 +1,14 @@
 local tablex = require("lib.tablex")
 
+-- Define the Set class
 local Set = setmetatable({}, {})
 local M = { Set = Set }
 
 Set.__index = Set
 
+--- Creates a new set.
+-- @param data A table containing the initial elements for the set (optional).
+-- @return A new set object.
 function Set:new(data)
     data = data or {}
     local data_new = {}
@@ -21,15 +25,22 @@ function Set:new(data)
     return data_new
 end
 
+--- Checks if the set contains an element.
+-- @param elem The element to check.
+-- @return True if the element is in the set, false otherwise.
 function Set:has(elem)
     return self[elem] ~= nil
 end
 
+--- Adds an element to the set.
+-- @param elem The element to add.
 function Set:add(elem)
     self[elem] = true
 end
 
--- s <= t
+--- Checks if the set is a subset of another set.
+-- @param other The other set.
+-- @return True if the set is a subset of the other set, false otherwise.
 function Set:is_subset(other)
     for elem in pairs(self) do
         if not other[elem] then
@@ -39,10 +50,16 @@ function Set:is_subset(other)
     return true
 end
 
+--- Metamethod for the subset comparison (<=).
+-- @param other The other set.
+-- @return True if the set is a subset of the other set, false otherwise.
 function Set:__le(other)
     return Set:is_subset(other)
 end
 
+--- Returns the union of the set with another set.
+-- @param other The other set.
+-- @return A new set containing all elements from both sets.
 function Set:union(other)
     local res = Set()
     for elem in pairs(self) do
@@ -54,12 +71,16 @@ function Set:union(other)
     return res
 end
 
--- bor not supported in luajit
+--- Metamethod for the union operation (+).
+-- @param other The other set.
+-- @return A new set containing all elements from both sets.
 function Set:__add(other)
     return Set.union(self, other)
 end
 
--- s & t
+--- Returns the intersection of the set with another set.
+-- @param other The other set.
+-- @return A new set containing only the elements common to both sets.
 function Set:intersection(other)
     local res = Set()
     for elem in pairs(self) do
@@ -70,12 +91,16 @@ function Set:intersection(other)
     return res
 end
 
--- band not supported in luajit
+--- Metamethod for the intersection operation (/).
+-- @param other The other set.
+-- @return A new set containing only the elements common to both sets.
 function Set:__div(other)
     return Set:intersection(other)
 end
 
--- s - t
+--- Returns the difference of the set with another set.
+-- @param other The other set.
+-- @return A new set containing the elements in the set but not in the other set.
 function Set:difference(other)
     local res = Set()
     for elem in pairs(self) do
@@ -86,11 +111,16 @@ function Set:difference(other)
     return res
 end
 
+--- Metamethod for the difference operation (-).
+-- @param other The other set.
+-- @return A new set containing the elements in the set but not in the other set.
 function Set:__sub(other)
     return Set.difference(self, other)
 end
 
--- s ^ t
+--- Returns the symmetric difference of the set with another set.
+-- @param other The other set.
+-- @return A new set containing elements in either set but not in both.
 function Set:symmetric_difference(other)
     local res = Set()
     for elem in pairs(self) do
@@ -106,16 +136,23 @@ function Set:symmetric_difference(other)
     return res
 end
 
+--- Metamethod for the symmetric difference operation (^).
+-- @param other The other set.
+-- @return A new set containing elements in either set but not in both.
 function Set:__pow(other)
     return Set.symmetric_difference(self, other)
 end
 
+--- Updates the set, adding elements from another set.
+-- @param other The other set.
 function Set:update(other)
     for elem in pairs(other) do
         self[elem] = true
     end
 end
 
+--- Updates the set, keeping only the elements also found in another set.
+-- @param other The other set.
 function Set:intersection_update(other)
     for elem in pairs(self) do
         if other[elem] == nil then
@@ -124,6 +161,8 @@ function Set:intersection_update(other)
     end
 end
 
+--- Updates the set, removing elements found in another set.
+-- @param other The other set.
 function Set:difference_update(other)
     for elem in pairs(self) do
         if other[elem] then
@@ -132,6 +171,8 @@ function Set:difference_update(other)
     end
 end
 
+--- Updates the set, performing a symmetric difference with another set.
+-- @param other The other set.
 function Set:symmetric_difference_update(other)
     for elem in pairs(other) do
         if self[elem] then
@@ -142,6 +183,8 @@ function Set:symmetric_difference_update(other)
     end
 end
 
+--- Removes and returns an arbitrary element from the set.
+-- @return An element from the set.
 function Set:pop()
     for elem in pairs(self) do
         self[elem] = nil
@@ -149,10 +192,14 @@ function Set:pop()
     end
 end
 
+--- Removes an element from the set.
+-- @param elem The element to remove.
 function Set:remove(elem)
     self[elem] = nil
 end
 
+--- Creates a copy of the set.
+-- @return A new set that is a copy of the current set.
 function Set:copy()
     local res = Set()
     for elem in pairs(self) do
@@ -161,6 +208,9 @@ function Set:copy()
     return res
 end
 
+--- Checks if two sets are equal.
+-- @param other The other set.
+-- @return True if the sets contain the same elements, false otherwise.
 function Set:__eq(other)
     for elem in pairs(self) do
         if not other[elem] then
@@ -175,6 +225,8 @@ function Set:__eq(other)
     return true
 end
 
+--- Converts the set to a string representation.
+-- @return A string representing the set.
 function Set:__tostring()
     local s = "Set{"
     for elem in pairs(self) do
@@ -184,6 +236,8 @@ function Set:__tostring()
     return s
 end
 
+--- Returns the number of elements in the set.
+-- @return The number of elements in the set.
 function Set:len()
     local count = 0
     for _ in pairs(self) do
@@ -192,6 +246,9 @@ function Set:len()
     return count
 end
 
+-- Metamethod for calling the Set constructor.
+-- @param opts The initial elements for the set (optional).
+-- @return A new set object.
 local mt = getmetatable(Set)
 function mt.__call(_, opts)
     return Set:new(opts)

@@ -1,5 +1,3 @@
-require("table.new")
-
 local M = {}
 
 -- useful functions from https://github.com/mobily/.nvim/blob/main/lua/utils/fn.lua
@@ -13,13 +11,16 @@ function M.is_listlike(tbl)
     return vim.islist(tbl)
 end
 
-function M.shallow_copy(tbl)
-    local t_new = table.new(#tbl, 0)
-    for i, x in ipairs(tbl) do
-        t_new[i] = x
-    end
-    return t_new
+function M.is_dictlike(tbl)
+    return #tbl == 0
 end
 
+function M.shallow_copy(tbl)
+    local tbl_copy = {}
+    for key, val in pairs(tbl) do
+        tbl_copy[key] = val
+    end
+    return tbl_copy
+end
 
 return M
