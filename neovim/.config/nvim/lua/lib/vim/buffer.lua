@@ -109,15 +109,15 @@ end
 
 local mt = getmetatable(Buffer)
 function mt.__call(_, ...)
-    arg = {...}
-    if #arg == 0 then
+    args = {...}
+    if #args == 0 then
         return Buffer:create()
     end
-    if #arg == 1 then
-        if type(arg[1]) == "number" then
-            return Buffer:from_handle(arg[1])
-        elseif type(arg[1]) == "string" then
-            return Buffer:from_name(arg[1])
+    if #args == 1 then
+        if type(args[1]) == "number" then
+            return Buffer:from_handle(args[1])
+        elseif type(args[1]) == "string" then
+            return Buffer:from_name(args[1])
         end
     end
 end

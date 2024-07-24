@@ -122,12 +122,12 @@ end
 
 local mt = getmetatable(Window)
 function mt.__call(_, ...)
-    if #arg == 0 then
-        arg = { 0, n = 1 }
+    if #args == 0 then
+        args = { 0, n = 1 }
     end
-    if arg["n"] == 1 then
-        if type(arg[1]) == "number" then
-            return Window:from_handle(arg[1])
+    if args["n"] == 1 then
+        if type(args[1]) == "number" then
+            return Window:from_handle(args[1])
         end
     end
 end
