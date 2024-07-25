@@ -53,9 +53,6 @@ local property_setters = {
     height = function(win, val)
         api.nvim_win_set_height(win.handle, val)
     end,
-    cursor = function(win, val)
-        api.nvim_win_set_cursor(win.handle, val)
-    end,
 }
 
 Window.__index = function(tbl, key)
@@ -145,6 +142,11 @@ end
 
 function Window:focus()
     M.set_current(self)
+end
+
+function Window:get_cursor()
+    local Cursor = require('lib.vim.cursor').Cursor
+    return Cursor(self.handle)
 end
 
 function Window:set_var(name, value)
