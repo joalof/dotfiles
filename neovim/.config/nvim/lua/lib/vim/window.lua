@@ -34,6 +34,10 @@ local property_getters = {
     float = function(win)
         return vim.api.nvim_win_get_config(win.handle).relative ~= ""
     end,
+    cursor = function(win)
+        local Cursor = require('lib.vim.cursor').Cursor
+        return Cursor(win.handle)
+    end,
 }
 
 local property_setters = {
@@ -89,14 +93,13 @@ end
 -- gets an existing Window from it's handle
 function Window:from_handle(handle)
     if handle == 0 then
-        return Window:_new(api.nvim_get_current_win())
-    end
-    local existing_handles = api.nvim_list_wins()
-    for _, hand in ipairs(existing_handles) do
-        if hand == handle then
+        return Window:_new(0)
+    else
+        if api.nvim_win_is_valid(handle) then
             return Window:_new(handle)
         end
     end
+    error(string.format('Window with handle %d is not valid', handle))
 end
 
 -- Opens a new window on given buffer
@@ -145,8 +148,11 @@ function Window:focus()
 end
 
 function Window:get_cursor()
-    local Cursor = require('lib.vim.cursor').Cursor
-    return Cursor(self.handle)
+    return api.nvim_win_get_cursor(self.handle)
+end
+
+function Window:set_cursor(pos)
+    return api.nvim_win_set_cursor(self.handle, pos)
 end
 
 function Window:set_var(name, value)

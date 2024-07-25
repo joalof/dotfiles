@@ -60,7 +60,7 @@ Buffer.__newindex = function(tbl, key, value)
 end
 
 -- creates a Buffer object with given handle that
--- is not guaranteed to correspond to any actual buffer
+-- is not guaranteed to correspond to an actual valid buffer
 function Buffer:_new(handle)
     local buf = {
         handle = handle,
@@ -81,20 +81,19 @@ function Buffer:create(name, listed, scratch)
     return buf
 end
 
--- gets an existing Buffer from it's handle
+-- Gets an existing Buffer from it's handle
 function Buffer:from_handle(handle)
     if handle == 0 then
         return Buffer:_new(0)
-    end
-    local existing_handles = api.nvim_list_bufs()
-    for _, hand in ipairs(existing_handles) do
-        if hand == handle then
+    else
+        if api.nvim_buf_is_valid(handle) then
             return Buffer:_new(handle)
         end
     end
+    error(string.format('Buffer with handle %d is not valid', handle))
 end
 
--- Gets an existing Buffer by name or creates a new one
+-- Gets an existing Buffer or creates a new one with a given name
 function Buffer:from_name(name)
     local existing_handles = api.nvim_list_bufs()
     for _, hand in ipairs(existing_handles) do

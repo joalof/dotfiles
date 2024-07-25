@@ -62,26 +62,28 @@ end
 -- gets an existing tabdow from it's handle
 function Tabpage:from_handle(handle)
     if handle == 0 then
-        return Tabpage:_new(api.nvim_get_current_tab())
-    end
-    local existing_handles = api.nvim_list_tabpages()
-    for _, hand in ipairs(existing_handles) do
-        if hand == handle then
+        return Tabpage:_new(api.nvim_get_current_tabpage())
+    else
+        if api.nvim_tabpage_is_valid(handle) then
             return Tabpage:_new(handle)
         end
     end
+    error(string.format("Tabpage with handle %d is not valid", handle))
 end
 
 -- Opens a new tabdow on given buffer
-function Tabpage:open(buffer, enter, config)
-    local Buffer = require("lib.vim.buffer").Buffer
-    enter = enter or true
-    config = config or {}
-    if oop.is_instance(buffer, Buffer) then
-        buffer = buffer.handle
+function Tabpage:open(buffer)
+    local cmd = { cmd = "tabnew" }
+    cmd.args = buffer
+    api.nvim_cmd(cmd, {})
+    return Tabpage:from_handle(0)
+end
+
+function Tabpage:close()
+    for _, win in self:list_windows() do
+        win:close()
     end
-    local handle = api.nvim_open_tab(buffer, enter, config)
-    return Tabpage:_new(handle)
+    self = nil
 end
 
 local mt = getmetatable(Tabpage)
@@ -106,7 +108,6 @@ function Tabpage:list_windows()
     end
     return wins
 end
-
 
 function Tabpage:set_var(name, value)
     api.nvim_tabpage_set_var(self.handle, name, value)
