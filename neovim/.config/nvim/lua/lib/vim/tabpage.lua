@@ -11,7 +11,7 @@ local property_getters = {
     end,
     current_window = function(tab)
         local Window = require("lib.vim.window").Window
-        return Window(api.nvim_tabpage_get_win(tab.handle))
+        return Window:from_handle(api.nvim_tabpage_get_win(tab.handle))
     end,
     valid = function(tab)
         return api.nvim_tabpage_is_valid(tab.handle)
@@ -104,7 +104,7 @@ function Tabpage:list_windows()
     local handles = api.nvim_tabpage_list_wins(self.handle)
     local wins = {}
     for i, hand in ipairs(handles) do
-        wins[i] = Window(hand)
+        wins[i] = Window:from_handle(hand)
     end
     return wins
 end

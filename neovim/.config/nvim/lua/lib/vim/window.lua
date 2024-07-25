@@ -8,7 +8,7 @@ local M = { Window = Window }
 local property_getters = {
     buffer = function(win)
         local Buffer = require("lib.vim.buffer").Buffer
-        return Buffer(api.nvim_win_get_buf(win.handle))
+        return Buffer:from_handle(api.nvim_win_get_buf(win.handle))
     end,
     config = function(win)
         return api.nvim_win_get_config(win.handle)
@@ -20,7 +20,8 @@ local property_getters = {
         return api.nvim_win_get_position(win.handle)
     end,
     tabpage = function(win)
-        return api.nvim_win_get_tabpage(win.handle)
+        local Tabpage = require("lib.vim.tabpage").Tabpage
+        return Tabpage:from_handle(api.nvim_win_get_tabpage(win.handle))
     end,
     width = function(win)
         return api.nvim_win_get_width(win.handle)

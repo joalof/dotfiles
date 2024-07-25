@@ -1,14 +1,21 @@
 local api = vim.api
+require('table.new')
 
+local M = {}
+
+--
+-- Buffer class
+--
 local Buffer = setmetatable({}, {})
 
-local M = { Buffer = Buffer }
+M.Buffer = Buffer
 
-local property_getters = {
+
+local buffer_getters = {
     name = function(buf)
         return api.nvim_buf_get_name(buf.handle)
     end,
-    length = function(buf)
+    line_count = function(buf)
         return api.nvim_buf_line_count(buf.handle)
     end,
     loaded = function(buf)
@@ -28,7 +35,7 @@ local property_getters = {
     end,
 }
 
-local property_setters = {
+local buffer_setters = {
     name = function(buf, name)
         api.nvim_buf_set_name(buf.handle, name)
     end,
@@ -44,14 +51,14 @@ Buffer.__index = function(tbl, key)
         return raw
     end
 
-    local getter = property_getters[key]
+    local getter = buffer_getters[key]
     if getter then
         return getter(tbl)
     end
 end
 
 Buffer.__newindex = function(tbl, key, value)
-    local setter = property_setters[key]
+    local setter = buffer_setters[key]
     if setter then
         setter(tbl, value)
     else
@@ -59,9 +66,13 @@ Buffer.__newindex = function(tbl, key, value)
     end
 end
 
--- creates a Buffer object with given handle that
--- is not guaranteed to correspond to an actual valid buffer
-function Buffer:_new(handle)
+function Buffer:new(handle, verify)
+    verify = verify or true
+    if verify and handle ~= 0 then
+        if not api.nvim_buf_is_valid(handle) then
+            error(string.format('Buffer with handle %d is not valid', handle))
+        end
+    end
     local buf = {
         handle = handle,
     }
@@ -74,24 +85,13 @@ function Buffer:create(name, listed, scratch)
     listed = listed or true
     scratch = scratch or false
     local handle = api.nvim_create_buf(listed, scratch)
-    local buf = Buffer:_new(handle)
+    local buf = Buffer:new(handle, false)
     if name then
         buf.name = name
     end
     return buf
 end
 
--- Gets an existing Buffer from it's handle
-function Buffer:from_handle(handle)
-    if handle == 0 then
-        return Buffer:_new(0)
-    else
-        if api.nvim_buf_is_valid(handle) then
-            return Buffer:_new(handle)
-        end
-    end
-    error(string.format('Buffer with handle %d is not valid', handle))
-end
 
 -- Gets an existing Buffer or creates a new one with a given name
 function Buffer:from_name(name)
@@ -99,26 +99,22 @@ function Buffer:from_name(name)
     for _, hand in ipairs(existing_handles) do
         local buf_name = api.nvim_buf_get_name(hand)
         if buf_name == name then
-            return Buffer:_new(hand)
+            return Buffer:new(hand, false)
         end
     end
-    local buf_new = Buffer:create(name)
-    return buf_new
+    error(string.format('Buffer with name %s does not exist', name))
 end
 
-local mt = getmetatable(Buffer)
-function mt.__call(_, ...)
-    args = {...}
-    if #args == 0 then
-        return Buffer:create()
-    end
+local Buffer_mt = getmetatable(Buffer)
+function Buffer_mt.__call(_, ...)
     if #args == 1 then
         if type(args[1]) == "number" then
-            return Buffer:from_handle(args[1])
+            return Buffer:new(args[1])
         elseif type(args[1]) == "string" then
             return Buffer:from_name(args[1])
         end
     end
+    error(string.format('No constructor matching arguments.'))
 end
 
 function Buffer:is_file()
@@ -247,9 +243,6 @@ function Buffer:call(fun)
     return res
 end
 
---
--- Extmark-related functions
---
 function Buffer:add_highlight(hl_group, line, col_start, col_stop, ns_id)
     ns_id = ns_id or 0
     col_start = col_start or 0
@@ -289,27 +282,110 @@ function Buffer:del_extmark(ns_id, id)
 end
 
 --
--- Module level functions
+-- BufferList class
 --
-function M.list()
-    local bufs = {}
-    local handles = api.nvim_list_bufs()
-    for i, handle in ipairs(handles) do
-        local buf = Buffer:_new(handle)
-        bufs[i] = buf
+local BufferList = setmetatable({}, {})
+
+M.BufferList = BufferList
+
+local bufferlist_getters = {
+    handles = function(buf_list)
+        local res = table.new(#buf_list, 0)
+        for i, buf in buf_list do
+            res[i] = buf.handle
+        end
+        return res
+    end,
+    names = function(buf_list)
+        local res = table.new(#buf_list, 0)
+        for i, buf in buf_list do
+            res[i] = buf.name
+        end
+        return res
+    end,
+}
+
+BufferList.__index = function(tbl, key)
+    if type(key) == "number" then
+        return tbl[key]
     end
+    local getter = bufferlist_getters[key]
+    if getter then
+        return getter(tbl)
+    else
+    end
+end
+
+
+-- creates a BufferList object with given handles that
+-- are not guaranteed to correspond to actual valid buffers
+function BufferList:new(handles)
+    local buf_list = table.new(#handles, 0)
+    for i, hand in ipairs(handles) do
+        buf_list[i] = Buffer:new(hand)
+    end
+    setmetatable(buf_list, BufferList)
+    return buf_list
+end
+
+function BufferList:from_names(names)
+    local bufs = table.new(#names, 0)
+    for i, name in ipairs(names) do
+        bufs[i] = Buffer:from_name(name)
+    end
+    setmetatable(bufs, BufferList)
     return bufs
 end
 
-function M.find(opts)
-    opts = opts or {}
-    local bufs = {}
-    local handles = api.nvim_list_bufs()
-    for i, handle in ipairs(handles) do
-        local buf = Buffer:_new(handle)
-        bufs[i] = buf
+local BufferList_mt = getmetatable(BufferList)
+function BufferList_mt.__call(_, ...)
+    args = {...}
+    if #args == 1 and type(args[1]) == "table" then
+        if type(args[1][1]) == 'number' then
+            return BufferList:from_handles(args[1])
+        elseif type(args[1][1]) == 'string' then
+            return BufferList:from_names(args[1])
+        end
     end
+    error('No constructor for given arguments.')
+end
+
+function BufferList:get_property(property)
+    local res = table.new(#self.handles, 0)
+    for i, buf in ipairs(self) do
+        res[i] = buf[property]
+    end
+    return res
+end
+
+function BufferList:filter(fun)
+    local bufs = {}
+    for i, buf in ipairs(self) do
+        if fun(buf) then
+            bufs[i] = self.handles[i]
+        end
+    end
+    setmetatable(bufs, BufferList)
     return bufs
+end
+
+function BufferList:filter_by(property, value)
+    local bufs = {}
+    for i, buf in ipairs(self) do
+        if buf[property] == value then
+            bufs[i] = buf
+        end
+    end
+    setmetatable(bufs, BufferList)
+    return bufs
+end
+
+--
+-- Module level functions
+--
+function M.list()
+    local handles = api.nvim_list_bufs()
+    return BufferList:from_handles(handles)
 end
 
 return M
