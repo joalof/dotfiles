@@ -5,34 +5,31 @@ local Cursor = setmetatable({}, {})
 
 local M = { Cursor = Cursor }
 
-
-local property_getters = {
+local Cursor_getters = {
     position = function(cursor)
         return Vector(api.nvim_win_get_cursor(cursor.window_handle))
     end,
 }
 
-local property_setters = {
+local Cursor_setters = {
     position = function(cursor, pos)
-         api.nvim_win_set_cursor(cursor.window_handle, pos)
+        api.nvim_win_set_cursor(cursor.window_handle, pos)
     end,
 }
-
 
 Cursor.__index = function(tbl, key)
     local raw = rawget(Cursor, key)
     if raw then
         return raw
     end
-
-    local getter = property_getters[key]
+    local getter = Cursor_getters[key]
     if getter then
         return getter(tbl)
     end
 end
 
 Cursor.__newindex = function(tbl, key, value)
-    local setter = property_setters[key]
+    local setter = Cursor_setters[key]
     if setter then
         setter(tbl, value)
     else
@@ -40,7 +37,17 @@ Cursor.__newindex = function(tbl, key, value)
     end
 end
 
-function Cursor:_new(win_handle)
+function Cursor:new(win_handle, verify)
+    if win_handle == 0 then
+        win_handle = api.nvim_get_current_win()
+    else
+        verify = verify or true
+        if verify then
+            if api.nvim_win_is_valid(win_handle) then
+                error(string.format('Window with handle %d is not valid', win_handle))
+            end
+        end
+    end
     local cursor = {
         window_handle = win_handle,
     }
@@ -57,8 +64,10 @@ function Cursor:set(pos)
     api.nvim_win_set_cursor(self.window_handle, pos)
 end
 
-function Cursor:translate(pos)
-    self:set(self:get() + pos)
+function Cursor:translate(vec)
+    local pos_new = self.position + vec
+    self.position = pos_new
+    return pos_new
 end
 
 function Cursor:with_anchor(fun, ...)

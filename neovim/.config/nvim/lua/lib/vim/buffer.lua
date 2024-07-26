@@ -11,7 +11,7 @@ local Buffer = setmetatable({}, {})
 M.Buffer = Buffer
 
 
-local buffer_getters = {
+local Buffer_getters = {
     name = function(buf)
         return api.nvim_buf_get_name(buf.handle)
     end,
@@ -33,9 +33,14 @@ local buffer_getters = {
     filetype = function(buf)
         return buf:get_option("filetype")
     end,
+    is_file = function(buf)
+        local Path = require("lib.path").Path
+        local buf_path = Path(buf.name)
+        return buf_path:is_file()
+    end
 }
 
-local buffer_setters = {
+local Buffer_setters = {
     name = function(buf, name)
         api.nvim_buf_set_name(buf.handle, name)
     end,
@@ -51,14 +56,14 @@ Buffer.__index = function(tbl, key)
         return raw
     end
 
-    local getter = buffer_getters[key]
+    local getter = Buffer_getters[key]
     if getter then
         return getter(tbl)
     end
 end
 
 Buffer.__newindex = function(tbl, key, value)
-    local setter = buffer_setters[key]
+    local setter = Buffer_setters[key]
     if setter then
         setter(tbl, value)
     else
@@ -67,10 +72,14 @@ Buffer.__newindex = function(tbl, key, value)
 end
 
 function Buffer:new(handle, verify)
-    verify = verify or true
-    if verify and handle ~= 0 then
-        if not api.nvim_buf_is_valid(handle) then
-            error(string.format('Buffer with handle %d is not valid', handle))
+    if handle == 0 then
+        handle = api.nvim_get_current_buf()
+    else
+        verify = verify or true
+        if verify then
+            if not api.nvim_buf_is_valid(handle) then
+                error(string.format('Buffer with handle %d is not valid', handle))
+            end
         end
     end
     local buf = {
@@ -107,6 +116,7 @@ end
 
 local Buffer_mt = getmetatable(Buffer)
 function Buffer_mt.__call(_, ...)
+    args = {...}
     if #args == 1 then
         if type(args[1]) == "number" then
             return Buffer:new(args[1])
@@ -114,14 +124,9 @@ function Buffer_mt.__call(_, ...)
             return Buffer:from_name(args[1])
         end
     end
-    error(string.format('No constructor matching arguments.'))
+    error(string.format('No constructor matching arguments'))
 end
 
-function Buffer:is_file()
-    local Path = require("lib.path").Path
-    local buf_path = Path(self.name)
-    return buf_path:is_file()
-end
 
 function Buffer:get_option(opt_name)
     if type(opt_name) == "string" then
@@ -142,9 +147,20 @@ function Buffer:set_option(opts)
     end
 end
 
+function Buffer:write()
+    -- TODO use plenary
+end
+
 function Buffer:delete(opts)
     opts = opts or {}
     api.nvim_buf_delete(self.handle, opts)
+end
+
+function Buffer:get_parent_windows()
+    local wn = require('lib.vim.window')
+    local wins = wn.list()
+    local parents = wins:filter(function(win) return win.buffer.handle == self.handle end)
+    return parents
 end
 
 function Buffer:set_lines(lines, start, stop, strict_indexing)
@@ -312,7 +328,10 @@ BufferList.__index = function(tbl, key)
     local getter = bufferlist_getters[key]
     if getter then
         return getter(tbl)
-    else
+    end
+    local raw = rawget(BufferList, key)
+    if raw then
+        return raw
     end
 end
 
@@ -342,7 +361,7 @@ function BufferList_mt.__call(_, ...)
     args = {...}
     if #args == 1 and type(args[1]) == "table" then
         if type(args[1][1]) == 'number' then
-            return BufferList:from_handles(args[1])
+            return BufferList:new(args[1])
         elseif type(args[1][1]) == 'string' then
             return BufferList:from_names(args[1])
         end
@@ -383,9 +402,17 @@ end
 --
 -- Module level functions
 --
+function M.set_current(buf)
+    local oop = require('lib.oop')
+    if oop.is_instance(buf, Buffer) then
+        buf = buf.handle
+    end
+    api.nvim_set_current_buf(buf)
+end
+
 function M.list()
     local handles = api.nvim_list_bufs()
-    return BufferList:from_handles(handles)
+    return BufferList:new(handles)
 end
 
 return M

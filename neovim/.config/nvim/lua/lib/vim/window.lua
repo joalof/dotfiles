@@ -1,3 +1,4 @@
+require('table.new')
 local api = vim.api
 local oop = require("lib.oop")
 
@@ -5,10 +6,10 @@ local Window = setmetatable({}, {})
 
 local M = { Window = Window }
 
-local property_getters = {
+local Window_getters = {
     buffer = function(win)
         local Buffer = require("lib.vim.buffer").Buffer
-        return Buffer:from_handle(api.nvim_win_get_buf(win.handle))
+        return Buffer:new(api.nvim_win_get_buf(win.handle), false)
     end,
     config = function(win)
         return api.nvim_win_get_config(win.handle)
@@ -37,11 +38,11 @@ local property_getters = {
     end,
     cursor = function(win)
         local Cursor = require('lib.vim.cursor').Cursor
-        return Cursor(win.handle)
+        return Cursor:new(win.handle, false)
     end,
 }
 
-local property_setters = {
+local Window_setters = {
     buffer = function(win, val)
         local Buffer = require("lib.vim.buffer").Buffer
         if oop.is_instance(val, Buffer) then
@@ -66,14 +67,14 @@ Window.__index = function(tbl, key)
         return raw
     end
 
-    local getter = property_getters[key]
+    local getter = Window_getters[key]
     if getter then
         return getter(tbl)
     end
 end
 
 Window.__newindex = function(tbl, key, value)
-    local setter = property_setters[key]
+    local setter = Window_setters[key]
     if setter then
         setter(tbl, value)
     else
@@ -81,9 +82,18 @@ Window.__newindex = function(tbl, key, value)
     end
 end
 
--- creates a Win object with given handle that
--- is not guaranteed to correspond to any actual win
-function Window:_new(handle)
+-- creates a Win object
+function Window:new(handle, verify)
+    if handle == 0 then
+        handle = api.nvim_get_current_win()
+    else
+        verify = verify or true
+        if verify then
+            if not api.nvim_win_is_valid(handle) then
+                error(string.format('Window with handle %d is not valid', handle))
+            end
+        end
+    end
     local win = {
         handle = handle,
     }
@@ -91,17 +101,6 @@ function Window:_new(handle)
     return win
 end
 
--- gets an existing Window from it's handle
-function Window:from_handle(handle)
-    if handle == 0 then
-        return Window:_new(0)
-    else
-        if api.nvim_win_is_valid(handle) then
-            return Window:_new(handle)
-        end
-    end
-    error(string.format('Window with handle %d is not valid', handle))
-end
 
 -- Opens a new window on given buffer
 function Window:open(buffer, enter, config)
@@ -112,7 +111,7 @@ function Window:open(buffer, enter, config)
         buffer = buffer.handle
     end
     local handle = api.nvim_open_win(buffer, enter, config)
-    return Window:_new(handle)
+    return Window:new(handle, false)
 end
 
 function Window:open_float(buffer, enter, config)
@@ -121,14 +120,14 @@ end
 function Window:split(buffer, enter, config)
 end
 
-local mt = getmetatable(Window)
-function mt.__call(_, ...)
+local Window_mt = getmetatable(Window)
+function Window_mt.__call(_, ...)
     if #args == 0 then
         args = { 0, n = 1 }
     end
     if args["n"] == 1 then
         if type(args[1]) == "number" then
-            return Window:from_handle(args[1])
+            return Window:new(args[1])
         end
     end
 end
@@ -145,7 +144,6 @@ function Window:hide()
 end
 
 function Window:focus()
-    M.set_current(self)
 end
 
 function Window:get_cursor()
@@ -178,6 +176,97 @@ function Window:text_height(opts)
     return info
 end
 
+
+--
+-- WindowList class
+--
+local WindowList = setmetatable({}, {})
+
+M.WindowList = WindowList
+
+local WindowList_getters = {
+    handles = function(buf_list)
+        local handles = table.new(#buf_list, 0)
+        for i, buf in buf_list do
+            handles[i] = buf.handle
+        end
+        return handles
+    end,
+}
+
+WindowList.__index = function(tbl, key)
+    if type(key) == "number" then
+        return tbl[key]
+    end
+    local getter = WindowList_getters[key]
+    if getter then
+        return getter(tbl)
+    end
+    local raw = rawget(WindowList, key)
+    if raw then
+        return raw
+    end
+end
+
+
+-- creates a BufferList object with given handles that
+-- are not guaranteed to correspond to actual valid buffers
+function WindowList:new(handles, verify)
+    verify = verify or true
+    local win_list = table.new(#handles, 0)
+    for i, hand in ipairs(handles) do
+        win_list[i] = Window:new(hand, verify)
+    end
+    setmetatable(win_list, WindowList)
+    return win_list
+end
+
+local WindowList_mt = getmetatable(WindowList)
+function WindowList_mt.__call(_, ...)
+    args = {...}
+    if #args == 1 and type(args[1]) == "table" then
+        if type(args[1][1]) == 'number' then
+            return WindowList:new(args[1])
+        elseif oop.is_instance(args[1][1], Window) then
+            local wins = args[1]
+            setmetatable(wins, WindowList)
+            return wins
+        end
+    end
+    error('No constructor for given arguments.')
+end
+
+function WindowList:get_property(property)
+    local res = table.new(#self.handles, 0)
+    for i, win in ipairs(self) do
+        res[i] = win[property]
+    end
+    return res
+end
+
+function WindowList:filter(fun)
+    local wins = {}
+    for i, win in ipairs(self) do
+        if fun(win) then
+            wins[i] = win
+        end
+    end
+    setmetatable(wins, WindowList)
+    return wins
+end
+
+function WindowList:filter_by(property, value)
+    local wins = {}
+    for i, win in ipairs(self) do
+        if win[property] == value then
+            wins[i] = win
+        end
+    end
+    setmetatable(wins, WindowList)
+    return wins
+end
+
+
 --
 -- Module level functions
 --
@@ -189,24 +278,8 @@ function M.set_current(win)
 end
 
 function M.list()
-    local wins = {}
     local handles = api.nvim_list_wins()
-    for i, handle in ipairs(handles) do
-        local win = Window:_new(handle)
-        wins[i] = win
-    end
-    return wins
-end
-
-function M.find(opts)
-    opts = opts or {}
-    local wins = {}
-    local handles = api.nvim_list_wins()
-    for i, handle in ipairs(handles) do
-        local win = Window:_new(handle)
-        wins[i] = win
-    end
-    return wins
+    return WindowList:new(handles, false)
 end
 
 return M
