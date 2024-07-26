@@ -1,56 +1,81 @@
 local api = vim.api
-require('table.new')
+require("table.new")
 
 local M = {}
 
---
--- Buffer class
---
+--- @class Buffer
+--- @field handle number The handle of the buffer
+--- @field name string The name of the buffer
+--- @field line_count number The number of lines in the buffer (readonly)
+--- @field loaded boolean Indicates if the buffer is loaded (readonly)
+--- @field valid boolean Indicates if the buffer is valid (readonly)
+--- @field changedtick number The changedtick of the buffer (readonly)
+--- @field readonly boolean Indicates if the buffer is readonly
+--- @field filetype string The filetype of the buffer (readonly)
+--- @field is_file boolean Indicates if the buffer corresponds to a file (readonly)
 local Buffer = setmetatable({}, {})
 
 M.Buffer = Buffer
 
-
 local Buffer_getters = {
+    --- @param buf Buffer
+    --- @return string
     name = function(buf)
         return api.nvim_buf_get_name(buf.handle)
     end,
+    --- @param buf Buffer
+    --- @return number
     line_count = function(buf)
         return api.nvim_buf_line_count(buf.handle)
     end,
+    --- @param buf Buffer
+    --- @return boolean
     loaded = function(buf)
         return api.nvim_buf_is_loaded(buf.handle)
     end,
+    --- @param buf Buffer
+    --- @return boolean
     valid = function(buf)
         return api.nvim_buf_is_valid(buf.handle)
     end,
+    --- @param buf Buffer
+    --- @return number
     changedtick = function(buf)
         return api.nvim_buf_get_changedtick(buf.handle)
     end,
+    --- @param buf Buffer
+    --- @return string
     readonly = function(buf)
         return buf:get_option("readonly")
     end,
+    --- @param buf Buffer
+    --- @return string
     filetype = function(buf)
         return buf:get_option("filetype")
     end,
+    --- @param buf Buffer
+    --- @return boolean
     is_file = function(buf)
         local Path = require("lib.path").Path
         local buf_path = Path(buf.name)
         return buf_path:is_file()
-    end
+    end,
 }
 
 local Buffer_setters = {
+    --- @param buf Buffer
+    --- @param name string
     name = function(buf, name)
         api.nvim_buf_set_name(buf.handle, name)
     end,
+    --- @param buf Buffer
+    --- @param value boolean
     readonly = function(buf, value)
-        buf:set_option({ readonly = value })
+        buf:set_option("readonly", value)
     end,
 }
 
 Buffer.__index = function(tbl, key)
-
     local raw = rawget(Buffer, key)
     if raw then
         return raw
@@ -71,6 +96,10 @@ Buffer.__newindex = function(tbl, key, value)
     end
 end
 
+--- Creates a new Buffer instance
+--- @param handle number The handle of the buffer
+--- @param verify boolean Whether to verify the buffer handle
+--- @return Buffer
 function Buffer:new(handle, verify)
     if handle == 0 then
         handle = api.nvim_get_current_buf()
@@ -78,7 +107,7 @@ function Buffer:new(handle, verify)
         verify = verify or true
         if verify then
             if not api.nvim_buf_is_valid(handle) then
-                error(string.format('Buffer with handle %d is not valid', handle))
+                error(string.format("Buffer with handle %d is not valid", handle))
             end
         end
     end
@@ -89,7 +118,11 @@ function Buffer:new(handle, verify)
     return buf
 end
 
--- creates a new Buffer
+--- Creates a new Buffer in neovim 
+--- @param name string? Name of the new buffer
+--- @param listed boolean? Name of the new buffer
+--- @param scratch boolean? Name of the new buffer
+--- @return Buffer
 function Buffer:create(name, listed, scratch)
     listed = listed or true
     scratch = scratch or false
@@ -101,8 +134,9 @@ function Buffer:create(name, listed, scratch)
     return buf
 end
 
-
--- Gets an existing Buffer or creates a new one with a given name
+--- Gets an existing Buffer from it's name
+--- @param name string? Name of the new buffer
+--- @return Buffer
 function Buffer:from_name(name)
     local existing_handles = api.nvim_list_bufs()
     for _, hand in ipairs(existing_handles) do
@@ -111,12 +145,12 @@ function Buffer:from_name(name)
             return Buffer:new(hand, false)
         end
     end
-    error(string.format('Buffer with name %s does not exist', name))
+    error(string.format("Buffer with name %s does not exist", name))
 end
 
 local Buffer_mt = getmetatable(Buffer)
 function Buffer_mt.__call(_, ...)
-    args = {...}
+    args = { ... }
     if #args == 1 then
         if type(args[1]) == "number" then
             return Buffer:new(args[1])
@@ -124,24 +158,38 @@ function Buffer_mt.__call(_, ...)
             return Buffer:from_name(args[1])
         end
     end
-    error(string.format('No constructor matching arguments'))
+    error(string.format("No constructor matching arguments"))
 end
 
-
+--- Gets a buffer option
+--- @param opt_name string
+--- @return any
 function Buffer:get_option(opt_name)
-    if type(opt_name) == "string" then
-        local value = api.nvim_get_option_value(opt_name, { buf = self.handle })
-        return value
-    else
-        local opts = {}
-        for _, name in ipairs(opt_name) do
-            opts[name] = api.nvim_get_option_value(name, { buf = self.handle })
-        end
-        return opts
-    end
+    local value = api.nvim_get_option_value(opt_name, { buf = self.handle })
+    return value
 end
 
-function Buffer:set_option(opts)
+--- Gets several buffer option
+--- @param opt_names table<string>
+--- @return table<string, any>
+function Buffer:get_options(opt_names)
+    local opts = {}
+    for _, name in ipairs(opt_names) do
+        opts[name] = api.nvim_get_option_value(name, { buf = self.handle })
+    end
+    return opts
+end
+
+--- Sets a buffer option
+--- @param opt_name string
+--- @param value any
+function Buffer:set_option(opt_name, value)
+    api.nvim_set_option_value(opt_name, value, { buf = self.handle })
+end
+
+--- Sets several buffer option
+--- @param opts table<string, any>
+function Buffer:set_options(opts)
     for name, val in pairs(opts) do
         api.nvim_set_option_value(name, val, { buf = self.handle })
     end
@@ -157,9 +205,11 @@ function Buffer:delete(opts)
 end
 
 function Buffer:get_parent_windows()
-    local wn = require('lib.vim.window')
+    local wn = require("lib.vim.window")
     local wins = wn.list()
-    local parents = wins:filter(function(win) return win.buffer.handle == self.handle end)
+    local parents = wins:filter(function(win)
+        return win.buffer.handle == self.handle
+    end)
     return parents
 end
 
@@ -172,7 +222,7 @@ end
 
 function Buffer:get_lines(start, stop, strict_indexing)
     start = start or 0
-    stop = stop or self.length
+    stop = stop or self.line_count
     strict_indexing = strict_indexing or true
     local lines = api.nvim_buf_get_lines(self.handle, start, stop, strict_indexing)
     return lines
@@ -283,7 +333,6 @@ function Buffer:get_extmarks(ns_id, start, stop, opts)
     opts = opts or {}
     local extmarks = api.nvim_buf_get_extmarks(self.handle, ns_id, start, stop, opts)
     return extmarks
-    
 end
 
 function Buffer:get_extmark_by_id(ns_id, id, opts)
@@ -297,9 +346,12 @@ function Buffer:del_extmark(ns_id, id)
     return success
 end
 
---
+-----------------------------------------------------------------
 -- BufferList class
---
+-----------------------------------------------------------------
+
+--- @class BufferList : table
+--- @field handles table<number> The list of buffer handles
 local BufferList = setmetatable({}, {})
 
 M.BufferList = BufferList
@@ -335,9 +387,9 @@ BufferList.__index = function(tbl, key)
     end
 end
 
-
--- creates a BufferList object with given handles that
--- are not guaranteed to correspond to actual valid buffers
+--- Creates a new BufferList instance
+--- @param handles table<number> The list of buffer handles
+--- @return BufferList
 function BufferList:new(handles)
     local buf_list = table.new(#handles, 0)
     for i, hand in ipairs(handles) do
@@ -347,6 +399,9 @@ function BufferList:new(handles)
     return buf_list
 end
 
+--- Creates a BufferList from a list of buffer names
+--- @param names table<string> The list of buffer names
+--- @return BufferList
 function BufferList:from_names(names)
     local bufs = table.new(#names, 0)
     for i, name in ipairs(names) do
@@ -358,17 +413,20 @@ end
 
 local BufferList_mt = getmetatable(BufferList)
 function BufferList_mt.__call(_, ...)
-    args = {...}
+    args = { ... }
     if #args == 1 and type(args[1]) == "table" then
-        if type(args[1][1]) == 'number' then
+        if type(args[1][1]) == "number" then
             return BufferList:new(args[1])
-        elseif type(args[1][1]) == 'string' then
+        elseif type(args[1][1]) == "string" then
             return BufferList:from_names(args[1])
         end
     end
-    error('No constructor for given arguments.')
+    error("No constructor for given arguments.")
 end
 
+--- Gets a property from all buffers in the list
+--- @param property string The property to get
+--- @return table The list of property values
 function BufferList:get_property(property)
     local res = table.new(#self.handles, 0)
     for i, buf in ipairs(self) do
@@ -377,6 +435,9 @@ function BufferList:get_property(property)
     return res
 end
 
+--- Filters buffers in the list based on a function
+--- @param fun function Filtering function, will be passed the 
+--- @return BufferList The filtered list of buffers
 function BufferList:filter(fun)
     local bufs = {}
     for i, buf in ipairs(self) do
@@ -388,6 +449,10 @@ function BufferList:filter(fun)
     return bufs
 end
 
+--- Filters buffers in the list based on a property value
+--- @param property string The property to filter by
+--- @param value any The value to match
+--- @return BufferList The filtered list of buffers
 function BufferList:filter_by(property, value)
     local bufs = {}
     for i, buf in ipairs(self) do
@@ -399,17 +464,22 @@ function BufferList:filter_by(property, value)
     return bufs
 end
 
---
+-----------------------------------------------------------------
 -- Module level functions
---
+-----------------------------------------------------------------
+
+--- Sets the current buffer
+--- @param buf Buffer|number The buffer instance or handle
 function M.set_current(buf)
-    local oop = require('lib.oop')
+    local oop = require("lib.oop")
     if oop.is_instance(buf, Buffer) then
         buf = buf.handle
     end
     api.nvim_set_current_buf(buf)
 end
 
+--- Lists all buffers
+--- @return BufferList The list of all buffers
 function M.list()
     local handles = api.nvim_list_bufs()
     return BufferList:new(handles)

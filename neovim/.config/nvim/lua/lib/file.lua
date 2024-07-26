@@ -1,11 +1,23 @@
---
--- File operations
---
-function Path:open() end
+local M = {}
+local uv = vim.uv
 
-function Path:close() end
+local File = setmetatable({}, {})
 
-function Path:touch(opts)
+M.File = File
+
+File.__index = File
+
+function File:new(path)
+    local file = { path }
+    setmetatable(file, File)
+    return file
+end
+
+function File:open() end
+
+function File:close() end
+
+function File:touch(opts)
     opts = opts or {}
 
     local mode = opts.mode or 420
@@ -18,7 +30,7 @@ function Path:touch(opts)
     end
 
     if parents then
-        Path:new(self:parent()):mkdir({ parents = true })
+        File:new(self:parent()):mkdir({ parents = true })
     end
 
     local fd = uv.fs_open(self:_fs_filename(), "w", mode)
@@ -30,7 +42,7 @@ function Path:touch(opts)
     return true
 end
 
-function Path:write(txt, flag, mode)
+function File:write(txt, flag, mode)
     assert(flag, [[Path:write_text requires a flag! For example: 'w' or 'a']])
 
     mode = mode or 438
@@ -42,7 +54,7 @@ end
 
 -- TODO: Asyncify this and use vim.wait in the meantime.
 --  This will allow other events to happen while we're waiting!
-function Path:_read()
+function File:_read()
     local fd = assert(uv.fs_open(self:_fs_filename(), "r", 438)) -- for some reason test won't pass with absolute
     local stat = assert(uv.fs_fstat(fd))
     local data = assert(uv.fs_read(fd, stat.size, 0))
@@ -51,7 +63,7 @@ function Path:_read()
     return data
 end
 
-function Path:_read_async(callback)
+function File:_read_async(callback)
     vim.uv.fs_open(self.filename, "r", 438, function(err_open, fd)
         if err_open then
             print("We tried to open this file but couldn't. We failed with following error message: " .. err_open)
@@ -73,15 +85,15 @@ function Path:_read_async(callback)
     end)
 end
 
-function Path:read(callback)
+function File:read(callback)
     if callback then
         return self:_read_async(callback)
     end
     return self:_read()
 end
 
-function Path:head(lines)
-    lines = lines or 10
+function File:head(num_lines)
+    num_lines = num_lines or 10
     local chunk_size = 256
 
     local fd = uv.fs_open(self:_fs_filename(), "r", 438)
@@ -96,14 +108,14 @@ function Path:head(lines)
 
     local data = ""
     local index, count = 0, 0
-    while count < lines and index < stat.size do
+    while count < num_lines and index < stat.size do
         local read_chunk = assert(uv.fs_read(fd, chunk_size, index))
 
         local i = 0
         for char in read_chunk:gmatch(".") do
             if char == "\n" then
                 count = count + 1
-                if count >= lines then
+                if count >= num_lines then
                     break
                 end
             end
@@ -122,8 +134,8 @@ function Path:head(lines)
     return data
 end
 
-function Path:tail(lines)
-    lines = lines or 10
+function File:tail(num_lines)
+    num_lines = num_lines or 10
     local chunk_size = 256
 
     local fd = uv.fs_open(self:_fs_filename(), "r", 438)
@@ -138,7 +150,7 @@ function Path:tail(lines)
 
     local data = ""
     local index, count = stat.size - 1, 0
-    while count < lines and index > 0 do
+    while count < num_lines and index > 0 do
         local real_index = index - chunk_size
         if real_index < 0 then
             chunk_size = chunk_size + real_index
@@ -152,7 +164,7 @@ function Path:tail(lines)
             local char = read_chunk:sub(i, i)
             if char == "\n" then
                 count = count + 1
-                if count >= lines then
+                if count >= num_lines then
                     break
                 end
             end
@@ -166,14 +178,14 @@ function Path:tail(lines)
     return data
 end
 
-function Path:readlines()
+function File:readlines()
     local data = self:read()
 
     data = data:gsub("\r", "")
     return vim.split(data, "\n")
 end
 
-function Path:iter()
+function File:iter()
     local data = self:readlines()
     local i = 0
     local n = #data
@@ -185,7 +197,7 @@ function Path:iter()
     end
 end
 
-function Path:readbyterange(offset, length)
+function File:readbyterange(offset, length)
     local fd = uv.fs_open(self:_fs_filename(), "r", 438)
     if not fd then
         return
@@ -219,3 +231,5 @@ function Path:readbyterange(offset, length)
 
     return data
 end
+
+return M

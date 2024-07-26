@@ -249,9 +249,18 @@ end
 -- Metamethod for calling the Set constructor.
 -- @param opts The initial elements for the set (optional).
 -- @return A new set object.
-local mt = getmetatable(Set)
-function mt.__call(_, opts)
+local Set_mt = getmetatable(Set)
+function Set_mt.__call(_, opts)
     return Set:new(opts)
+end
+
+--
+-- Module level functions
+-- 
+function M.union(...)
+end
+    
+function M.intersection(...)
 end
 
 return M
