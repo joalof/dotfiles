@@ -3,9 +3,6 @@ local tablex = require("lib.tablex")
 
 local M = {}
 
---
--- vector class
--- --
 local Vector = setmetatable({}, {})
 
 M.Vector = Vector
@@ -420,6 +417,10 @@ function M.arange(start, stop, step)
     end
     setmetatable(res, Vector)
     return res
+end
+
+function M.vector(...)
+    return M.Vector(...)
 end
 
 return M

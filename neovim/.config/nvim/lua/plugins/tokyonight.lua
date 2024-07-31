@@ -4,7 +4,7 @@ return {
     priority = 1000,
     config = function()
 
-        Color = require('lib.color').Color
+        Color = require('lib.color')
         
         require("tokyonight").setup({
             style = "moon",

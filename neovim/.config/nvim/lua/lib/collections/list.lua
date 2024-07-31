@@ -2,7 +2,6 @@ local tablex = require("lib.tablex")
 require("table.new")
 
 local List = setmetatable({}, {})
-local M = { List = List }
 
 List.__index = List
 
@@ -12,7 +11,7 @@ function List:new(data, copy)
         error("Failed to create list, table contains non-integer keys")
     end
     if copy then
-        data = table.shallow_copy(data)
+        data = tablex.shallow_copy(data)
     end
     data = setmetatable(data, List)
     return data
@@ -109,4 +108,4 @@ function mt.__call(_, opts)
     end
 end
 
-return M
+return List

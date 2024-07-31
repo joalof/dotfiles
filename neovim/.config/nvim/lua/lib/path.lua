@@ -15,8 +15,6 @@ local S_IF = {
     REG = 0x8000,
 }
 
-local M = {}
-
 local info = {}
 info.home = vim.uv.os_homedir()
 
@@ -714,6 +712,4 @@ end
 
 function Path:iterdir() end
 
-M.Path = Path
-
-return M
+return Path

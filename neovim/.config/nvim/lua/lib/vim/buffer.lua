@@ -1,7 +1,6 @@
 local api = vim.api
 require("table.new")
 
-local M = {}
 
 --- @class Buffer
 --- @field handle number The handle of the buffer
@@ -15,7 +14,6 @@ local M = {}
 --- @field is_file boolean Indicates if the buffer corresponds to a file (readonly)
 local Buffer = setmetatable({}, {})
 
-M.Buffer = Buffer
 
 local Buffer_getters = {
     --- @param buf Buffer
@@ -56,7 +54,7 @@ local Buffer_getters = {
     --- @param buf Buffer
     --- @return boolean
     is_file = function(buf)
-        local Path = require("lib.path").Path
+        local Path = require('lib.path')
         local buf_path = Path(buf.name)
         return buf_path:is_file()
     end,
@@ -205,8 +203,8 @@ function Buffer:delete(opts)
 end
 
 function Buffer:get_parent_windows()
-    local wn = require("lib.vim.window")
-    local wins = wn.list()
+    local Window = require("lib.vim.window")
+    local wins = Window.list_all()
     local parents = wins:filter(function(win)
         return win.buffer.handle == self.handle
     end)
@@ -346,143 +344,16 @@ function Buffer:del_extmark(ns_id, id)
     return success
 end
 
------------------------------------------------------------------
--- BufferList class
------------------------------------------------------------------
-
---- @class BufferList : table
---- @field handles table<number> The list of buffer handles
-local BufferList = setmetatable({}, {})
-
-M.BufferList = BufferList
-
-local bufferlist_getters = {
-    handles = function(buf_list)
-        local res = table.new(#buf_list, 0)
-        for i, buf in buf_list do
-            res[i] = buf.handle
-        end
-        return res
-    end,
-    names = function(buf_list)
-        local res = table.new(#buf_list, 0)
-        for i, buf in buf_list do
-            res[i] = buf.name
-        end
-        return res
-    end,
-}
-
-BufferList.__index = function(tbl, key)
-    if type(key) == "number" then
-        return tbl[key]
-    end
-    local getter = bufferlist_getters[key]
-    if getter then
-        return getter(tbl)
-    end
-    local raw = rawget(BufferList, key)
-    if raw then
-        return raw
-    end
-end
-
---- Creates a new BufferList instance
---- @param handles table<number> The list of buffer handles
---- @return BufferList
-function BufferList:new(handles)
-    local buf_list = table.new(#handles, 0)
-    for i, hand in ipairs(handles) do
-        buf_list[i] = Buffer:new(hand)
-    end
-    setmetatable(buf_list, BufferList)
-    return buf_list
-end
-
---- Creates a BufferList from a list of buffer names
---- @param names table<string> The list of buffer names
---- @return BufferList
-function BufferList:from_names(names)
-    local bufs = table.new(#names, 0)
-    for i, name in ipairs(names) do
-        bufs[i] = Buffer:from_name(name)
-    end
-    setmetatable(bufs, BufferList)
-    return bufs
-end
-
-local BufferList_mt = getmetatable(BufferList)
-function BufferList_mt.__call(_, ...)
-    args = { ... }
-    if #args == 1 and type(args[1]) == "table" then
-        if type(args[1][1]) == "number" then
-            return BufferList:new(args[1])
-        elseif type(args[1][1]) == "string" then
-            return BufferList:from_names(args[1])
-        end
-    end
-    error("No constructor for given arguments.")
-end
-
---- Gets a property from all buffers in the list
---- @param property string The property to get
---- @return table The list of property values
-function BufferList:get_property(property)
-    local res = table.new(#self.handles, 0)
-    for i, buf in ipairs(self) do
-        res[i] = buf[property]
-    end
-    return res
-end
-
---- Filters buffers in the list based on a function
---- @param fun function Filtering function, will be passed the 
---- @return BufferList The filtered list of buffers
-function BufferList:filter(fun)
-    local bufs = {}
-    for i, buf in ipairs(self) do
-        if fun(buf) then
-            bufs[i] = self.handles[i]
-        end
-    end
-    setmetatable(bufs, BufferList)
-    return bufs
-end
-
---- Filters buffers in the list based on a property value
---- @param property string The property to filter by
---- @param value any The value to match
---- @return BufferList The filtered list of buffers
-function BufferList:filter_by(property, value)
-    local bufs = {}
-    for i, buf in ipairs(self) do
-        if buf[property] == value then
-            bufs[i] = buf
-        end
-    end
-    setmetatable(bufs, BufferList)
-    return bufs
-end
-
------------------------------------------------------------------
--- Module level functions
------------------------------------------------------------------
-
---- Sets the current buffer
---- @param buf Buffer|number The buffer instance or handle
-function M.set_current(buf)
-    local oop = require("lib.oop")
-    if oop.is_instance(buf, Buffer) then
-        buf = buf.handle
-    end
-    api.nvim_set_current_buf(buf)
+function Buffer:set_as_current()
+    api.nvim_set_current_buf(self.handle)
 end
 
 --- Lists all buffers
---- @return BufferList The list of all buffers
-function M.list()
+--- @return Handleables The list of all buffers
+function Buffer.list_all()
+    local Handleables = require('lib.vim.handleables')
     local handles = api.nvim_list_bufs()
-    return BufferList:new(handles)
+    return Handleables:new(handles, Buffer)
 end
 
-return M
+return Buffer

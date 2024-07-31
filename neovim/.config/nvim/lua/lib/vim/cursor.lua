@@ -1,5 +1,5 @@
 local api = vim.api
-local Vector = require("lib.collections.vector").Vector
+local la = require("lib.linalg")
 
 local Cursor = setmetatable({}, {})
 
@@ -7,7 +7,7 @@ local M = { Cursor = Cursor }
 
 local Cursor_getters = {
     position = function(cursor)
-        return Vector(api.nvim_win_get_cursor(cursor.window_handle))
+        return la.vector(api.nvim_win_get_cursor(cursor.window_handle))
     end,
 }
 
@@ -57,7 +57,7 @@ end
 
 function Cursor:get()
     local pos = api.nvim_win_get_cursor(self.window_handle)
-    return Vector(pos)
+    return la(pos)
 end
 
 function Cursor:set(pos)

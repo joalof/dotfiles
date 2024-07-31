@@ -2,7 +2,6 @@ local tablex = require("lib.tablex")
 
 -- Define the Set class
 local Set = setmetatable({}, {})
-local M = { Set = Set }
 
 Set.__index = Set
 
@@ -254,13 +253,4 @@ function Set_mt.__call(_, opts)
     return Set:new(opts)
 end
 
---
--- Module level functions
--- 
-function M.union(...)
-end
-    
-function M.intersection(...)
-end
-
-return M
+return Set

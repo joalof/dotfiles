@@ -8,7 +8,7 @@ local M = { Window = Window }
 
 local Window_getters = {
     buffer = function(win)
-        local Buffer = require("lib.vim.buffer").Buffer
+        local Buffer = require("lib.vim.buffer")
         return Buffer:new(api.nvim_win_get_buf(win.handle), false)
     end,
     config = function(win)
@@ -44,7 +44,7 @@ local Window_getters = {
 
 local Window_setters = {
     buffer = function(win, val)
-        local Buffer = require("lib.vim.buffer").Buffer
+        local Buffer = require("lib.vim.buffer")
         if oop.is_instance(val, Buffer) then
             val = val.handle
         end
@@ -104,7 +104,7 @@ end
 
 -- Opens a new window on given buffer
 function Window:open(buffer, enter, config)
-    local Buffer = require("lib.vim.buffer").Buffer
+    local Buffer = require("lib.vim.buffer")
     enter = enter or true
     config = config or {}
     if oop.is_instance(buffer, Buffer) then
@@ -177,109 +177,14 @@ function Window:text_height(opts)
 end
 
 
---
--- WindowList class
---
-local WindowList = setmetatable({}, {})
-
-M.WindowList = WindowList
-
-local WindowList_getters = {
-    handles = function(buf_list)
-        local handles = table.new(#buf_list, 0)
-        for i, buf in buf_list do
-            handles[i] = buf.handle
-        end
-        return handles
-    end,
-}
-
-WindowList.__index = function(tbl, key)
-    if type(key) == "number" then
-        return tbl[key]
-    end
-    local getter = WindowList_getters[key]
-    if getter then
-        return getter(tbl)
-    end
-    local raw = rawget(WindowList, key)
-    if raw then
-        return raw
-    end
+function Window:set_as_current()
+    api.nvim_set_current_win(self.handle)
 end
 
-
--- creates a BufferList object with given handles that
--- are not guaranteed to correspond to actual valid buffers
-function WindowList:new(handles, verify)
-    verify = verify or true
-    local win_list = table.new(#handles, 0)
-    for i, hand in ipairs(handles) do
-        win_list[i] = Window:new(hand, verify)
-    end
-    setmetatable(win_list, WindowList)
-    return win_list
-end
-
-local WindowList_mt = getmetatable(WindowList)
-function WindowList_mt.__call(_, ...)
-    args = {...}
-    if #args == 1 and type(args[1]) == "table" then
-        if type(args[1][1]) == 'number' then
-            return WindowList:new(args[1])
-        elseif oop.is_instance(args[1][1], Window) then
-            local wins = args[1]
-            setmetatable(wins, WindowList)
-            return wins
-        end
-    end
-    error('No constructor for given arguments.')
-end
-
-function WindowList:get_property(property)
-    local res = table.new(#self.handles, 0)
-    for i, win in ipairs(self) do
-        res[i] = win[property]
-    end
-    return res
-end
-
-function WindowList:filter(fun)
-    local wins = {}
-    for i, win in ipairs(self) do
-        if fun(win) then
-            wins[i] = win
-        end
-    end
-    setmetatable(wins, WindowList)
-    return wins
-end
-
-function WindowList:filter_by(property, value)
-    local wins = {}
-    for i, win in ipairs(self) do
-        if win[property] == value then
-            wins[i] = win
-        end
-    end
-    setmetatable(wins, WindowList)
-    return wins
-end
-
-
---
--- Module level functions
---
-function M.set_current(win)
-    if oop.is_instance(win, Window) then
-        win = win.handle
-    end
-    api.nvim_set_current_win(win)
-end
-
-function M.list()
+function Window.list_all()
+    local Handleables = require('lib.vim.handleables')
     local handles = api.nvim_list_wins()
-    return WindowList:new(handles, false)
+    return Handleables:new(handles, Window)
 end
 
 return M

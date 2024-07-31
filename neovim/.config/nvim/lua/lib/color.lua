@@ -2,10 +2,6 @@ local mathx = require('lib.mathx')
 --- Color library forked from nightfox theme
 --- https://github.com/EdenEast/nightfox.nvim/blob/main/lua/nightfox/lib/color.lua
 
--- holds top-level functions and Color class
-local M = {}
-
-
 ---RGBA color representation stored in float [0,1]
 ---@class RGBA
 ---@field red number [0,255]
@@ -363,6 +359,4 @@ function mt.__call(_, opts)
     return Color.new(opts)
 end
 
-M['Color'] = Color
-
-return M
+return Color

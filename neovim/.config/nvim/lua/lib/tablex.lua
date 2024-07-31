@@ -23,4 +23,14 @@ function M.shallow_copy(tbl)
     return tbl_copy
 end
 
+function M.range(start, stop, step)
+    local tbl = {}
+    local ind = 1
+    for val = start, stop, step do
+        tbl[ind] = val
+        ind = ind + 1
+    end
+    return tbl
+end
+
 return M
