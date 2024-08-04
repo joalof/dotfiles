@@ -1,10 +1,8 @@
-require('table.new')
+require("table.new")
 local api = vim.api
 local oop = require("lib.oop")
 
 local Window = setmetatable({}, {})
-
-local M = { Window = Window }
 
 local Window_getters = {
     buffer = function(win)
@@ -21,7 +19,7 @@ local Window_getters = {
         return api.nvim_win_get_position(win.handle)
     end,
     tabpage = function(win)
-        local Tabpage = require("lib.vim.tabpage").Tabpage
+        local Tabpage = require("lib.vim.tabpage")
         return Tabpage:from_handle(api.nvim_win_get_tabpage(win.handle))
     end,
     width = function(win)
@@ -37,7 +35,7 @@ local Window_getters = {
         return vim.api.nvim_win_get_config(win.handle).relative ~= ""
     end,
     cursor = function(win)
-        local Cursor = require('lib.vim.cursor').Cursor
+        local Cursor = require("lib.vim.cursor")
         return Cursor:new(win.handle, false)
     end,
 }
@@ -90,7 +88,7 @@ function Window:new(handle, verify)
         verify = verify or true
         if verify then
             if not api.nvim_win_is_valid(handle) then
-                error(string.format('Window with handle %d is not valid', handle))
+                error(string.format("Window with handle %d is not valid", handle))
             end
         end
     end
@@ -100,7 +98,6 @@ function Window:new(handle, verify)
     setmetatable(win, Window)
     return win
 end
-
 
 -- Opens a new window on given buffer
 function Window:open(buffer, enter, config)
@@ -114,11 +111,9 @@ function Window:open(buffer, enter, config)
     return Window:new(handle, false)
 end
 
-function Window:open_float(buffer, enter, config)
-end
+function Window:open_float(buffer, enter, config) end
 
-function Window:split(buffer, enter, config)
-end
+function Window:split(buffer, enter, config) end
 
 local Window_mt = getmetatable(Window)
 function Window_mt.__call(_, ...)
@@ -143,16 +138,15 @@ function Window:hide()
     self = nil
 end
 
-function Window:focus()
-end
+function Window:focus() end
 
-function Window:get_cursor()
-    return api.nvim_win_get_cursor(self.handle)
-end
+-- function Window:get_cursor()
+--     return api.nvim_win_get_cursor(self.handle)
+-- end
 
-function Window:set_cursor(pos)
-    return api.nvim_win_set_cursor(self.handle, pos)
-end
+-- function Window:set_cursor(pos)
+--     return api.nvim_win_set_cursor(self.handle, pos)
+-- end
 
 function Window:set_var(name, value)
     api.nvim_win_set_var(self.handle, name, value)
@@ -176,15 +170,20 @@ function Window:text_height(opts)
     return info
 end
 
-
 function Window:set_as_current()
     api.nvim_set_current_win(self.handle)
 end
 
+--- Lists all buffers
+--- @return ObjectList List of all Windows
 function Window.list_all()
-    local Handleables = require('lib.vim.handleables')
-    local handles = api.nvim_list_wins()
-    return Handleables:new(handles, Window)
+    local ObjectList = require("lib.vim.object_list")
+    local handles = api.nvim_list_bufs()
+    local objs = table.new(#handles, 0)
+    for i, hand in ipairs(handles) do
+        objs[i] = Window:new(hand, false)
+    end
+    return ObjectList(objs)
 end
 
-return M
+return Window

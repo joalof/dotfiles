@@ -3,14 +3,12 @@ local oop = require("lib.oop")
 
 local Tabpage = setmetatable({}, {})
 
-local M = { Tabpage = Tabpage }
-
 local property_getters = {
     number = function(tab)
         return api.nvim_tabpage_get_number(tab.handle)
     end,
     current_window = function(tab)
-        local Window = require("lib.vim.window").Window
+        local Window = require("lib.vim.window")
         return Window:from_handle(api.nvim_tabpage_get_win(tab.handle))
     end,
     valid = function(tab)
@@ -20,7 +18,7 @@ local property_getters = {
 
 local property_setters = {
     current_window = function(tab, val)
-        local Window = require("lib.vim.window").Window
+        local Window = require("lib.vim.window")
         if oop.is_instance(val, Window) then
             val = val.handle
         end
@@ -49,9 +47,18 @@ Tabpage.__newindex = function(tbl, key, value)
     end
 end
 
--- creates a tab object with given handle that
--- is not guaranteed to correspond to any actual tab
-function Tabpage:_new(handle)
+-- creates a Tabpage object
+function Tabpage:new(handle, verify)
+    if handle == 0 then
+        handle = api.nvim_get_current_tabpage()
+    else
+        verify = verify or true
+        if verify then
+            if not api.nvim_tagpage_is_valid(handle) then
+                error(string.format("Tabpage with handle %d is not valid", handle))
+            end
+        end
+    end
     local tab = {
         handle = handle,
     }
@@ -59,24 +66,12 @@ function Tabpage:_new(handle)
     return tab
 end
 
--- gets an existing tabdow from it's handle
-function Tabpage:from_handle(handle)
-    if handle == 0 then
-        return Tabpage:_new(api.nvim_get_current_tabpage())
-    else
-        if api.nvim_tabpage_is_valid(handle) then
-            return Tabpage:_new(handle)
-        end
-    end
-    error(string.format("Tabpage with handle %d is not valid", handle))
-end
-
 -- Opens a new tabdow on given buffer
 function Tabpage:open(buffer)
     local cmd = { cmd = "tabnew" }
     cmd.args = buffer
     api.nvim_cmd(cmd, {})
-    return Tabpage:from_handle(0)
+    return Tabpage:new(0)
 end
 
 function Tabpage:close()
@@ -100,13 +95,14 @@ function mt.__call(_, ...)
 end
 
 function Tabpage:list_windows()
-    local Window = require("lib.vim.window").Window
+    local Window = require("lib.vim.window")
+    local ObjectList = require("lib.vim.object_list")
     local handles = api.nvim_tabpage_list_wins(self.handle)
     local wins = {}
     for i, hand in ipairs(handles) do
         wins[i] = Window:from_handle(hand)
     end
-    return wins
+    return ObjectList(wins)
 end
 
 function Tabpage:set_var(name, value)
@@ -121,35 +117,22 @@ function Tabpage:del_var(name)
     api.nvim_tabpage_del_var(self.handle, name)
 end
 
---
--- Module level functions
---
-function M.set_current(tab)
-    if oop.is_instance(tab, Tabpage) then
-        tab = tab.handle
-    end
-    api.nvim_set_current_tabpage(tab)
+function Tabpage:set_as_current()
+    api.nvim_set_current_tabpage(self.handle)
 end
 
-function M.list()
+--
+--  Static functions
+--
+function Tabpage.list_all()
+    local ObjectList = require("lib.vim.object_list")
     local tabs = {}
     local handles = api.nvim_list_tabpages()
     for i, handle in ipairs(handles) do
-        local tab = Tabpage:_new(handle)
+        local tab = Tabpage:new(handle, false)
         tabs[i] = tab
     end
-    return tabs
+    return ObjectList(tabs)
 end
 
-function M.find(opts)
-    opts = opts or {}
-    local tabs = {}
-    local handles = api.nvim_list_tabpages()
-    for i, handle in ipairs(handles) do
-        local tab = Tabpage:_new(handle)
-        tabs[i] = tab
-    end
-    return tabs
-end
-
-return M
+return Tabpage

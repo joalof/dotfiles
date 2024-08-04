@@ -3,7 +3,6 @@ local la = require("lib.linalg")
 
 local Cursor = setmetatable({}, {})
 
-local M = { Cursor = Cursor }
 
 local Cursor_getters = {
     position = function(cursor)
@@ -57,7 +56,7 @@ end
 
 function Cursor:get()
     local pos = api.nvim_win_get_cursor(self.window_handle)
-    return la(pos)
+    return la.vector(pos)
 end
 
 function Cursor:set(pos)
@@ -90,4 +89,4 @@ function Cursor:search(pattern, opts)
     return res == 0
 end
 
-return M
+return Cursor

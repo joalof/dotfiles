@@ -202,12 +202,13 @@ function Buffer:delete(opts)
     api.nvim_buf_delete(self.handle, opts)
 end
 
-function Buffer:get_parent_windows()
+function Buffer:get_parent_windows(opts)
+    opts = opts or {first = false}
     local Window = require("lib.vim.window")
     local wins = Window.list_all()
     local parents = wins:filter(function(win)
         return win.buffer.handle == self.handle
-    end)
+    end, opts)
     return parents
 end
 
@@ -349,11 +350,15 @@ function Buffer:set_as_current()
 end
 
 --- Lists all buffers
---- @return Handleables The list of all buffers
+--- @return ObjectList The list of all buffers
 function Buffer.list_all()
-    local Handleables = require('lib.vim.handleables')
+    local ObjectList = require('lib.vim.object_list')
     local handles = api.nvim_list_bufs()
-    return Handleables:new(handles, Buffer)
+    local objs = table.new(#handles, 0)
+    for i, hand in ipairs(handles) do
+        objs[i] = Buffer:new(hand, false)
+    end
+    return ObjectList(objs)
 end
 
 return Buffer
