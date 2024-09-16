@@ -140,13 +140,13 @@ end
 
 function Window:focus() end
 
--- function Window:get_cursor()
---     return api.nvim_win_get_cursor(self.handle)
--- end
+function Window:get_cursor()
+    return api.nvim_win_get_cursor(self.handle)
+end
 
--- function Window:set_cursor(pos)
---     return api.nvim_win_set_cursor(self.handle, pos)
--- end
+function Window:set_cursor(pos)
+    return api.nvim_win_set_cursor(self.handle, pos)
+end
 
 function Window:set_var(name, value)
     api.nvim_win_set_var(self.handle, name, value)
@@ -170,7 +170,7 @@ function Window:text_height(opts)
     return info
 end
 
-function Window:set_as_current()
+function Window:set_current()
     api.nvim_set_current_win(self.handle)
 end
 

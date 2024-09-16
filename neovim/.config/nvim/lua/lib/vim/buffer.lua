@@ -1,7 +1,6 @@
 local api = vim.api
 require("table.new")
 
-
 --- @class Buffer
 --- @field handle number The handle of the buffer
 --- @field name string The name of the buffer
@@ -13,7 +12,6 @@ require("table.new")
 --- @field filetype string The filetype of the buffer (readonly)
 --- @field is_file boolean Indicates if the buffer corresponds to a file (readonly)
 local Buffer = setmetatable({}, {})
-
 
 local Buffer_getters = {
     --- @param buf Buffer
@@ -54,7 +52,7 @@ local Buffer_getters = {
     --- @param buf Buffer
     --- @return boolean
     is_file = function(buf)
-        local Path = require('lib.path')
+        local Path = require("plenary.path")
         local buf_path = Path(buf.name)
         return buf_path:is_file()
     end,
@@ -116,7 +114,7 @@ function Buffer:new(handle, verify)
     return buf
 end
 
---- Creates a new Buffer in neovim 
+--- Creates a new Buffer in neovim
 --- @param name string? Name of the new buffer
 --- @param listed boolean? Name of the new buffer
 --- @param scratch boolean? Name of the new buffer
@@ -193,23 +191,9 @@ function Buffer:set_options(opts)
     end
 end
 
-function Buffer:write()
-    -- TODO use plenary
-end
-
 function Buffer:delete(opts)
     opts = opts or {}
     api.nvim_buf_delete(self.handle, opts)
-end
-
-function Buffer:get_parent_windows(opts)
-    opts = opts or {first = false}
-    local Window = require("lib.vim.window")
-    local wins = Window.list_all()
-    local parents = wins:filter(function(win)
-        return win.buffer.handle == self.handle
-    end, opts)
-    return parents
 end
 
 function Buffer:set_lines(lines, start, stop, strict_indexing)
@@ -345,14 +329,34 @@ function Buffer:del_extmark(ns_id, id)
     return success
 end
 
-function Buffer:set_as_current()
+function Buffer:set_current()
     api.nvim_set_current_buf(self.handle)
+end
+
+function Buffer:clear()
+    self:set_lines({}, 0, -1)
+end
+
+function Buffer:get_parent_windows(opts)
+    opts = opts or { first = false }
+    local Window = require("lib.vim.window")
+    local wins = Window.list_all()
+    local parents = wins:filter(function(win)
+        return win.buffer.handle == self.handle
+    end, opts)
+    return parents
+end
+
+function Buffer:write()
+    local Path = require("plenary.path")
+    local buf_path = Path(self.name)
+    -- TODO
 end
 
 --- Lists all buffers
 --- @return ObjectList The list of all buffers
 function Buffer.list_all()
-    local ObjectList = require('lib.vim.object_list')
+    local ObjectList = require("lib.vim.object_list")
     local handles = api.nvim_list_bufs()
     local objs = table.new(#handles, 0)
     for i, hand in ipairs(handles) do

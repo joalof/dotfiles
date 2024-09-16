@@ -1,5 +1,4 @@
 local Color = require("lib.color")
-local Path = require('lib.path')
 
 local M = {}
 
@@ -44,19 +43,22 @@ local function create_pane(f, name, active)
     f.add({ "", fg = hls.wedge.fg, bg = hls.wedge.bg })
 end
 
-M.display_marks = {}
+M.tags = {}
 
--- cache marks for display with tabline
+-- cache tags for display with tabline
 -- this will not be called frequently
-function M.cache_display_marks(list_name)
-    local harp_list = require("harpoon"):list(list_name)
-    -- M.display_marks = harp_list.items
-    -- only use filenames and not the full path
-    M.display_marks = {}
-    for i, item in ipairs(harp_list.items) do
-        M.display_marks[i] = Path(item.value):name()
-    end
-end
+-- function M.cache_display_tags()
+-- local harp_list = require("harpoon"):list(list_name)
+-- M.display_tags = harp_list.items
+-- only use filenames and not the full path
+-- M.display_tags = {}
+-- for i, item in ipairs(harp_list.items) do
+--     M.display_tags[i] = Path(item.value):name()
+-- end
+-- end
+
+
+local grapple = require('grapple')
 
 -- This will be called a million times so we don't do expensive stuff here
 M.render = function(f)
@@ -75,10 +77,12 @@ M.render = function(f)
     --     create_pane(f, current_file, true)
     -- end
 
-    -- add all marks
-    for _, item in ipairs(M.display_marks) do
-        local active = curr_file == item
-        create_pane(f, item, active)
+    -- add all tags
+    local tags = grapple.tags()
+    for _, tag in ipairs(tags) do
+        local path = tag.path:match("/([^/]+)$")
+        local active = curr_file == path
+        create_pane(f, path, active)
     end
     --
     f.add_spacer()
@@ -90,18 +94,18 @@ M.render = function(f)
     -- end )
 end
 
-M.toggle_tabline = function()
-    if #M.display_marks > 0 then
+M.toggle = function()
+    local tags = grapple.tags()
+    if #tags > 0 then
         vim.o.showtabline = 2
     else
         vim.o.showtabline = 0
     end
 end
 
-M.update_marks = function(branch)
-    branch = branch or require("utils.project").get_git_branch()
-    M.cache_display_marks(branch)
-    M.toggle_tabline()
-end
+-- M.update_tags = function(branch)
+--     M.cache_display_tags(branch)
+--     M.toggle_tabline()
+-- end
 
 return M

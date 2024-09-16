@@ -215,11 +215,11 @@ eval "$(zoxide init --cmd f bash)"
 # }}}
 
 # Starship {{{
-eval "$(starship init bash)"
+[[ -f $HOME/.local/bin/starship ]] && eval "$(starship init bash)"
 # }}}
 #
 # Mojo {{{
-MOJO_PATH=$(modular config mojo.path)
+[[ -f /bin/modular ]] && MOJO_PATH=$(modular config mojo.path)
 export MODULAR_HOME=$HOME/.modular
 export PATH=$MOJO_PATH/bin:$PATH
 # }}}
@@ -234,6 +234,15 @@ case ":$PATH:" in
         ;;
 esac
 
+# }}}
+
+# Docker {{{
+if grep -q "microsoft" /proc/version > /dev/null 2>&1; then
+    if service docker status 2>&1 | grep -q "is not running"; then
+        wsl.exe --distribution "${WSL_DISTRO_NAME}" --user root \
+            --exec /usr/sbin/service docker start > /dev/null 2>&1
+    fi
+fi
 # }}}
 
 # end apps }}}

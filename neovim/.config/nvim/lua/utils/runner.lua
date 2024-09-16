@@ -5,7 +5,7 @@ local interpreters = {
     julia = "julia",
     mojo = "mojo",
     markdown = "glow",
-    r = 'R',
+    r = "R",
 }
 
 local M = {}
@@ -13,12 +13,13 @@ local M = {}
 local api = vim.api
 
 function M.run_script(opts)
-    local file = vim.fn.expand("%:p")
-    local name = "run_script"
-    opts = opts or {grace_time = 10}
+    local file_name = vim.fn.expand("%:p")
+    local task_name = "run_script"
+    opts = opts or { grace_time = 10 }
 
+    -- close any old tasks
     for _, task in ipairs(overseer.list_tasks()) do
-        if task.name == name then
+        if task.name == task_name then
             task:dispose()
             task.strategy.term:shutdown()
             vim.cmd("cclose")
@@ -36,9 +37,9 @@ function M.run_script(opts)
 
     -- Runs file in a toggleterm, sending errors to quickfix
     local task = overseer.new_task({
-        name = name,
+        name = task_name,
         cmd = { interpreters[vim.bo.filetype] },
-        args = { file },
+        args = { file_name },
         strategy = { "toggleterm", open_on_start = true },
         components = components,
     })
@@ -47,41 +48,19 @@ function M.run_script(opts)
     api.nvim_cmd({ cmd = "KittyNavigateUp" }, {})
 end
 
+function M.abort_script()
+    local task_name = "run_script"
+    for _, task in ipairs(overseer.list_tasks()) do
+        if task.name == task_name then
+            task:dispose()
+            task.strategy.term:shutdown()
+            vim.cmd("cclose")
+        end
+    end
+end
+
 function M.run_lua()
     api.nvim_cmd({ cmd = "Redir", args = { "luafile", "%" } }, {})
-    -- old approach
-    -- local strings = require('lib.strings')
-    -- local Path = require('plenary.path')
-
-    -- -- run lua file and capture output
-    -- local run_file = vim.fn.expand('%')
-    -- local out = api.nvim_cmd({cmd='luafile', args={run_file}}, {output = true})
-    -- local out_lines = strings.split(out, '\n')
-
-    -- -- clear OUTPUT buffer if it already exists
-    -- local bufnr = nil
-    -- local buf_info = vim.fn.getbufinfo({bufloaded = 1, buflisted = 1})
-    -- for _, info in ipairs(buf_info) do
-    --     local path = Path:new(info.name)
-    --     if path:make_relative() == 'OUTPUT' then
-    --         bufnr = info.bufnr
-    --         api.nvim_buf_set_lines(bufnr, 0, 100, false, {})
-    --         break
-    --     end
-    -- end
-    --
-    -- -- create new scratch buffer in split and write output
-    -- local split_size = math.min(math.max(5, #out_lines), 20)
-    -- if bufnr == nil then
-    --     api.nvim_cmd({cmd = 'split', args = {'OUTPUT'}, range = {split_size}}, {})
-    --     bufnr = vim.api.nvim_get_current_buf()
-    --     api.nvim_cmd({ cmd = "KittyNavigateUp" }, {})
-    --     local opts = {bufhidden = 'delete', buflisted = true, buftype = 'nofile', swapfile = false}
-    --     for name, val in pairs(opts) do
-    --         api.nvim_set_option_value(name, val, {buf=bufnr})
-    --     end
-    -- end
-    -- api.nvim_buf_set_lines(bufnr, 0, 0, false, out_lines)
 end
 
 function M.run()

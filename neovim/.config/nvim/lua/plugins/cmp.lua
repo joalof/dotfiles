@@ -11,6 +11,14 @@ return {
         "hrsh7th/cmp-cmdline",
         "octaltree/cmp-look",
         "micangl/cmp-vimtex",
+        {
+            "MattiasMTS/cmp-dbee",
+            dependencies = {
+                {"kndndrj/nvim-dbee"}
+            },
+            ft = "sql", -- optional but good to have
+            opts = {}, -- needed
+        },
     },
     event = "InsertEnter",
     config = function()
@@ -83,6 +91,7 @@ return {
             },
             sources = {
                 -- { name = "codeium", max_item_count = 2, group_index = 1 },
+                { name = "cmp-dbee" },
                 { name = "nvim_lsp", max_item_count = 20, group_index = 1 },
                 { name = "luasnip", max_item_count = 4, group_index = 1 },
                 { name = "buffer", max_item_count = 4, group_index = 1 },

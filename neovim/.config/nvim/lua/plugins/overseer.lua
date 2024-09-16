@@ -17,5 +17,8 @@ return {
         vim.keymap.set("n", "<leader>rr", function()
             runner.run()
         end, { silent = true })
+        vim.keymap.set("n", "<leader>rx", function()
+            runner.abort_script()
+        end, { silent = true })
     end,
 }

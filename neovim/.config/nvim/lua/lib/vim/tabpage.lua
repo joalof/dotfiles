@@ -117,7 +117,7 @@ function Tabpage:del_var(name)
     api.nvim_tabpage_del_var(self.handle, name)
 end
 
-function Tabpage:set_as_current()
+function Tabpage:set_current()
     api.nvim_set_current_tabpage(self.handle)
 end
 
