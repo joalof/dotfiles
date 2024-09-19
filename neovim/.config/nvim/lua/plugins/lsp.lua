@@ -18,7 +18,7 @@ local server_configs = {
                     useLibraryCodeForTypes = true,
                     diagnosticMode = "openFilesOnly",
                     autoSearchPaths = true,
-                    stubPath = "/home/joalof/.local/share/stubs",
+                    stubPath = "/home/autarch/.local/share/stubs",
                     -- diagnosticSeverityOverrides = {
                     --     reportUnusedVariable = "warning",
                     -- },
@@ -36,7 +36,7 @@ local server_configs = {
                     useLibraryCodeForTypes = true,
                     diagnosticMode = "openFilesOnly",
                     autoSearchPaths = true,
-                    stubPath = "/home/joalof/.local/share/typings",
+                    stubPath = "/home/autarch/.local/share/stubs",
                     -- diagnosticSeverityOverrides = {
                     --     reportUnusedVariable = "warning",
                     -- },
