@@ -49,6 +49,6 @@ dependencies:
   - rsa
 
   # other
-  - shapely
+  - pylatexenc
   - pip:
     - pnglatex
