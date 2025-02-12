@@ -9,4 +9,5 @@ xmodmap $DIR/swap_caps_shift
 xcape_space2ctrl
 
 eval `ssh-agent`
-ssh-add
+ssh-add ~/.ssh/id_ed25519_git_vion
+# xset r rate 200 35

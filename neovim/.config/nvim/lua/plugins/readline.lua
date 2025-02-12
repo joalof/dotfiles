@@ -1,7 +1,7 @@
 return {
     "joalof/readline.nvim",
-    event = "VeryLazy",
     dev = true,
+    event = "VeryLazy",
     keys = {
         {
             mode = { "!" },

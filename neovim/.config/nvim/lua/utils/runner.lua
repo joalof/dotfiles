@@ -15,7 +15,7 @@ local api = vim.api
 function M.run_script(opts)
     local file_name = vim.fn.expand("%:p")
     local task_name = "run_script"
-    opts = opts or { grace_time = 10 }
+    opts = opts or { grace_time = 60 }
 
     -- close any old tasks
     for _, task in ipairs(overseer.list_tasks()) do

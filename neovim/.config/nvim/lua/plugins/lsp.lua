@@ -13,12 +13,13 @@ local server_configs = {
         -- capabilities = pyright_capabilities,
         settings = {
             python = {
+                -- pythonPath = vim.fn.exepath("python"),
                 analysis = {
                     typeCheckingMode = "basic",
                     useLibraryCodeForTypes = true,
                     diagnosticMode = "openFilesOnly",
                     autoSearchPaths = true,
-                    stubPath = "/home/autarch/.local/share/stubs",
+                    -- stubPath = "/home/joakim/.local/share/stubs",
                     -- diagnosticSeverityOverrides = {
                     --     reportUnusedVariable = "warning",
                     -- },
@@ -36,7 +37,7 @@ local server_configs = {
                     useLibraryCodeForTypes = true,
                     diagnosticMode = "openFilesOnly",
                     autoSearchPaths = true,
-                    stubPath = "/home/autarch/.local/share/stubs",
+                    stubPath = "/home/joakim/.local/share/stubs",
                     -- diagnosticSeverityOverrides = {
                     --     reportUnusedVariable = "warning",
                     -- },

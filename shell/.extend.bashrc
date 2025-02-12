@@ -1,6 +1,12 @@
 # Basics {{{
 # Disable CTRL-S and CTRL-Q
 [[ $- =~ i ]] && stty -ixoff -ixon
+
+# Set key repetiion delay and rate
+# First number is delay in miliseconds
+# and second is repetition per seconds
+xset r rate 200 25
+
 # }}}
 
 # Functions {{{
@@ -83,15 +89,63 @@ function stow_app ()
 }
 
 # append indempotently to PATH
-path_append () {
-  for d; do
-    d=$({ cd -- "$d" && { pwd -P || pwd; } } 2>/dev/null)  # canonicalize symbolic links
-    if [ -z "$d" ]; then continue; fi  # skip nonexistent directory
-    case ":$PATH:" in
-      *":$d:"*) :;;
-      *) PATH=$PATH:$d;;
+# path_append () {
+#   for d; do
+#     d=$({ cd -- "$d" && { pwd -P || pwd; } } 2>/dev/null)  # canonicalize symbolic links
+#     if [ -z "$d" ]; then continue; fi  # skip nonexistent directory
+#     case ":$PATH:" in
+#       *":$d:"*) :;;
+#       *) PATH=$PATH:$d;;
+#     esac
+#   done
+# }
+
+prepend_env_var() {
+    local var_name="$1"  # Name of the environment variable (e.g., PATH)
+    local dir="$2"       # Directory to add
+
+    # Get the current value of the environment variable (or set to empty if unset)
+    local current_value="${!var_name:-}"
+
+    # Check if the directory is already in the variable
+    case ":$current_value:" in
+        *":$dir:"*) 
+            # If dir is already present, move it to the front
+            export "$var_name"="$dir:$(echo "$current_value" | sed "s|$dir:||;s|:$dir||")"
+            return
+            ;;
     esac
-  done
+
+    # If the variable is empty, just set it to dir
+    if [[ -z "$current_value" ]]; then
+        export "$var_name"="$dir"
+    else
+        export "$var_name"="$dir:$current_value"
+    fi
+}
+
+append_env_var() {
+    local var_name="$1"  # Name of the environment variable (e.g., PATH)
+    local dir="$2"       # Directory to add
+
+    # Get the current value of the environment variable (or set to empty if unset)
+    local current_value="${!var_name:-}"
+
+    # Check if the directory is already in the variable
+    case ":$current_value:" in
+        *":$dir:"*) 
+            # If dir is already present, move it to the end
+            export "$var_name"="$(echo "$current_value" | sed "s|$dir:||;s|:$dir||"):$dir"
+            return
+            ;;
+    esac
+
+    # If the variable is empty, just set it to dir
+    if [[ -z "$current_value" ]]; then
+        export "$var_name"="$dir"
+    else
+        export "$var_name"="$current_value:$dir"
+    fi
 }
 
 # }}}
@@ -119,6 +173,8 @@ export GOOGLE_DEFAULT_CLIENT_SECRET="no"
 #
 # Python {{{
 export PYTHONBREAKPOINT=ipdb.set_trace
+export TF_CPP_MIN_LOG_LEVEL=3
+
 # }}}
 
 # Rust {{{
@@ -176,10 +232,10 @@ else
 fi
 unset __mamba_setup
 
-mamba_last_env=~/.cache/mamba_last_env
-if [[ -f $mamba_last_env ]]; then
-    read -r env_name < $mamba_last_env
-    micromamba activate $env_name
+mamba_last_env_file="$HOME/.cache/mamba_last_env"
+if [[ -f $mamba_last_env_file ]]; then
+    read -r last_env < $mamba_last_env_file
+    micromamba activate $last_env
 fi
 
 # Define mamba command to activate/save env and run micromamba
@@ -217,11 +273,11 @@ eval "$(zoxide init --cmd f bash)"
 # Starship {{{
 [[ -f $HOME/.local/bin/starship ]] && eval "$(starship init bash)"
 # }}}
-#
+
 # Mojo {{{
-[[ -f /bin/modular ]] && MOJO_PATH=$(modular config mojo.path)
-export MODULAR_HOME=$HOME/.modular
-export PATH=$MOJO_PATH/bin:$PATH
+# [[ -f /bin/modular ]] && MOJO_PATH=$(modular config mojo.path)
+# export MODULAR_HOME=$HOME/.modular
+# export PATH=$MOJO_PATH/bin:$PATH
 # }}}
 
 # Julia {{{
@@ -243,6 +299,10 @@ if grep -q "microsoft" /proc/version > /dev/null 2>&1; then
             --exec /usr/sbin/service docker start > /dev/null 2>&1
     fi
 fi
+# }}}
+
+# ClearML {{{
+export CLEARML_HOST_IP=localhost
 # }}}
 
 # end apps }}}
@@ -285,10 +345,12 @@ alias lmkxet='latexmk -xelatex'
 alias lmklua='latexmk -lualatex'
 
 # other
-alias vdp="vd -f pandas"
 alias act="mamba activate"
 alias dea="mamba deactivate"
 alias feh="feh --zoom=50"
+
+alias cmlup='docker-compose -f /opt/clearml/docker-compose.yml up -d'
+alias cmldown='docker-compose -f /opt/clearml/docker-compose.yml down'
 
 # }}}
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
