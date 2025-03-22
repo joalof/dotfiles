@@ -94,7 +94,7 @@ end
 
 --- Creates a new Buffer instance
 --- @param handle number The handle of the buffer
---- @param verify boolean Whether to verify the buffer handle
+--- @param verify boolean? Whether to verify the buffer handle, defaults to true
 --- @return Buffer
 function Buffer:new(handle, verify)
     if handle == 0 then

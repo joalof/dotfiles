@@ -16,8 +16,8 @@ function ObjectList:new(objects)
 end
 
 
-local Handleables_mt = getmetatable(ObjectList)
-function Handleables_mt.__call(_, ...)
+local ObjectList_mt = getmetatable(ObjectList)
+function ObjectList_mt.__call(_, ...)
     return ObjectList:new(...)
 end
 

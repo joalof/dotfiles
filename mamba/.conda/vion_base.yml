@@ -1,0 +1,29 @@
+name: vion-base
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - librosa
+  - av
+  - opencv
+  - matplotlib
+  - seaborn
+  - scipy
+  - google-auth
+  - google-cloud-sdk
+  - google-cloud-storage
+  - google-cloud-datastore
+  - cloudpathlib
+  - typer
+  - black
+  - isort
+  - pynvim
+  - jupyter
+  - jupyterlab
+  - jupytext
+  - jupyter_client
+  - fastapi
+  - itsdangerous
+  - pip:
+    - modal

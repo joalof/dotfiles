@@ -153,7 +153,7 @@ function Window:set_var(name, value)
 end
 
 function Window:get_var(name)
-    api.nvim_win_get_var(self.handle, name)
+    return api.nvim_win_get_var(self.handle, name)
 end
 
 function Window:del_var(name)

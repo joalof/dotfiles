@@ -1,11 +1,19 @@
 return {
-    'echasnovski/mini.ai',
+    "echasnovski/mini.ai",
     event = "VeryLazy",
     dependencies = { "nvim-treesitter-textobjects" },
-    config = function ()
-        local ai = require('mini.ai')
+    config = function()
+        local ai = require("mini.ai")
         ai.setup({
             n_lines = 500,
+            mappings = {
+                goto_left = "",
+                goto_right = "",
+                around_next = "",
+                inside_next = "",
+                around_last = "",
+                inside_last = "",
+            },
             custom_textobjects = {
                 o = ai.gen_spec.treesitter({
                     a = { "@block.outer", "@conditional.outer", "@loop.outer" },
@@ -15,8 +23,5 @@ return {
                 c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
             },
         })
-
-        vim.keymap.del({'o', 'x', 'n'}, 'g]')
-        vim.keymap.del({'o', 'x', 'n'}, 'g[')
     end,
 }

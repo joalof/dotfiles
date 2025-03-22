@@ -1,9 +1,8 @@
-name: torch
+name: torchvision
 
 channels:
   - pytorch
   - nvidia
-  # - gpytorch
   - conda-forge
 
 dependencies:
@@ -22,7 +21,6 @@ dependencies:
   - torchvision=0.20 
   - torchaudio 
   - pytorch-cuda=12.4
-  - botorch
 
   # visualisation
   - matplotlib

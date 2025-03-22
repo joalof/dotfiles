@@ -11,6 +11,9 @@ dependencies:
 
   # ML
   - scikit-learn
+  - gpytorch
+  - botorch
+  - opt_einsum
 
   # visualisation
   - pillow
@@ -47,8 +50,10 @@ dependencies:
   - tomli
   - tomli-w
   - rsa
+  - gitpython
 
   # other
   - pylatexenc
+  - pydoe2
   - pip:
     - pnglatex

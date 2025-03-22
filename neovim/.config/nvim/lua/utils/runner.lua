@@ -6,6 +6,7 @@ local interpreters = {
     mojo = "mojo",
     markdown = "glow",
     r = "R",
+    sh = "bash",
 }
 
 local M = {}

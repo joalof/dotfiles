@@ -76,7 +76,6 @@ local server_configs = {
             end
         end,
     },
-
 }
 
 return {
@@ -85,7 +84,6 @@ return {
         "onsails/lspkind.nvim",
     },
     config = function()
-
         -- plugins that have to be set up before lspconfig
         require("mason").setup({
             ui = { border = "rounded" },
@@ -99,7 +97,7 @@ return {
         -- update default capabilities
         local lsp_defaults = lspconfig.util.default_config
         lsp_defaults.capabilities =
-        vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+            vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
         -- define autocmds and mappings on lsp attach
         vim.api.nvim_create_autocmd("LspAttach", {
@@ -130,7 +128,6 @@ return {
                 -- end
 
                 local opts = { silent = true, buffer = bufnr, noremap = true }
-                -- vim.keymap.set('n', '<leader>af', function() vim.lsp.buf.format { async = true } end, opts)
                 vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
                 vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
                 vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
@@ -167,12 +164,13 @@ return {
             })
 
             -- handlers
-            vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-                virtual_text = false,
-                underline = true,
-                signs = true,
-                update_in_insert = true,
-            })
+            vim.lsp.handlers["textDocument/publishDiagnostics"] =
+                vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+                    virtual_text = false,
+                    underline = true,
+                    signs = true,
+                    update_in_insert = true,
+                })
 
             vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
                 border = "rounded",
@@ -182,12 +180,12 @@ return {
         -- load lsp settings
         lsp_settings()
 
-        local sever_list = { "basedpyright", "lua_ls", "jsonls", "yamlls", "taplo", "mojo", "julials" }
+        local sever_list = { "basedpyright", "lua_ls", "jsonls", "yamlls", "taplo", "julials", "bashls" }
 
         for _, server in ipairs(sever_list) do
             local config = server_configs[server] or {}
+            -- config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
             lspconfig[server].setup(config)
         end
-
     end,
 }

@@ -86,5 +86,8 @@ return {
                 position = { row = "20%", col = "50%" },
             },
         },
+        signature = {
+            enabled = false,
+        },
     },
 }

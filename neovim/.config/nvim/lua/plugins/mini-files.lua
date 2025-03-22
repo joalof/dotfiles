@@ -48,7 +48,7 @@ return {
         end
 
         local function go_in_cd()
-            MiniFiles.go_in({ close_on_file = false })
+            MiniFiles.go_in({ close_on_file = true })
             vim.cmd('cd %:p:h')
             -- vim.uv.chdir(vim.fn.expand('%:p:h'))
         end
