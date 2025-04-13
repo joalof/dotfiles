@@ -20,7 +20,7 @@ return {
                     i = { "@block.inner", "@conditional.inner", "@loop.inner" },
                 }, {}),
                 f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }, {}),
-                c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
+                k = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
             },
         })
     end,

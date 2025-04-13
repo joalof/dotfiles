@@ -97,9 +97,9 @@ return {
 
         -- update default capabilities
         local lsp_defaults = lspconfig.util.default_config
-        lsp_defaults.capabilities =
-            vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
-
+        -- lsp_defaults.capabilities =
+        --     vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+        --
         -- define autocmds and mappings on lsp attach
         vim.api.nvim_create_autocmd("LspAttach", {
             desc = "LSP mappings and autocmds",
