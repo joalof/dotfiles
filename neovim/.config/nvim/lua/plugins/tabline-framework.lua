@@ -7,15 +7,6 @@ return {
     config = function()
         local tabline_utils = require("utils.tabline")
 
-
-        -- for debugging
-        -- local render = function(f)
-        --     f.add { ' ', fg = "#bb0000" }
-        --     f.add ' '
-        --     vim.print('render called')
-        -- end
-        -- opts.render = render
-      
         local opts = {
             render = tabline_utils.render,
             hl_fill = { fg = tabline_utils.hls.fill.fg, bg = tabline_utils.hls.fill.bg },

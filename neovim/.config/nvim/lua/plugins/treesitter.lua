@@ -18,8 +18,8 @@ return {
     cmd = { "TSUpdateSync" },
     opts = {
         highlight = { enable = true },
-        -- indent = { enable = true, disable = { "python" } },
-        indent = { enable = true},
+        indent = { enable = true, disable = { "python" } },
+        -- indent = { enable = true},
         ensure_installed = {
             "bash",
             "c",

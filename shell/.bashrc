@@ -408,6 +408,10 @@ if grep -q "microsoft" /proc/version > /dev/null 2>&1; then
 fi
 # }}}
 
+# {{{ Pixi
+prepend_env PATH "$HOME/.pixi/bin"
+# }}}
+
 # ClearML {{{
 export CLEARML_HOST_IP=localhost
 # }}}

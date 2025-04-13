@@ -69,7 +69,7 @@ function Cursor:translate(vec)
     return pos_new
 end
 
-function Cursor:with_anchor(fun, ...)
+function Cursor:with_rebound(fun, ...)
     local pos = self:get()
     fun(...)
     self:set(pos)

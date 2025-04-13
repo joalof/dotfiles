@@ -37,7 +37,7 @@ local server_configs = {
                     useLibraryCodeForTypes = true,
                     diagnosticMode = "openFilesOnly",
                     autoSearchPaths = true,
-                    stubPath = "/home/joakim/.local/share/stubs",
+                    stubPath = vim.uv.os_homedir() .. "/.local/share/stubs",
                     -- diagnosticSeverityOverrides = {
                     --     reportUnusedVariable = "warning",
                     -- },
@@ -71,7 +71,8 @@ local server_configs = {
     julials = {
         on_new_config = function(new_config, _)
             local julia = vim.fn.expand("~/.julia/environments/nvim-lspconfig/bin/julia")
-            if require("lspconfig").util.path.is_file(julia) then
+            -- if require("lspconfig").util.path.is_file(julia) then
+            if (vim.loop.fs_stat(julia) or {}).type == "file" then
                 new_config.cmd[1] = julia
             end
         end,

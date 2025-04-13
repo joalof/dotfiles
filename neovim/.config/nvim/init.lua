@@ -19,7 +19,7 @@ require("lazy").setup(
     {
         ui = { border = 'rounded' },
         dev = { path = "~/code/neovim" },
-        concurrency = 10,
+        concurrency = 20,
         rocks = { hererocks = true },
     }
 )

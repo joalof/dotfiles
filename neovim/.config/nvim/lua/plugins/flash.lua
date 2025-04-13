@@ -1,6 +1,6 @@
 return {
     "folke/flash.nvim",
-    keys = {"f", "F", "t", "T", "s", "/", "?"},
+    keys = {"f", "F", "t", "T", "/", "?"},
     config = function()
         require("flash").setup({
             modes = {
@@ -26,16 +26,16 @@ return {
                 return false
             end,
         }
-        vim.keymap.set({ "n", "x", "o" }, "s", function()
-            require("flash").jump({
-                labels = "sdfgqwertyuopzxcvbnm",
-                search = {
-                    max_length = 2,
-                    incremental = true,
-                    wrap = false,
-                },
-                actions = actions,
-            })
-        end)
+        -- vim.keymap.set({ "n", "x", "o" }, "s", function()
+        --     require("flash").jump({
+        --         labels = "sdfgqwertyuopzxcvbnm",
+        --         search = {
+        --             max_length = 2,
+        --             incremental = true,
+        --             wrap = false,
+        --         },
+        --         actions = actions,
+        --     })
+        -- end,
     end,
 }
