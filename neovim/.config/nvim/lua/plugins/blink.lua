@@ -28,7 +28,7 @@ return {
         keymap = {
             preset = 'default',
             ["<C-i>"] = {'select_next', 'fallback'},
-            ["<C-j>"] = {'accept', 'fallback'},
+            ["<C-y>"] = {'accept', 'fallback'},
         },
 
         appearance = {
@@ -37,10 +37,9 @@ return {
             nerd_font_variant = 'mono'
         },
 
-        -- (Default) Only show the documentation popup when manually triggered
         completion = {
             documentation = { auto_show = true },
-            list = { selection = { preselect = true, auto_insert = true } },
+            list = { selection = { preselect = false, auto_insert = true } },
             accept = { auto_brackets = { enabled = true }, },
         },
 
@@ -48,14 +47,9 @@ return {
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         -- -- can add snipper
         sources = {
-            default = { 'lsp', 'path', 'buffer' },
+            default = { 'lsp', 'path', 'buffer', 'cmdline'},
         },
 
-        -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
-        -- You may use a lua implementation instead by using `implementation = ` or fallback to the lua implementation,
-        -- when the Rust fuzzy matcher is not available, by using `implementation = `
-        --
-        -- See the fuzzy documentation for more information
         fuzzy = { implementation = "prefer_rust_with_warning" }
     },
     opts_extend = { "sources.default" }

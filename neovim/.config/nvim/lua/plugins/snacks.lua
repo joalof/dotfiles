@@ -38,16 +38,14 @@ return {
         -- find
         { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
         { "<leader>fn", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
-        { "<leader>ff", function() Snacks.picker.smart() end, desc = "Find Files" },
-        { "<leader>fF", function() Snacks.picker.files() end, desc = "Find Files" },
+        { "<leader>ff"},
         { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
         -- git
-        { "<leader>fgf", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
         { "<leader>fgb", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
         -- search
         { '<leader>fs', function() Snacks.picker.search_history() end, desc = "Search History" },
         { "<leader>fc", function() Snacks.picker.command_history() end, desc = "Command History" },
-        { "<leader>fC", function() Snacks.picker.commands() end, desc = "Commands" },
+        { "<leader>fk", function() Snacks.picker.commands() end, desc = "Commands" },
         { "<leader>fd", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
         { "<leader>fh", function() Snacks.picker.help() end, desc = "Help Pages" },
         { "<leader>fm", function() Snacks.picker.man() end, desc = "Man Pages" },
@@ -55,4 +53,18 @@ return {
         -- LSP
         { "<leader>af", function() Snacks.rename.rename_file() end, desc = "Rename File" },
     },
+    config = function(_, opts)
+        local Snacks = require('snacks')
+        Snacks.setup(opts)
+
+        vim.keymap.set('n', "<leader>ff", function() Snacks.picker.files(
+            {
+                cwd = require('utils.project').get_root('cwd'),
+                matcher = {
+                    frecency = true,
+                    sort_empty = true,
+                },
+            }
+        ) end, { desc = "Find project files" })
+    end
 }
