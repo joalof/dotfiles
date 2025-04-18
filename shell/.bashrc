@@ -477,8 +477,6 @@ alias lmkxet='latexmk -xelatex'
 alias lmklua='latexmk -lualatex'
 
 # other
-alias act="mamba activate"
-alias dea="mamba deactivate"
 alias feh="feh --zoom=50"
 
 alias cmlup='docker-compose -f /opt/clearml/docker-compose.yml up -d'

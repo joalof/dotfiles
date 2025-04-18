@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+# Directory where virtual environments are stored
+VENV_DIR="$HOME/.local/venv"
+
+# Ensure we were sourced, not executed
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "Please source this script to activate/deactivate environments:"
+    echo "  source $0 <command> [args...]"
+    exit 1
+fi
+
+# ezenv command function
+ezenv() {
+    local cmd="$1"
+    shift
+
+    case "$cmd" in
+        list)
+            if [[ ! -d "$VENV_DIR" ]]; then
+                echo "No virtual environments found."
+                return
+            fi
+            local envs=()
+            while IFS= read -r -d $'\0' env; do
+                envs+=("$(basename "$env")")
+            done < <(find "$VENV_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
+
+            if [[ ${#envs[@]} -eq 0 ]]; then
+                echo "No virtual environments found."
+            else
+                echo "Available virtual environments:"
+                for env in "${envs[@]}"; do
+                    echo " - $env"
+                done
+            fi
+            ;;
+
+        activate)
+            local name="$1"
+            if [[ -z "$name" ]]; then
+                echo "Usage: ezenv activate <env-name>"
+                return 1
+            fi
+
+            local activate_path="$VENV_DIR/$name/bin/activate"
+            if [[ ! -f "$activate_path" ]]; then
+                echo "Environment '$name' not found at $activate_path"
+                return 1
+            fi
+
+            # Deactivate current env if one is active
+            if [[ -n "$VIRTUAL_ENV" ]]; then
+                deactivate
+            fi
+
+            source "$activate_path"
+            echo "Activated virtual environment: $name"
+            ;;
+
+        deactivate)
+            if [[ -z "$VIRTUAL_ENV" ]]; then
+                echo "No virtual environment is currently active."
+                return
+            fi
+            deactivate
+            echo "Deactivated virtual environment."
+            ;;
+
+        *)
+            echo "Usage: ezenv {list|activate <env-name>|deactivate}"
+            return 1
+            ;;
+    esac
+}
