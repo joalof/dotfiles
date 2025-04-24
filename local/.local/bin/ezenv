@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
-# Directory where virtual environments are stored
-VENV_DIR="$HOME/.local/venv"
+# Directories where virtual environments are stored
+VENV_DIRS=(
+    "$HOME/.local/venv"
+    "$HOME/projects"
+    # Add more directories here as needed
+)
 
 # Ensure we were sourced, not executed
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "Please source this script to activate/deactivate environments:"
-    echo "  source $0 <command> [args...]"
+    echo "  source $0"
     exit 1
 fi
 
@@ -17,36 +21,93 @@ ezenv() {
 
     case "$cmd" in
         list)
-            if [[ ! -d "$VENV_DIR" ]]; then
-                echo "No virtual environments found."
-                return
-            fi
-            local envs=()
-            while IFS= read -r -d $'\0' env; do
-                envs+=("$(basename "$env")")
-            done < <(find "$VENV_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
+            local found_envs=false
+            for dir in "${VENV_DIRS[@]}"; do
+                if [[ ! -d "$dir" ]]; then
+                    continue
+                fi
+                
+                local envs=()
+                while IFS= read -r -d $'\0' env; do
+                    # Check if this is a valid venv by looking for the activate script
+                    if [[ -f "$env/bin/activate" ]]; then
+                        envs+=("$(basename "$env")")
+                    fi
+                done < <(find "$dir" -mindepth 1 -maxdepth 1 -type d -print0)
 
-            if [[ ${#envs[@]} -eq 0 ]]; then
-                echo "No virtual environments found."
-            else
-                echo "Available virtual environments:"
-                for env in "${envs[@]}"; do
-                    echo " - $env"
-                done
+                if [[ ${#envs[@]} -gt 0 ]]; then
+                    found_envs=true
+                    echo "Virtual environments in $dir:"
+                    for env in "${envs[@]}"; do
+                        echo " - $env"
+                    done
+                    echo ""
+                fi
+            done
+
+            if [[ "$found_envs" == false ]]; then
+                echo "No virtual environments found in any of the configured directories."
             fi
             ;;
 
         activate)
             local name="$1"
+            
             if [[ -z "$name" ]]; then
-                echo "Usage: ezenv activate <env-name>"
-                return 1
-            fi
-
-            local activate_path="$VENV_DIR/$name/bin/activate"
-            if [[ ! -f "$activate_path" ]]; then
-                echo "Environment '$name' not found at $activate_path"
-                return 1
+                # Interactive mode - build a list of all environments
+                local env_paths=()
+                local env_names=()
+                local count=0
+                
+                for dir in "${VENV_DIRS[@]}"; do
+                    if [[ ! -d "$dir" ]]; then
+                        continue
+                    fi
+                    
+                    while IFS= read -r -d $'\0' env_path; do
+                        if [[ -f "$env_path/bin/activate" ]]; then
+                            local env_name=$(basename "$env_path")
+                            ((count++))
+                            env_paths+=("$env_path")
+                            env_names+=("$env_name")
+                            echo "$count) $env_name ($dir)"
+                        fi
+                    done < <(find "$dir" -mindepth 1 -maxdepth 1 -type d -print0)
+                done
+                
+                if [[ $count -eq 0 ]]; then
+                    echo "No virtual environments found in any of the configured directories."
+                    return 1
+                fi
+                
+                read -p "Which environment would you like to activate? [1-$count]: " selection
+                
+                # Validate input
+                if ! [[ "$selection" =~ ^[0-9]+$ ]] || [ "$selection" -lt 1 ] || [ "$selection" -gt $count ]; then
+                    echo "Invalid selection. Please enter a number between 1 and $count."
+                    return 1
+                fi
+                
+                # Adjust index (arrays are 0-based)
+                ((selection--))
+                
+                local activate_path="${env_paths[$selection]}/bin/activate"
+                name="${env_names[$selection]}"
+            else
+                # Direct selection mode - look for specified environment
+                local activate_path=""
+                for dir in "${VENV_DIRS[@]}"; do
+                    local potential_path="$dir/$name/bin/activate"
+                    if [[ -f "$potential_path" ]]; then
+                        activate_path="$potential_path"
+                        break
+                    fi
+                done
+                
+                if [[ -z "$activate_path" ]]; then
+                    echo "Environment '$name' not found in any of the configured directories."
+                    return 1
+                fi
             fi
 
             # Deactivate current env if one is active
@@ -55,6 +116,7 @@ ezenv() {
             fi
 
             source "$activate_path"
+            echo $name > ~/.cache/last_venv
             echo "Activated virtual environment: $name"
             ;;
 
@@ -67,8 +129,79 @@ ezenv() {
             echo "Deactivated virtual environment."
             ;;
 
+        remove)
+            local name="$1"
+            if [[ -z "$name" ]]; then
+                echo "Usage: ezenv remove <env-name>"
+                return 1
+            fi
+
+            # Check if the environment is currently active
+            if [[ -n "$VIRTUAL_ENV" && "$(basename "$(dirname "$VIRTUAL_ENV")")" == "$name" ]]; then
+                echo "Cannot remove the currently active environment. Please deactivate it first."
+                return 1
+            fi
+
+            # Look for environment in all configured directories
+            local env_path=""
+            local env_dir=""
+            for dir in "${VENV_DIRS[@]}"; do
+                local potential_path="$dir/$name"
+                if [[ -d "$potential_path" && -f "$potential_path/bin/activate" ]]; then
+                    env_path="$potential_path"
+                    env_dir="$dir"
+                    break
+                fi
+            done
+
+            if [[ -z "$env_path" ]]; then
+                echo "Environment '$name' not found in any of the configured directories."
+                return 1
+            fi
+
+            # Confirm deletion
+            read -p "Are you sure you want to remove the environment '$name' from $env_dir? [y/N] " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                echo "Removing virtual environment: $name"
+                rm -rf "$env_path"
+                if [[ $? -eq 0 ]]; then
+                    echo "Environment '$name' has been removed successfully."
+                else
+                    echo "Failed to remove environment '$name'. Check permissions and try again."
+                    return 1
+                fi
+            else
+                echo "Operation cancelled."
+            fi
+            ;;
+
+        add-dir)
+            local new_dir="$1"
+            if [[ -z "$new_dir" ]]; then
+                echo "Usage: ezenv add-dir <directory-path>"
+                return 1
+            fi
+            
+            # Expand the path if it contains a tilde
+            new_dir="${new_dir/#\~/$HOME}"
+            
+            # Check if directory already exists in the list
+            for dir in "${VENV_DIRS[@]}"; do
+                if [[ "$dir" == "$new_dir" ]]; then
+                    echo "Directory '$new_dir' is already in the list."
+                    return 0
+                fi
+            done
+            
+            # Add the new directory to the configuration
+            echo "Adding '$new_dir' to the virtual environment directories."
+            echo "You'll need to manually add this directory to VENV_DIRS in the script."
+            echo "Add this line: \"$new_dir\""
+            ;;
+
         *)
-            echo "Usage: ezenv {list|activate <env-name>|deactivate}"
+            echo "Usage: ezenv {list|activate [env-name]|deactivate|remove <env-name>|add-dir <directory-path>}"
             return 1
             ;;
     esac
