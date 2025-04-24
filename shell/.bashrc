@@ -334,29 +334,29 @@ fi
 # }}}
 
 # Mamba {{{
-export MAMBA_EXE="$HOME/.local/bin/micromamba";
-export MAMBA_ROOT_PREFIX="$HOME/apps/micromamba";
-__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__mamba_setup"
-else
-    alias micromamba="$MAMBA_EXE"  # Fallback on help from mamba activate
-fi
-unset __mamba_setup
-
-mamba_last_env_file="$HOME/.cache/mamba_last_env"
-if [[ -f $mamba_last_env_file ]]; then
-    read -r last_env < $mamba_last_env_file
-    micromamba activate $last_env
-fi
-
-# Define mamba command to activate/save env and run micromamba
-mamba () {
-  micromamba "$@"
-  if [[ $1 == "activate" || $1 == "deactivate" ]]; then
-      echo $CONDA_DEFAULT_ENV > ~/.cache/mamba_last_env
-  fi
-}
+# export MAMBA_EXE="$HOME/.local/bin/micromamba";
+# export MAMBA_ROOT_PREFIX="$HOME/apps/micromamba";
+# __mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__mamba_setup"
+# else
+#     alias micromamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+# fi
+# unset __mamba_setup
+#
+# mamba_last_env_file="$HOME/.cache/mamba_last_env"
+# if [[ -f $mamba_last_env_file ]]; then
+#     read -r last_env < $mamba_last_env_file
+#     micromamba activate $last_env
+# fi
+#
+# # Define mamba command to activate/save env and run micromamba
+# mamba () {
+#   micromamba "$@"
+#   if [[ $1 == "activate" || $1 == "deactivate" ]]; then
+#       echo $CONDA_DEFAULT_ENV > ~/.cache/mamba_last_env
+#   fi
+# }
 
 # ----
 # }}}
@@ -409,11 +409,22 @@ fi
 # }}}
 
 # {{{ Pixi
-prepend_env PATH "$HOME/.pixi/bin"
+# prepend_env PATH "$HOME/.pixi/bin"
 # }}}
 
 # ClearML {{{
-export CLEARML_HOST_IP=localhost
+# export CLEARML_HOST_IP=localhost
+# }}}
+
+# Ezenv {{{
+[ -f ~/.local/bin/ezenv ] && source ~/.local/bin/ezenv
+
+last_venv_file="$HOME/.cache/last_venv"
+if [[ -f $last_venv_file ]]; then
+    read -r last_venv < $last_venv_file
+    ezenv activate $last_venv
+fi
+
 # }}}
 
 # end apps }}}
