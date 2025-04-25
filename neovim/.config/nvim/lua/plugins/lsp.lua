@@ -1,7 +1,4 @@
--- local lsp_defaults = require("lspconfig").util.default_config
--- local pyright_capabilities = vim.tbl_deep_extend("force", {}, lsp_defaults.capabilities)
--- -- local capabilities = vim.lsp.protocol.make_client_capabilities()
--- pyright_capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
+local Path = require('lib.path')
 
 local server_configs = {
     ruff_lsp = {
@@ -9,26 +6,7 @@ local server_configs = {
             client.server_capabilities.hoverProvider = false
         end,
     },
-    pyright = {
-        -- capabilities = pyright_capabilities,
-        settings = {
-            python = {
-                -- pythonPath = vim.fn.exepath("python"),
-                analysis = {
-                    typeCheckingMode = "basic",
-                    useLibraryCodeForTypes = true,
-                    diagnosticMode = "openFilesOnly",
-                    autoSearchPaths = true,
-                    -- stubPath = "/home/joakim/.local/share/stubs",
-                    -- diagnosticSeverityOverrides = {
-                    --     reportUnusedVariable = "warning",
-                    -- },
-                },
-            },
-        },
-    },
     basedpyright = {
-        -- capabilities = pyright_capabilities,
         settings = {
             basedpyright = {
                 analysis = {
@@ -38,11 +16,12 @@ local server_configs = {
                     diagnosticMode = "openFilesOnly",
                     autoSearchPaths = true,
                     stubPath = vim.uv.os_homedir() .. "/.local/share/stubs",
-                    -- diagnosticSeverityOverrides = {
-                    --     reportUnusedVariable = "warning",
-                    -- },
                 },
             },
+            python = {
+                venvPath = Path(vim.env['VIRTUAL_ENV']):parent().filename,
+                venv = Path(vim.env['VIRTUAL_ENV']):name(),
+            }
         },
     },
     lua_ls = {
@@ -166,12 +145,12 @@ return {
 
             -- handlers
             vim.lsp.handlers["textDocument/publishDiagnostics"] =
-                vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-                    virtual_text = false,
-                    underline = true,
-                    signs = true,
-                    update_in_insert = true,
-                })
+            vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+                virtual_text = false,
+                underline = true,
+                signs = true,
+                update_in_insert = true,
+            })
 
             vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
                 border = "rounded",

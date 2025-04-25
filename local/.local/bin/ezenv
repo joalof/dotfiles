@@ -175,34 +175,5 @@ ezenv() {
                 echo "Operation cancelled."
             fi
             ;;
-
-        add-dir)
-            local new_dir="$1"
-            if [[ -z "$new_dir" ]]; then
-                echo "Usage: ezenv add-dir <directory-path>"
-                return 1
-            fi
-            
-            # Expand the path if it contains a tilde
-            new_dir="${new_dir/#\~/$HOME}"
-            
-            # Check if directory already exists in the list
-            for dir in "${VENV_DIRS[@]}"; do
-                if [[ "$dir" == "$new_dir" ]]; then
-                    echo "Directory '$new_dir' is already in the list."
-                    return 0
-                fi
-            done
-            
-            # Add the new directory to the configuration
-            echo "Adding '$new_dir' to the virtual environment directories."
-            echo "You'll need to manually add this directory to VENV_DIRS in the script."
-            echo "Add this line: \"$new_dir\""
-            ;;
-
-        *)
-            echo "Usage: ezenv {list|activate [env-name]|deactivate|remove <env-name>|add-dir <directory-path>}"
-            return 1
-            ;;
     esac
 }
