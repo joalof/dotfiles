@@ -1,6 +1,9 @@
 local api = vim.api
 require("table.new")
 
+local File = require('lib.file').File
+
+
 --- @class Buffer
 --- @field handle number The handle of the buffer
 --- @field name string The name of the buffer
@@ -92,7 +95,7 @@ Buffer.__newindex = function(tbl, key, value)
     end
 end
 
---- Creates a new Buffer instance
+--- Instantiates a Buffer object
 --- @param handle number The handle of the buffer
 --- @param verify boolean? Whether to verify the buffer handle, defaults to true
 --- @return Buffer
@@ -116,8 +119,8 @@ end
 
 --- Creates a new Buffer in neovim
 --- @param name string? Name of the new buffer
---- @param listed boolean? Name of the new buffer
---- @param scratch boolean? Name of the new buffer
+--- @param listed boolean?
+--- @param scratch boolean?
 --- @return Buffer
 function Buffer:create(name, listed, scratch)
     listed = listed or true
@@ -144,6 +147,20 @@ function Buffer:from_name(name)
     error(string.format("Buffer with name %s does not exist", name))
 end
 
+
+--- @param file string file to open
+--- @return Buffer
+function Buffer:from_file(file, listed, scratch)
+    listed = listed or true
+    scratch = scratch or false
+    file = File(file)
+    local lines = file:read_lines()
+    local buf = Buffer:create(tostring(file.path), listed, scratch)
+    buf:set_lines(lines)
+    return buf
+end
+
+
 local Buffer_mt = getmetatable(Buffer)
 function Buffer_mt.__call(_, ...)
     args = { ... }
@@ -155,6 +172,14 @@ function Buffer_mt.__call(_, ...)
         end
     end
     error(string.format("No constructor matching arguments"))
+end
+
+function Buffer:__tostring()
+    local s = "Buffer("
+    s = s .. ("handle=%s"):format(self.handle)
+    s = s .. (", name=%s"):format(self.name)
+    s = s .. ")"
+    return s
 end
 
 --- Gets a buffer option
@@ -198,8 +223,8 @@ end
 
 function Buffer:set_lines(lines, start, stop, strict_indexing)
     start = start or 0
-    stop = stop or start
-    strict_indexing = strict_indexing or true
+    stop = stop or (start + #lines)
+    strict_indexing = strict_indexing or false
     api.nvim_buf_set_lines(self.handle, start, stop, strict_indexing, lines)
 end
 
@@ -347,15 +372,16 @@ function Buffer:get_parent_windows(opts)
     return parents
 end
 
-function Buffer:write()
-    local Path = require("plenary.path")
-    local buf_path = Path(self.name)
-    -- TODO
+function Buffer:write(path)
+    path = tostring(path)
+    local file = File(path)
+    local lines = self:get_lines()
+    file:write_lines(lines, 'w')
 end
 
 --- Lists all buffers
 --- @return ObjectList The list of all buffers
-function Buffer.list_all()
+local function list_buffers()
     local ObjectList = require("lib.vim.object_list")
     local handles = api.nvim_list_bufs()
     local objs = table.new(#handles, 0)
@@ -365,4 +391,4 @@ function Buffer.list_all()
     return ObjectList(objs)
 end
 
-return Buffer
+return { Buffer = Buffer, list_buffers = list_buffers }

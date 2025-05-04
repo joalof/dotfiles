@@ -124,7 +124,7 @@ end
 --
 --  Static functions
 --
-function Tabpage.list_all()
+local function list_tabpages()
     local ObjectList = require("lib.vim.object_list")
     local tabs = {}
     local handles = api.nvim_list_tabpages()
@@ -135,4 +135,4 @@ function Tabpage.list_all()
     return ObjectList(tabs)
 end
 
-return Tabpage
+return {Tabpage = Tabpage, list_tabpages = list_tabpages}

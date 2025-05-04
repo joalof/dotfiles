@@ -1,31 +1,49 @@
-local M = {}
 local uv = vim.uv
 
-local File = setmetatable({}, {})
+local Path = require("lib.path").Path
 
-M.File = File
+local function if_nil(val, was_nil, was_not_nil)
+    if val == nil then
+        return was_nil
+    else
+        return was_not_nil
+    end
+end
+
+local File = setmetatable({}, {})
 
 File.__index = File
 
 function File:new(path)
-    local file = { path }
+    local file = { path = Path(path) }
     setmetatable(file, File)
     return file
 end
 
-function File:open() end
+local File_mt = getmetatable(File)
+function File_mt.__call(_, ...)
+    args = { ... }
+    if #args == 1 then
+        local name = tostring(args[1])
+        return File:new(name)
+    end
+    error(string.format("No constructor matching arguments"))
+end
 
-function File:close() end
+function File.__tostring(self)
+    return tostring(self.path)
+end
 
 function File:touch(opts)
     opts = opts or {}
+    local path = self.path
 
     local mode = opts.mode or 420
-    local parents = F.if_nil(opts.parents, false, opts.parents)
+    local parents = if_nil(opts.parents, false, opts.parents)
 
     if self:exists() then
         local new_time = os.time()
-        uv.fs_utime(self:_fs_filename(), new_time, new_time)
+        uv.fs_utime(path:_fs_filename(), new_time, new_time)
         return
     end
 
@@ -33,9 +51,9 @@ function File:touch(opts)
         File:new(self:parent()):mkdir({ parents = true })
     end
 
-    local fd = uv.fs_open(self:_fs_filename(), "w", mode)
+    local fd = uv.fs_open(path:_fs_filename(), "w", mode)
     if not fd then
-        error("Could not create file: " .. self:_fs_filename())
+        error("Could not create file: " .. path:_fs_filename())
     end
     uv.fs_close(fd)
 
@@ -47,15 +65,21 @@ function File:write(txt, flag, mode)
 
     mode = mode or 438
 
-    local fd = assert(uv.fs_open(self:_fs_filename(), flag, mode))
+    local fd = assert(uv.fs_open(self.path:_fs_filename(), flag, mode))
     assert(uv.fs_write(fd, txt, -1))
     assert(uv.fs_close(fd))
 end
 
+function File:write_lines(lines, flag, mode)
+    local text = require('lib.stringx').join('\n', lines)
+    self:write(text, flag, mode)
+end
+
+
 -- TODO: Asyncify this and use vim.wait in the meantime.
 --  This will allow other events to happen while we're waiting!
 function File:_read()
-    local fd = assert(uv.fs_open(self:_fs_filename(), "r", 438)) -- for some reason test won't pass with absolute
+    local fd = assert(uv.fs_open(self.path:_fs_filename(), "r", 438)) -- for some reason test won't pass with absolute
     local stat = assert(uv.fs_fstat(fd))
     local data = assert(uv.fs_read(fd, stat.size, 0))
     assert(uv.fs_close(fd))
@@ -96,7 +120,7 @@ function File:head(num_lines)
     num_lines = num_lines or 10
     local chunk_size = 256
 
-    local fd = uv.fs_open(self:_fs_filename(), "r", 438)
+    local fd = uv.fs_open(self.path:_fs_filename(), "r", 438)
     if not fd then
         return
     end
@@ -138,7 +162,7 @@ function File:tail(num_lines)
     num_lines = num_lines or 10
     local chunk_size = 256
 
-    local fd = uv.fs_open(self:_fs_filename(), "r", 438)
+    local fd = uv.fs_open(self.path:_fs_filename(), "r", 438)
     if not fd then
         return
     end
@@ -178,7 +202,7 @@ function File:tail(num_lines)
     return data
 end
 
-function File:readlines()
+function File:read_lines()
     local data = self:read()
 
     data = data:gsub("\r", "")
@@ -198,7 +222,7 @@ function File:iter()
 end
 
 function File:readbyterange(offset, length)
-    local fd = uv.fs_open(self:_fs_filename(), "r", 438)
+    local fd = uv.fs_open(self.path:_fs_filename(), "r", 438)
     if not fd then
         return
     end
@@ -231,5 +255,7 @@ function File:readbyterange(offset, length)
 
     return data
 end
+
+M = { File = File }
 
 return M

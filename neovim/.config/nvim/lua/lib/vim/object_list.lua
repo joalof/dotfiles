@@ -71,4 +71,4 @@ function ObjectList:filter_by(property, value, opts)
     return ObjectList:new(filtered)
 end
 
-return ObjectList
+return {ObjectList = ObjectList}

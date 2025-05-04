@@ -1,6 +1,7 @@
 return {
     'nvim-pack/nvim-spectre',
     keys = { "<leader>as" },
+    cmd = {'Spectre'},
     config = function()
         vim.keymap.set(
             'n',

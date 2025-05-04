@@ -102,9 +102,9 @@ function List:__eq(other)
 end
 
 local mt = getmetatable(List)
-function mt.__call(_, opts)
-    if type(opts) == "table" then
-        return List:new(opts)
+function mt.__call(_, args)
+    if type(args) == "table" then
+        return List:new(args)
     end
 end
 

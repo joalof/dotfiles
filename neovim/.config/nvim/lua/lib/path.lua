@@ -6,7 +6,15 @@
 local bit = require("plenary.bit")
 local uv = vim.uv
 
-local F = require("plenary.functional")
+
+local function if_nil(val, was_nil, was_not_nil)
+    if val == nil then
+        return was_nil
+    else
+        return was_not_nil
+    end
+end
+
 
 local S_IF = {
     -- S_IFDIR  = 0o040000  # directory
@@ -328,7 +336,7 @@ function Path:make_relative(cwd)
     end
 
     self.filename = clean(self.filename)
-    cwd = clean(F.if_nil(cwd, self._cwd, cwd))
+    cwd = clean(if_nil(cwd, self._cwd, cwd))
     if self.filename == cwd then
         self.filename = "."
     else
@@ -456,8 +464,8 @@ function Path:mkdir(opts)
     opts = opts or {}
 
     local mode = opts.mode or 448 -- 0700 -> decimal
-    local parents = F.if_nil(opts.parents, false, opts.parents)
-    local exists_ok = F.if_nil(opts.exists_ok, true, opts.exists_ok)
+    local parents = if_nil(opts.parents, false, opts.parents)
+    local exists_ok = if_nil(opts.exists_ok, true, opts.exists_ok)
 
     local exists = self:exists()
     if not exists_ok and exists then
@@ -545,8 +553,8 @@ end
 ---@return table {[Path of destination]: bool} indicating success of copy; nested tablex constitute sub dirs
 function Path:copy(opts)
     opts = opts or {}
-    opts.recursive = F.if_nil(opts.recursive, false, opts.recursive)
-    opts.override = F.if_nil(opts.override, true, opts.override)
+    opts.recursive = if_nil(opts.recursive, false, opts.recursive)
+    opts.override = if_nil(opts.override, true, opts.override)
 
     local dest = opts.destination
     -- handles `.`, `..`, `./`, and `../`
@@ -568,26 +576,26 @@ function Path:copy(opts)
                 { prompt = string.format("Overwrite existing %s?", dest:absolute().filename) },
                 function(_, idx)
                     success[dest] = uv.fs_copyfile(self:absolute(), dest:absolute().filename, { excl = idx ~= 1 })
-                        or false
+                    or false
                 end
             )
         else
             -- nil: not overriden if `override = false`
             success[dest] = uv.fs_copyfile(make_absolute(self), make_absolute(dest), { excl = not opts.override })
-                or false
+            or false
         end
         return success
     end
     -- dir
     if opts.recursive then
         dest:mkdir({
-            parents = F.if_nil(opts.parents, false, opts.parents),
-            exists_ok = F.if_nil(opts.exists_ok, true, opts.exists_ok),
+            parents = if_nil(opts.parents, false, opts.parents),
+            exists_ok = if_nil(opts.exists_ok, true, opts.exists_ok),
         })
         local scan = require("plenary.scandir")
         local data = scan.scan_dir(self.filename, {
-            respect_gitignore = F.if_nil(opts.respect_gitignore, false, opts.respect_gitignore),
-            hidden = F.if_nil(opts.hidden, true, opts.hidden),
+            respect_gitignore = if_nil(opts.respect_gitignore, false, opts.respect_gitignore),
+            hidden = if_nil(opts.hidden, true, opts.hidden),
             depth = 1,
             add_dirs = true,
         })
@@ -610,7 +618,7 @@ end
 function Path:rm(opts)
     opts = opts or {}
 
-    local recursive = F.if_nil(opts.recursive, false, opts.recursive)
+    local recursive = if_nil(opts.recursive, false, opts.recursive)
     if recursive then
         local scan = require("plenary.scandir")
         local abs = make_absolute(self)
@@ -685,16 +693,19 @@ end
 
 function Path:find_upwards(filename)
     local folder = Path:new(self)
-    local root = info.root(folder)
+    local root = path.root(folder:absolute())
 
-    while folder:absolute().filename ~= root do
+    while true do
         local p = folder:joinpath(filename)
         if p:exists() then
             return p
         end
+        if folder:absolute() == root then
+            break
+        end
         folder = folder:parent()
     end
-    return ""
+    return nil
 end
 
 function Path:name()
@@ -712,4 +723,5 @@ end
 
 function Path:iterdir() end
 
-return Path
+
+return {Path = Path}

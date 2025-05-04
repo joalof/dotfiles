@@ -4,12 +4,9 @@ return {
     dependencies = {
         "nvim-lua/plenary.nvim",
         { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-        "joalof/readline.nvim"
+        "assistcontrol/readline.nvim"
     },
-    cmd = "Telescope",
-    keys = { "<leader>ff", "<leader>fn", "<leader>fh", "<leader>fg", "<leader>fa"},
     config = function()
-        local builtin = require("telescope.builtin")
         local actions = require("telescope.actions")
 
         require("telescope").setup({
@@ -55,33 +52,18 @@ return {
         })
 
         require("telescope").load_extension("fzf")
-        local project = require('utils.project')
-
-
-        vim.keymap.set("n", "<leader>ff", function()
-            builtin.find_files({ cwd = tostring(project.get_root('cwd')) })
-        end)
-        vim.keymap.set("n", "<leader>fa", function()
-            builtin.find_files({ cwd = "~" })
-        end)
-        vim.keymap.set("n", "<leader>fg", function()
-            builtin.live_grep({ cwd = tostring(project.get_root('cwd')) })
-        end)
-        vim.keymap.set("n", "<leader>fh", builtin.help_tags)
-        vim.keymap.set("n", "<leader>fn", function()
-            builtin.find_files({ cwd = vim.fn.environ()["HOME"] .. "/.config/nvim", hidden = true })
-        end)
-
-        -- custom action for cding to dir of selected file
-        -- local transform_mod = require('telescope.actions.mt').transform_mod
-        -- local custom_actions = transform_mod({
-        --     tcd = function(prompt_bufnr)
-        --         local selection = require("telescope.actions.state").get_selected_entry()
-        --         local dir = vim.fn.fnamemodify(selection.path, ":p:h")
-        --         require("telescope.actions").close(prompt_bufnr)
-        --         vim.cmd(string.format("silent tcd %s", dir))
-        --     end,
-        -- })
-
+        -- vim.keymap.set("n", "<leader>ff", function()
+        --     builtin.find_files({ cwd = tostring(project.get_root('cwd')) })
+        -- end)
+        -- vim.keymap.set("n", "<leader>fa", function()
+        --     builtin.find_files({ cwd = "~" })
+        -- end)
+        -- vim.keymap.set("n", "<leader>fg", function()
+        --     builtin.live_grep({ cwd = tostring(project.get_root('cwd')) })
+        -- end)
+        -- vim.keymap.set("n", "<leader>fh", builtin.help_tags)
+        -- vim.keymap.set("n", "<leader>fn", function()
+        --     builtin.find_files({ cwd = vim.fn.environ()["HOME"] .. "/.config/nvim", hidden = true })
+        -- end)
     end,
 }

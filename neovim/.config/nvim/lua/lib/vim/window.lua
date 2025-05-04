@@ -176,7 +176,7 @@ end
 
 --- Lists all buffers
 --- @return ObjectList List of all Windows
-function Window.list_all()
+local function list_windows()
     local ObjectList = require("lib.vim.object_list")
     local handles = api.nvim_list_bufs()
     local objs = table.new(#handles, 0)
@@ -186,4 +186,4 @@ function Window.list_all()
     return ObjectList(objs)
 end
 
-return Window
+return {Window = Window, list_windows = list_windows}

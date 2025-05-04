@@ -89,4 +89,4 @@ function Cursor:search(pattern, opts)
     return res == 0
 end
 
-return Cursor
+return {Cursor = Cursor}

@@ -1,5 +1,5 @@
 return {
-    "joalof/readline.nvim",
+    "assistcontrol/readline.nvim",
     dev = true,
     event = "VeryLazy",
     keys = {

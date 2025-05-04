@@ -1,27 +1,50 @@
-return {
-    "luckasRanarison/nvim-devdocs",
+return  {
+    "maskudo/devdocs.nvim",
+    lazy = false,
     dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-telescope/telescope.nvim",
-        "nvim-treesitter/nvim-treesitter",
+        "folke/snacks.nvim",
     },
-    cmd = {
-        'DevdocsFetch',
-        'DevdocsInstall',
-        'DevdocsUninstall',
-        'DevdocsUpdate',
-        'DevdocsUpdateAll',
-        'DevdocsOpen',
-        'DevdocsOpenFloat',
-        'DevdocsOpenCurrent',
-        'DevdocsOpenCurrentFloat',
-        'DevdocsToggle',
-        'DevdocsKeywordprg',
+    cmd = { "DevDocs" },
+    keys = {
+        {
+            "<leader>ho",
+            mode = "n",
+            "<cmd>DevDocs get<cr>",
+            desc = "Get Devdocs",
+        },
+        {
+            "<leader>hi",
+            mode = "n",
+            "<cmd>DevDocs install<cr>",
+            desc = "Install Devdocs",
+        },
+        {
+            "<leader>hv",
+            mode = "n",
+            function()
+                local devdocs = require("devdocs")
+                local installedDocs = devdocs.GetInstalledDocs()
+                vim.ui.select(installedDocs, {}, function(selected)
+                    if not selected then
+                        return
+                    end
+                    local docDir = devdocs.GetDocDir(selected)
+                    -- prettify the filename as you wish
+                    Snacks.picker.files({ cwd = docDir })
+                end)
+            end,
+            desc = "Get Devdocs",
+        },
+        {
+            "<leader>hd",
+            mode = "n",
+            "<cmd>DevDocs delete<cr>",
+            desc = "Delete Devdoc",
+        }
     },
     opts = {
-        -- previewer_cmd = "glow",
-        -- cmd_args = { "-s", "dark", "-w", "80" },
-        -- picker_cmd = true,
-        -- picker_cmd_args = { "-p" },
+        ensure_installed = {
+            -- "lua~5.1",
+        },
     },
 }

@@ -1,4 +1,4 @@
-local Path = require('lib.path')
+local Path = require('lib.path').Path
 
 local server_configs = {
     ruff_lsp = {

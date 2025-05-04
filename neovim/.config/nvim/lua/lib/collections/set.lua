@@ -249,8 +249,32 @@ end
 -- @param opts The initial elements for the set (optional).
 -- @return A new set object.
 local Set_mt = getmetatable(Set)
-function Set_mt.__call(_, opts)
-    return Set:new(opts)
+function Set_mt.__call(_, args)
+    return Set:new(args)
 end
 
-return Set
+local M = {}
+M.Set = Set
+
+-- define some convenient module level functions
+M.set = function(args)
+    return Set(args)
+end
+
+M.union = function(sets)
+    local res = Set()
+    for _, set in ipairs(sets) do
+        res.update(set)
+    end
+    return res
+end
+
+M.intersection = function(sets)
+    local res = Set()
+    for _, set in ipairs(sets) do
+        res.intersection_update(set)
+    end
+    return res
+end
+
+return M
