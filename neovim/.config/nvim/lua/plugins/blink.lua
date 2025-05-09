@@ -1,14 +1,7 @@
 return {
     'saghen/blink.cmp',
-    -- optional: provides snippets for the snippet source
     -- dependencies = { 'rafamadriz/friendly-snippets' },
-
-    -- use a release tag to download pre-built binaries
     version = '1.*',
-    -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-    -- build = 'cargo build --release',
-    -- If you use nix, you can build from source using latest nightly rust with:
-    -- build = 'nix run .#build-plugin',
 
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -32,9 +25,7 @@ return {
         },
 
         appearance = {
-            -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-            -- Adjusts spacing to ensure icons are aligned
-            nerd_font_variant = 'mono'
+            nerd_font_variant = 'normal'
         },
 
         completion = {
@@ -47,9 +38,15 @@ return {
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         -- -- can add snipper
         sources = {
-            default = { 'lsp', 'path', 'buffer', 'cmdline'},
+            default = { 'lsp', 'path', 'buffer', 'cmdline', 'lazydev'},
+            providers = {
+                lazydev = {
+                    name = 'LazyDev',
+                    module = 'lazydev.integrations.blink',
+                    score_offset = 100, -- make lazydev completions top priority (see `:h blink.cmp`)
+                },
+            }
         },
-
         fuzzy = { implementation = "prefer_rust_with_warning" }
     },
     opts_extend = { "sources.default" }
