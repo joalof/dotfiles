@@ -1,0 +1,42 @@
+[
+    {
+      "key": "ctrl+h",
+      "command": "-editor.action.replace",
+      "when": "editorTextFocus"
+    },
+    {
+      "key": "ctrl+l",
+      "command": "-editor.action.selectLine",
+      "when": "editorTextFocus"
+    },
+  {
+    "key": "h",
+    "command": "list.collapse",
+    "when": "explorerViewletVisible && explorerViewletFocus"
+  },
+  {
+    "key": "l",
+    "command": "list.expand",
+    "when": "explorerViewletVisible && explorerViewletFocus"
+  },
+  {
+    "key": "j",
+    "command": "list.focusDown",
+    "when": "explorerViewletVisible && explorerViewletFocus"
+  },
+  {
+    "key": "k",
+    "command": "list.focusUp",
+    "when": "explorerViewletVisible && explorerViewletFocus"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "list.select",
+    "when": "explorerViewletVisible && explorerViewletFocus"
+  },
+  {
+    "key": "escape",
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "explorerViewletVisible && explorerViewletFocus"
+  }
+  ]

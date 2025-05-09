@@ -1,0 +1,69 @@
+{
+    "security.workspace.trust.untrustedFiles": "open",
+    "editor.fontFamily": "'JetBrains Mono NF'",
+    "editor.fontSize": 14,
+    "editor.fontLigatures": true,
+    "editor.tabSize": 4,
+    "window.zoomLevel": 0.5,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": true,
+    "vim.useSystemClipboard": true,
+    "vim.useCtrlKeys": true,
+    "vim.insertModeKeyBindings": [
+        { "before": ["j", "k"], "after": ["<Esc>"] }
+    ],
+    "vim.hlsearch": true,
+    "vim.incsearch": true,
+    "vim.leader": ",",
+    "vim.statusBarColorControl": true,
+    "vim.statusBarColors.normal": ["#8FBCBB", "#434C5E"],
+    "vim.statusBarColors.insert": "#BF616A",
+    "vim.statusBarColors.visual": "#B48EAD",
+    "vim.statusBarColors.visualline": "#B48EAD",
+    "vim.statusBarColors.visualblock": "#A3BE8C",
+    "vim.statusBarColors.replace": "#D08770",
+    "vim.statusBarColors.commandlineinprogress": "#007ACC",
+    "vim.statusBarColors.searchinprogressmode": "#007ACC",
+    "vim.statusBarColors.easymotionmode": "#007ACC",
+    "vim.statusBarColors.easymotioninputmode": "#007ACC",
+    "vim.statusBarColors.surroundinputmode": "#007ACC",
+    "workbench.colorCustomizations": {
+      "statusBar.background": "#8FBCBB",
+      "statusBar.noFolderBackground": "#8FBCBB",
+      "statusBar.debuggingBackground": "#8FBCBB",
+      "statusBar.foreground": "#434C5E",
+      "statusBar.debuggingForeground": "#434C5E"
+    },
+    "workbench.startupEditor": "none",
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+          "before": ["<leader>", "r", "t"],
+          "commands": ["workbench.action.terminal.toggleTerminal"]
+        },
+        {
+          "before": ["<leader>", "f", "f"],
+          "commands": ["workbench.action.quickOpen"]
+        },
+        {
+          "before": ["<leader>", "f", "n"],
+          "commands": ["workbench.action.openSettingsJson"]
+        },
+        {
+          "before": ["<leader>", "f", "e"],
+          "commands": ["workbench.view.explorer"]
+        },
+        {
+          "before": ["<C-h>"],
+          "commands": ["workbench.action.previousEditor"]
+        },
+        {
+          "before": ["<C-l>"],
+          "commands": ["workbench.action.nextEditor"]
+        },
+        {
+          "before": [":"],
+          "commands": ["workbench.action.showCommands"]
+        }
+      ],
+      "terminal.integrated.fontFamily": "monospace"
+}

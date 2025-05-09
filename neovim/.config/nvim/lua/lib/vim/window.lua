@@ -1,6 +1,23 @@
 require("table.new")
 local api = vim.api
-local oop = require("lib.oop")
+
+
+local function is_instance(object, class)
+    if type(object) == "table" then
+        if class == "table" then
+            return true
+        else
+            local mt = getmetatable(object)
+            if mt then
+                return mt == class
+            end
+        end
+    elseif type(object) == class then
+        return true
+    end
+    return false
+end
+
 
 local Window = setmetatable({}, {})
 
@@ -43,7 +60,7 @@ local Window_getters = {
 local Window_setters = {
     buffer = function(win, val)
         local Buffer = require("lib.vim.buffer")
-        if oop.is_instance(val, Buffer) then
+        if is_instance(val, Buffer) then
             val = val.handle
         end
         api.nvim_win_set_buf(win.handle, val)
@@ -104,7 +121,7 @@ function Window:open(buffer, enter, config)
     local Buffer = require("lib.vim.buffer")
     enter = enter or true
     config = config or {}
-    if oop.is_instance(buffer, Buffer) then
+    if is_instance(buffer, Buffer) then
         buffer = buffer.handle
     end
     local handle = api.nvim_open_win(buffer, enter, config)

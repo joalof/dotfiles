@@ -1,5 +1,23 @@
 local api = vim.api
-local oop = require("lib.oop")
+
+
+local function is_instance(object, class)
+    if type(object) == "table" then
+        if class == "table" then
+            return true
+        else
+            local mt = getmetatable(object)
+            if mt then
+                return mt == class
+            end
+        end
+    elseif type(object) == class then
+        return true
+    end
+    return false
+end
+
+
 
 local Tabpage = setmetatable({}, {})
 
@@ -8,7 +26,7 @@ local property_getters = {
         return api.nvim_tabpage_get_number(tab.handle)
     end,
     current_window = function(tab)
-        local Window = require("lib.vim.window")
+        local Window = require("lib.vim.window").Window
         return Window:from_handle(api.nvim_tabpage_get_win(tab.handle))
     end,
     valid = function(tab)
@@ -18,8 +36,8 @@ local property_getters = {
 
 local property_setters = {
     current_window = function(tab, val)
-        local Window = require("lib.vim.window")
-        if oop.is_instance(val, Window) then
+        local Window = require("lib.vim.window").Window
+        if is_instance(val, Window) then
             val = val.handle
         end
         api.nvim_tabpage_set_win(tab.handle, val)
