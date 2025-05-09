@@ -37,6 +37,6 @@ vim.keymap.set("n", "S", function()
 end, { expr = true })
 
 -- apply macro over visual range
-vim.keymap.set("x", "@", function()
-    return ":norm @" .. vim.fn.getcharstr() .. "<cr>"
-end, { expr = true })
+-- vim.keymap.set("x", "@", function()
+--     return ":norm @" .. vim.fn.getcharstr() .. "<cr>"
+-- end, { expr = true })

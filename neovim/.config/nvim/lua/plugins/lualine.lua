@@ -15,9 +15,10 @@ return {
         -- PERF: we don't need this lualine require madness
         local lualine_require = require("lualine_require")
         lualine_require.require = require
-        local highlight = require('utils.highlight')
 
-        local icons = require("utils.icons")
+        local project = require("utils.project")
+        local fallback = "cwd"
+        project.setup_root_caching(fallback)
 
         vim.o.laststatus = vim.g.lualine_laststatus
 
@@ -29,65 +30,24 @@ return {
             },
             sections = {
                 lualine_a = { "mode" },
-                lualine_b = { "branch" },
+                lualine_b = {
+                    {
+                        function()
+                            return vim.fs.basename(vim.g.project_root)
+                        end,
+                        separator = "",
+                        padding = { left = 1, right = 0 },
+                    },
+                    { "branch" },
+                },
                 lualine_c = {
                     { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-                    { 'filename', path = 1, separator = "" },
-                    -- {
-                    --     "diagnostics",
-                    --     symbols = {
-                    --         error = icons.diagnostics.Error,
-                    --         warn = icons.diagnostics.Warn,
-                    --         info = icons.diagnostics.Info,
-                    --         hint = icons.diagnostics.Hint,
-                    --     },
-                    -- },
+                    { "filename", path = 4, separator = "" },
                 },
-
-                -- lualine_c = {
-                --     LazyVim.lualine.root_dir(),
-                --     {
-                --         "diagnostics",
-                --         symbols = {
-                --             error = icons.diagnostics.Error,
-                --             warn = icons.diagnostics.Warn,
-                --             info = icons.diagnostics.Info,
-                --             hint = icons.diagnostics.Hint,
-                --         },
-                --     },
-                --     { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-                --     { pretty_path() },
-                -- },
-                -- lualine_x = {
-                --     {
-                --         function() return require("noice").api.status.mode.get() end,
-                --         cond = function() return package.loaded["noice"] and require("noice").api.status.mode.has() end,
-                --         color = function() return highlight.get_fg_color("Constant") end,
-                --     },
-                --     {
-                --         function() return "  " .. require("dap").status() end,
-                --         cond = function() return package.loaded["dap"] and require("dap").status() ~= "" end,
-                --         color = function() return highlight.get_fg_color("Debug") end,
-                --     },
-                --     {
-                --         "diff",
-                --         symbols = {
-                --             added = icons.git.added,
-                --             modified = icons.git.modified,
-                --             removed = icons.git.removed,
-                --         },
-                --         source = function()
-                --             local gitsigns = vim.b.gitsigns_status_dict
-                --             if gitsigns then
-                --                 return {
-                --                     added = gitsigns.added,
-                --                     modified = gitsigns.changed,
-                --                     removed = gitsigns.removed,
-                --                 }
-                --             end
-                --         end,
-                --     },
-                -- },
+                lualine_x = {
+                    { require('recorder').recordingStatus, separator = " "},
+                    { "lsp_status" },
+                },
                 lualine_y = {
                     { "progress", separator = " ", padding = { left = 1, right = 0 } },
                     { "location", padding = { left = 0, right = 1 } },
@@ -98,7 +58,7 @@ return {
                     end,
                 },
             },
-            extensions = { "lazy" },
+            -- extensions = { "lazy" },
         }
         return opts
     end,

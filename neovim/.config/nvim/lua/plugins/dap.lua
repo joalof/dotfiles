@@ -1,4 +1,4 @@
-local function set_dap_keymaps()
+local function set_dapui_keymaps()
     local tmpmap = require('utils.tmpmap')
     -- tmpmap.set(
     --     'n',
@@ -23,7 +23,7 @@ local function set_dap_keymaps()
     -- { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
 end
 
-local function del_dap_keymaps()
+local function del_dapui_keymaps()
     local tmpmap = require('lib.tmpmap')
     -- tmpmap.set(
     --     'n',
@@ -77,8 +77,6 @@ return {
     keys = {
         '<leader>db',
         '<leader>de',
-        '<leader>dtm',
-        '<leader>dtc',
     },
     config = function()
         -- dap stuff
@@ -116,7 +114,6 @@ return {
         -- end
 
         vim.keymap.set('n', "<leader>db", function() require("dap").toggle_breakpoint() end, { desc = "Toggle Breakpoint" })
-
         vim.keymap.set({ "n", "v" }, "<leader>de", function() require("dapui").eval() end)
 
         local ui_active = false
@@ -127,9 +124,9 @@ return {
                 require("dapui").toggle()
                 ui_active = not ui_active
                 if ui_active then
-                    set_dap_keymaps()
+                    set_dapui_keymaps()
                 else
-                    del_dap_keymaps()
+                    del_dapui_keymaps()
                 end
             end
         )

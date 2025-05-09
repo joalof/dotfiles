@@ -129,14 +129,13 @@ return {
                 })
             end
 
-            local function setup_codelens(bufnr)
-                vim.lsp.codelens.refresh()
-                vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-                    buffer = bufnr,
-                    callback = vim.lsp.codelens.refresh,
-                })
-            end
-
+            -- local function setup_codelens(bufnr)
+            --     vim.lsp.codelens.refresh()
+            --     vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+            --         buffer = bufnr,
+            --         callback = vim.lsp.codelens.refresh,
+            --     })
+            -- end
 
             -- Disable the new 0.11 default keybinds
             for _, bind in ipairs({ "grn", "gra", "gri", "grr" }) do
@@ -152,14 +151,14 @@ return {
 
                     local Snacks = require("snacks")
 
-                    map("gd", function() Snacks.picker.lsp_definitions() end, "[G]oto [D]efinition")
-                    map("gr", function() Snacks.picker.lsp_references() end, "[G]oto [R]eferences")
-                    map("gI", function() Snacks.picker.lsp_implementations() end, "[G]oto [I]mplementation")
+                    map("gd", function() Snacks.picker.lsp_definitions() end, "[g]oto [d]efinition")
+                    map("gr", function() Snacks.picker.lsp_references() end, "[g]oto [r]eferences")
+                    map("gI", function() Snacks.picker.lsp_implementations() end, "[g]oto [I]mplementation")
                     map("<leader>ll", vim.diagnostic.setloclist, "Open diagnostic [l]sp [l]oclist list")
                     map("<leader>lq", vim.diagnostic.setqflist, "Open diagnostic [l]sp [q]uickfix list")
-                    map("<leader>lr", vim.lsp.buf.rename, "[l]sp [R]ename")
-                    map("<leader>lc", vim.lsp.buf.code_action, "[l]sp [C]ode Action")
-                    map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+                    map("<leader>ar", vim.lsp.buf.rename, "[a]ction [r]ename")
+                    map("<leader>ac", vim.lsp.buf.code_action, "[a]ction [c] action")
+                    map("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client then
@@ -168,12 +167,23 @@ return {
                         then
                             setup_document_highlight(event.buf)
                         end
-                        if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
-                            setup_codelens(event.buf)
-                        end
+
+                        -- if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
+                        --     setup_codelens(event.buf)
+                        -- end
+                        --
+
                         if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-                            vim.lsp.inlay_hint.enable(true)
+                            vim.lsp.inlay_hint.enable(false)
+                            map("<leader>lti", function()
+                                if vim.lsp.inlay_hint.is_enabled() then
+                                    vim.lsp.inlay_hint.enable(false)
+                                else
+                                    vim.lsp.inlay_hint.enable(true)
+                                end
+                            end, "[l]sp [t]oggle [i]nlay hints")
                         end
+
                         if client.name == "ruff" then
                             client.server_capabilities.hoverProvider = false
                         end
@@ -289,7 +299,7 @@ return {
                         end
                     end,
                 })
-                :map("<leader>lvl")
+                :map("<leader>ltl")
 
             Snacks.toggle
                 .new({
@@ -310,7 +320,7 @@ return {
                         end
                     end,
                 })
-                :map("<leader>lvt")
+                :map("<leader>ltt")
         end,
     },
 }
