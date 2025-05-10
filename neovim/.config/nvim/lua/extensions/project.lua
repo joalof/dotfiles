@@ -1,4 +1,4 @@
--- Utility module for things related to project management
+-- Things related to project management
 local M = {}
 
 M.root_identifiers = { ".git" }
@@ -21,6 +21,7 @@ function M.setup_root_caching(fallback)
 end
 
 function M.get_root(fallback)
+    fallback = fallback or "cwd"
     local home = vim.uv.os_homedir()
     local root_dir = nil
     for _, name in ipairs(M.root_identifiers) do

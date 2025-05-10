@@ -59,7 +59,7 @@ return {
 
         vim.keymap.set('n', "<leader>ff", function() Snacks.picker.files(
             {
-                cwd = require('utils.project').get_root('cwd'),
+                cwd = require('extensions.project').get_root('cwd'),
                 matcher = {
                     frecency = true,
                     sort_empty = true,

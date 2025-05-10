@@ -11,14 +11,14 @@ return {
         local overseer = require("overseer")
         overseer.setup(opts)
 
-        local runner = require('utils.runner')
+        local coderunner = require('extensions.coderunner')
 
         -- set keymap to run in toggleterm and autoclose
         vim.keymap.set("n", "<leader>rr", function()
-            runner.run()
+            coderunner.run()
         end, { silent = true })
         vim.keymap.set("n", "<leader>rx", function()
-            runner.abort_script()
+            coderunner.abort_script()
         end, { silent = true })
     end,
 }

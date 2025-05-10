@@ -1,4 +1,4 @@
-local redir = require('utils.redir')
+local redir = require('extensions.redir')
 
 vim.api.nvim_create_user_command("Redir", redir.redir, {
     nargs = "+",

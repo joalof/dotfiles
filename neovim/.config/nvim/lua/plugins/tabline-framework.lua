@@ -5,15 +5,14 @@ return {
         { "cbochs/grapple.nvim" },
     },
     config = function()
-        local tabline_utils = require("utils.tabline")
+        local tabline_ext = require("extensions.tabline")
 
         local opts = {
-            render = tabline_utils.render,
-            hl_fill = { fg = tabline_utils.hls.fill.fg, bg = tabline_utils.hls.fill.bg },
+            render = tabline_ext.render,
+            hl_fill = { fg = tabline_ext.hls.fill.fg, bg = tabline_ext.hls.fill.bg },
         }
-
-
         require("tabline_framework").setup(opts)
+        tabline_ext.toggle()
 
         -- local print_warn = require'tabline_framework.helpers'.print_warn
         -- local hi = require'tabline_framework.highlights'
@@ -35,13 +34,10 @@ return {
 
         -- vim.opt.tabline = [[%!v:lua.require'tabline_framework'.make_tabline()]]
 
-
-        tabline_utils.toggle()
-
         -- vim.api.nvim_create_augroup("tabline_conf", { clear = true })
         -- vim.api.nvim_create_autocmd({ "FocusGained" }, {
         --     callback = function()
-        --         tabline_utils.toggle()
+        --         tabline_ext.toggle()
         --     end,
         --     group = "tabline_conf",
         --     desc = "Toggle tabline",

@@ -16,7 +16,7 @@ return {
         local lualine_require = require("lualine_require")
         lualine_require.require = require
 
-        local project = require("utils.project")
+        local project = require("extensions.project")
         local fallback = "cwd"
         project.setup_root_caching(fallback)
 

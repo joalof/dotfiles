@@ -1,8 +1,6 @@
--- From
+-- Credits
 -- https://gist.github.com/Leenuus/7a2ea47b88bfe16430b42e4e48122718
--- which was adapten from
--- credit: https://gist.github.com/romainl/eae0a260ab9c135390c30cd370c20cd7
---
+--  https://gist.github.com/romainl/eae0a260ab9c135390c30cd370c20cd7
 
 local M = {}
 

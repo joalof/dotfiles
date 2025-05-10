@@ -1,5 +1,5 @@
 local function set_dapui_keymaps()
-    local tmpmap = require('utils.tmpmap')
+    local tmpmap = require('extensions.tmpmap')
     -- tmpmap.set(
     --     'n',
     --     "<leader>dB",

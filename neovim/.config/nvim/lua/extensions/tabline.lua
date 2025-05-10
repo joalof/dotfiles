@@ -7,6 +7,7 @@ local norm_fg = Color.from_hl("Normal", "fg")
 local norm_fg_dark = norm_fg:shade(-0.55)
 local norm_bg = Color.from_hl("Normal", "bg")
 local norm_bg_dark = norm_bg:shade(-0.35)
+
 norm_fg = norm_fg:to_css()
 norm_fg_dark = norm_fg_dark:to_css()
 norm_bg = norm_bg:to_css()

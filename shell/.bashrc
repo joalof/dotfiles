@@ -381,12 +381,6 @@ export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 [[ -f $(command -v starship) ]] && eval "$(starship init bash)"
 # }}}
 
-# Mojo {{{
-# [[ -f /bin/modular ]] && MOJO_PATH=$(modular config mojo.path)
-# export MODULAR_HOME=$HOME/.modular
-# export PATH=$MOJO_PATH/bin:$PATH
-# }}}
-
 # Julia {{{
 case ":$PATH:" in
     *:/home/autarch/.juliaup/bin:*)
@@ -412,10 +406,6 @@ fi
 # prepend_env PATH "$HOME/.pixi/bin"
 # }}}
 
-# ClearML {{{
-# export CLEARML_HOST_IP=localhost
-# }}}
-
 # Ezenv {{{
 [ -f ~/.local/bin/ezenv ] && source ~/.local/bin/ezenv
 
@@ -425,6 +415,10 @@ if [[ -f $last_venv_file ]]; then
     ezenv activate $last_venv
 fi
 
+# }}}
+
+# Keychain {{{
+[ -f ~/.keychain/$(hostname)-sh ] && source ~/.keychain/$(hostname)-sh
 # }}}
 
 # end apps }}}
