@@ -1,7 +1,9 @@
 return {
-    'saghen/blink.cmp',
+    "saghen/blink.cmp",
     -- dependencies = { 'rafamadriz/friendly-snippets' },
-    version = '1.*',
+    version = "1.*",
+
+    dependencies = {'onsails/lspkind.nvim', 'nvim-tree/nvim-web-devicons'},
 
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -19,38 +21,74 @@ return {
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         keymap = {
-            preset = 'default',
-            ["<C-i>"] = {'select_next', 'fallback'},
-            ["<C-y>"] = {'accept', 'fallback'},
+            preset = "default",
+            ["<C-i>"] = { "select_next", "fallback" },
+            ["<C-l>"] = { "accept", "fallback" },
         },
 
         appearance = {
-            nerd_font_variant = 'normal'
+            nerd_font_variant = "normal",
         },
 
         completion = {
             documentation = { auto_show = true },
-            list = { selection = { preselect = false, auto_insert = true } },
-            accept = { auto_brackets = { enabled = true }, },
-        },
-        signature = {
-            enabled = false
-        },
+            list = { selection = { preselect = true, auto_insert = true } },
+            accept = { auto_brackets = { enabled = true } },
+            menu = {
+                draw = {
+                    components = {
+                        kind_icon = {
+                            text = function(ctx)
+                                local icon = ctx.kind_icon
+                                if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                                    local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
+                                    if dev_icon then
+                                        icon = dev_icon
+                                    end
+                                else
+                                    icon = require("lspkind").symbolic(ctx.kind, {
+                                        mode = "symbol",
+                                    })
+                                end
 
-        -- Default list of enabled providers defined so that you can extend it
-        -- elsewhere in your config, without redefining it, due to `opts_extend`
-        -- -- can add snipper
-        sources = {
-            default = { 'lsp', 'path', 'buffer', 'cmdline', 'lazydev'},
-            providers = {
-                lazydev = {
-                    name = 'LazyDev',
-                    module = 'lazydev.integrations.blink',
-                    score_offset = 100, -- make lazydev completions top priority (see `:h blink.cmp`)
+                                return icon .. ctx.icon_gap
+                            end,
+
+                            -- Optionally, use the highlight groups from nvim-web-devicons
+                            -- You can also add the same function for `kind.highlight` if you want to
+                            -- keep the highlight groups in sync with the icons.
+                            highlight = function(ctx)
+                                local hl = ctx.kind_hl
+                                if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                                    local dev_icon, dev_hl = require("nvim-web-devicons").get_icon(ctx.label)
+                                    if dev_icon then
+                                        hl = dev_hl
+                                    end
+                                end
+                                return hl
+                            end,
+                        }
+                    }
+                }
+            },
+            signature = {
+                enabled = false,
+            },
+            -- Default list of enabled providers defined so that you can extend it
+            -- elsewhere in your config, without redefining it, due to `opts_extend`
+            -- -- can add snipper
+            sources = {
+                default = { "lsp", "path", "buffer", "cmdline", "lazydev" },
+                providers = {
+                    lazydev = {
+                        name = "LazyDev",
+                        module = "lazydev.integrations.blink",
+                        score_offset = 100, -- make lazydev completions top priority (see `:h blink.cmp`)
+                    },
                 },
-            }
+            },
+            fuzzy = { implementation = "prefer_rust_with_warning" },
         },
-        fuzzy = { implementation = "prefer_rust_with_warning" }
-    },
-    opts_extend = { "sources.default" }
+        opts_extend = { "sources.default" },
+    }
 }

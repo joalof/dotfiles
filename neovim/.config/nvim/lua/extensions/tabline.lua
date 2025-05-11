@@ -1,4 +1,4 @@
-local Color = require("lib.color")
+local Color = require("lib.color").Color
 
 local M = {}
 

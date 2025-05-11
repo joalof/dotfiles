@@ -359,4 +359,6 @@ function mt.__call(_, opts)
     return Color.new(opts)
 end
 
-return Color
+local exports = { Color = Color }
+
+return exports

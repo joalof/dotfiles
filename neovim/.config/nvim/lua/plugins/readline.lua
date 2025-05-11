@@ -4,34 +4,34 @@ return {
     event = "VeryLazy",
     keys = {
         {
-            mode = { "!" },
+            mode = { "t", "c" },
             "<C-a>",
             function()
                 require("readline").beginning_of_line()
             end,
         },
         {
-            mode = { "!" },
+            mode = { "t", "c" },
             "<C-e>",
             function()
                 require("readline").end_of_line()
             end,
         },
         {
-            mode = { "!" },
+            mode = { "t", "c" },
             "<C-w>",
             function()
                 require("readline").unix_word_rubout()
             end,
         },
         {
-            mode = { "!" },
+            mode = { "t", "c" },
             "<C-u>",
             function()
                 require("readline").backward_kill_line()
             end,
         },
-        { mode = { "!" }, "<C-f>", "<Right>" },
-        { mode = { "!" }, "<C-b>", "<Left>" },
+        { mode = { "t", "c" }, "<C-f>", "<Right>" },
+        { mode = { "t", "c" }, "<C-b>", "<Left>" },
     },
 }

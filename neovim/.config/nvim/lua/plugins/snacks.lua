@@ -34,6 +34,9 @@ return {
         }
     },
     keys = {
+        { "<leader>bs",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
+        { "<leader>bS",  function() Snacks.scratch.select() end, desc = "Select scratch buffer" },
+
         -- Top Pickers & Explorer
         -- find
         { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },

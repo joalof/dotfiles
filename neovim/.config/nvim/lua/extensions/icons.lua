@@ -59,6 +59,6 @@ return {
         TypeParameter = " ",
         Unit          = " ",
         Value         = " ",
-        Variable      = "󰀫 ",
+        Variable      = "󰀫",
     },
 }

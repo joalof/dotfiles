@@ -20,6 +20,8 @@ return {
         local fallback = "cwd"
         project.setup_root_caching(fallback)
 
+        local root_icon = require('extensions.icons').kinds.Package
+
         vim.o.laststatus = vim.g.lualine_laststatus
 
         local opts = {
@@ -33,7 +35,7 @@ return {
                 lualine_b = {
                     {
                         function()
-                            return vim.fs.basename(vim.g.project_root)
+                            return root_icon .. vim.fs.basename(vim.g.project_root)
                         end,
                         separator = "",
                         padding = { left = 1, right = 0 },
@@ -41,12 +43,13 @@ return {
                     { "branch" },
                 },
                 lualine_c = {
+                    { function() return vim.fs.basename(vim.env.PWD) end, separator = "" },
                     { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
                     { "filename", path = 4, separator = "" },
                 },
                 lualine_x = {
                     { require('recorder').recordingStatus, separator = " "},
-                    { "lsp_status" },
+                    { "lsp_status", symbols = {spinner = "", done = ""} },
                 },
                 lualine_y = {
                     { "progress", separator = " ", padding = { left = 1, right = 0 } },
