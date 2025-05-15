@@ -1,4 +1,4 @@
-local Path = require('lib.path').Path
+local Path = require("lib.path").Path
 
 -- adapted from https://github.com/rijulkap/dotfiles/blob/master/nvim/lua/plugins/lsp.lua
 vim.g.lsp_servers = {
@@ -15,20 +15,15 @@ vim.g.lsp_servers = {
                 },
             },
             python = {
-                venvPath = Path(vim.env['VIRTUAL_ENV']):parent().filename,
-                venv = Path(vim.env['VIRTUAL_ENV']):name(),
-            }
+                venvPath = Path(vim.env["VIRTUAL_ENV"]):parent().filename,
+                venv = Path(vim.env["VIRTUAL_ENV"]):name(),
+            },
         },
     },
     yamlls = {},
     taplo = {},
     bashls = {},
     jsonls = {
-        -- lazy-load schemastore when needed
-        -- on_new_config = function(new_config)
-        --     new_config.settings.json.schemas = new_config.settings.json.schemas or {}
-        --     vim.list_extend(new_config.settings.json.schemas, require("schemastore").json.schemas())
-        -- end,
         settings = {
             json = {
                 format = {
@@ -67,7 +62,7 @@ return {
 
     {
         "mason-org/mason.nvim",
-        opts = { ui = { border = 'rounded' } },
+        opts = { ui = { border = "rounded" } },
     },
     {
         "mason-org/mason-lspconfig.nvim",
@@ -129,13 +124,45 @@ return {
                 })
             end
 
-            -- local function setup_codelens(bufnr)
-            --     vim.lsp.codelens.refresh()
-            --     vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-            --         buffer = bufnr,
-            --         callback = vim.lsp.codelens.refresh,
+            -- hover is currently handled by Noice, but if we remove Noice
+            -- we can enable this
+            -- local hover = vim.lsp.buf.hover
+            -- ---@diagnostic disable-next-line: duplicate-set-field
+            -- vim.lsp.buf.hover = function()
+            --     return hover({
+            --         border = "rounded",
+            --         max_height = math.floor(vim.o.lines * 0.5),
+            --         max_width = math.floor(vim.o.columns * 0.4),
+            --         silent = true,
             --     })
             -- end
+
+            local function setup_document_hover(bufnr)
+                local hover_augroup = vim.api.nvim_create_augroup("LspDocumentHover", { clear = false })
+                vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+                    group = hover_augroup,
+                    buffer = bufnr,
+                    callback = function()
+                        local cursor = vim.api.nvim_win_get_cursor(0)
+                        local lnum, col = cursor[1] - 1, cursor[2]
+
+                        -- Get diagnostics exactly under the cursor
+                        local diagnostics = vim.diagnostic.get(0, { lnum = lnum })
+                        local has_diagnostic_under_cursor = false
+
+                        for _, diag in ipairs(diagnostics) do
+                            if diag.col <= col and col < diag.end_col then
+                                has_diagnostic_under_cursor = true
+                                break
+                            end
+                        end
+
+                        if not has_diagnostic_under_cursor then
+                            vim.lsp.buf.hover()
+                        end
+                    end,
+                })
+            end
 
             -- Disable the new 0.11 default keybinds
             for _, bind in ipairs({ "grn", "gra", "gri", "grr" }) do
@@ -151,14 +178,21 @@ return {
 
                     local Snacks = require("snacks")
 
-                    map("gd", function() Snacks.picker.lsp_definitions() end, "[g]oto [d]efinition")
-                    map("gr", function() Snacks.picker.lsp_references() end, "[g]oto [r]eferences")
-                    map("gI", function() Snacks.picker.lsp_implementations() end, "[g]oto [I]mplementation")
+                    map("gd", function()
+                        Snacks.picker.lsp_definitions()
+                    end, "[g]oto [d]efinition")
+                    map("gr", function()
+                        Snacks.picker.lsp_references()
+                    end, "[g]oto [r]eferences")
+                    map("gI", function()
+                        Snacks.picker.lsp_implementations()
+                    end, "[g]oto [I]mplementation")
                     map("<leader>ll", vim.diagnostic.setloclist, "Open diagnostic [l]sp [l]oclist list")
                     map("<leader>lq", vim.diagnostic.setqflist, "Open diagnostic [l]sp [q]uickfix list")
                     map("<leader>ar", vim.lsp.buf.rename, "[a]ction [r]ename")
                     map("<leader>ac", vim.lsp.buf.code_action, "[a]ction [c] action")
                     map("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
+                    map("K", vim.lsp.buf.hover, "Open hover")
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client then
@@ -168,10 +202,9 @@ return {
                             setup_document_highlight(event.buf)
                         end
 
-                        -- if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
-                        --     setup_codelens(event.buf)
-                        -- end
-                        --
+                        if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover, event.buf) then
+                            setup_document_hover(event.buf)
+                        end
 
                         if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
                             vim.lsp.inlay_hint.enable(false)
@@ -193,16 +226,6 @@ return {
 
             vim.lsp.set_log_level("off")
 
-            local hover = vim.lsp.buf.hover
-            ---@diagnostic disable-next-line: duplicate-set-field
-            vim.lsp.buf.hover = function()
-                return hover({
-                    border = "rounded",
-                    max_height = math.floor(vim.o.lines * 0.5),
-                    max_width = math.floor(vim.o.columns * 0.4),
-                })
-            end
-
             local signature_help = vim.lsp.buf.signature_help
             ---@diagnostic disable-next-line: duplicate-set-field
             vim.lsp.buf.signature_help = function()
@@ -213,17 +236,6 @@ return {
                 })
             end
 
-            -- wrappers to allow for toggling
-            local def_virtual_text = {
-                isTrue = {
-                    severity = { max = "WARN" },
-                    source = "if_many",
-                    spacing = 4,
-                    prefix = "● ",
-                },
-                isFalse = false,
-            }
-
             local function truncate_message(message, max_length)
                 if #message > max_length then
                     return message:sub(1, max_length) .. "..."
@@ -231,22 +243,44 @@ return {
                 return message
             end
 
-            local def_virtual_lines = {
-                isTrue = {
+            local diagnostic_symbols = {
+                [vim.diagnostic.severity.ERROR] = { " ", "DiagnosticError" },
+                [vim.diagnostic.severity.WARN] = { " ", "DiagnosticWarn" },
+                [vim.diagnostic.severity.INFO] = { " ", "DiagnosticInfo" },
+                [vim.diagnostic.severity.HINT] = { " ", "DiagnosticHint" },
+            }
+
+            -- wrappers to allow for toggling
+            local virtual_text = {
+                on = {
+                    severity = { max = "Error" },
+                    source = "if_many",
+                    spacing = 4,
+                    prefix = function(diagnostic, i, total)
+                        -- show prefix only once even if there are many error
+                        if i == 1 then
+                            return unpack(diagnostic_symbols[diagnostic.severity] or { "", "" })
+                        end
+                    end,
+                },
+                off = false,
+            }
+            local virtual_lines = {
+                on = {
                     current_line = true,
                     severity = { min = "ERROR" },
                     format = function(diagnostic)
                         local max_length = 100 -- Set your preferred max length
-                        return "● " .. truncate_message(diagnostic.message, max_length)
+                        return "  " .. truncate_message(diagnostic.message, max_length)
                     end,
                 },
-                isFalse = false,
+                off = false,
             }
 
             local default_diagnostic_config = {
                 update_in_insert = false,
-                virtual_lines = def_virtual_lines.isTrue,
-                virtual_text = def_virtual_text.isTrue,
+                virtual_lines = virtual_lines.off,
+                virtual_text = virtual_text.off,
                 underline = true,
                 severity_sort = true,
                 float = {
@@ -255,14 +289,13 @@ return {
                     border = "rounded",
                     source = "always",
                     header = "",
-                    prefix = "",
+                    prefix = function(diagnostic)
+                        -- return diagnostic_symbols[diagnostic.severity] or ""
+                        return unpack(diagnostic_symbols[diagnostic.severity] or { "", "" })
+                    end,
                 },
                 signs = {
                     text = {
-                        -- [vim.diagnostic.severity.ERROR] = " ",
-                        -- [vim.diagnostic.severity.WARN] = " ",
-                        -- [vim.diagnostic.severity.INFO] = " ",
-                        -- [vim.diagnostic.severity.HINT] = " ",
                         [vim.diagnostic.severity.ERROR] = "",
                         [vim.diagnostic.severity.WARN] = "",
                         [vim.diagnostic.severity.INFO] = "",
@@ -276,8 +309,15 @@ return {
                     },
                 },
             }
-
             vim.diagnostic.config(default_diagnostic_config)
+
+            local diagnostic_augroup = vim.api.nvim_create_augroup("VimDiagnostic", { clear = false })
+            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+                group = diagnostic_augroup,
+                callback = function()
+                    vim.diagnostic.open_float(nil, { focusable = false, scope = "cursor" })
+                end,
+            })
 
             -- Set Toggles
             Snacks.toggle
@@ -293,9 +333,9 @@ return {
                     end,
                     set = function(state)
                         if state == true then
-                            vim.diagnostic.config({ virtual_lines = def_virtual_lines.isTrue })
+                            vim.diagnostic.config({ virtual_lines = virtual_lines.on })
                         else
-                            vim.diagnostic.config({ virtual_lines = def_virtual_lines.isFalse })
+                            vim.diagnostic.config({ virtual_lines = virtual_lines.off })
                         end
                     end,
                 })
@@ -314,9 +354,9 @@ return {
                     end,
                     set = function(state)
                         if state == true then
-                            vim.diagnostic.config({ virtual_text = def_virtual_text.isTrue })
+                            vim.diagnostic.config({ virtual_text = virtual_text.on })
                         else
-                            vim.diagnostic.config({ virtual_text = def_virtual_text.isFalse })
+                            vim.diagnostic.config({ virtual_text = virtual_text.off })
                         end
                     end,
                 })

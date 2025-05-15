@@ -125,12 +125,6 @@ ex ()
   fi
 }
 
-# Run python job with nohup
-br ()
-{
-    nohup python3 "$1" "$2" &> nohup.out &
-}
-
 silent ()
 {
     "$@" &> /dev/null &
@@ -460,7 +454,7 @@ if [ -f $(command -v nvim) ] ; then
 fi
 
 # quality of life
-alias rd='rm -rf'
+alias rd='rm -r'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'

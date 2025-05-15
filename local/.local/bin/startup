@@ -10,6 +10,8 @@ xcape_space2ctrl
 
 # eval `ssh-agent`
 # ssh-add ~/.ssh/id_ed25519_vion
+keychain ~/.ssh/id_ed25519_vion
+[ -f ~/.keychain/$(hostname)-sh ] && source ~/.keychain/$(hostname)-sh
 
 # Set key repetiion delay and rate
 # First number is delay in miliseconds

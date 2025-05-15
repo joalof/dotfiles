@@ -23,13 +23,11 @@ return {
         keymap = {
             preset = "default",
             ["<C-i>"] = { "select_next", "fallback" },
-            ["<C-l>"] = { "accept", "fallback" },
+            ["<C-k>"] = { "accept", "fallback" },
         },
-
         appearance = {
             nerd_font_variant = "normal",
         },
-
         completion = {
             documentation = { auto_show = true },
             list = { selection = { preselect = true, auto_insert = true } },
@@ -67,28 +65,27 @@ return {
                                 end
                                 return hl
                             end,
-                        }
-                    }
-                }
-            },
-            signature = {
-                enabled = false,
-            },
-            -- Default list of enabled providers defined so that you can extend it
-            -- elsewhere in your config, without redefining it, due to `opts_extend`
-            -- -- can add snipper
-            sources = {
-                default = { "lsp", "path", "buffer", "cmdline", "lazydev" },
-                providers = {
-                    lazydev = {
-                        name = "LazyDev",
-                        module = "lazydev.integrations.blink",
-                        score_offset = 100, -- make lazydev completions top priority (see `:h blink.cmp`)
+                        },
                     },
                 },
             },
-            fuzzy = { implementation = "prefer_rust_with_warning" },
         },
-        opts_extend = { "sources.default" },
-    }
+        signature = {
+            enabled = false,
+        },
+        -- Default list of enabled providers defined so that you can extend it
+        -- elsewhere in your config, without redefining it, due to `opts_extend`
+        -- -- can add snipper
+        sources = {
+            default = { "lsp", "path", "buffer", "cmdline", "lazydev" },
+            providers = {
+                lazydev = {
+                    name = "LazyDev",
+                    module = "lazydev.integrations.blink",
+                    score_offset = 100, -- make lazydev completions top priority (see `:h blink.cmp`)
+                },
+            },
+        },
+        fuzzy = { implementation = "prefer_rust_with_warning" },
+    },
 }

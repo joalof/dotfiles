@@ -21,16 +21,16 @@ function M.setup_root_caching(fallback)
 end
 
 function M.get_root(fallback)
-    fallback = fallback or "cwd"
     local home = vim.uv.os_homedir()
     local root_dir = nil
     for _, name in ipairs(M.root_identifiers) do
         local res = vim.fs.find({ name }, { upward = true, stop = home })
         if #res > 0 then
             local id_path = res[1]
-            root_dir = id_path:sub(1, #id_path - #name - 1)
-            M.cached_root = root_dir
-            return root_dir
+            if id_path ~= home then
+                root_dir = id_path:sub(1, #id_path - #name - 1)
+                return root_dir
+            end
         end
     end
 
@@ -38,7 +38,7 @@ function M.get_root(fallback)
         root_dir = vim.uv.cwd()
     elseif fallback == "home" or fallback == "~" then
         root_dir = home
-    else
+    elseif fallback then
         root_dir = fallback()
     end
     return root_dir

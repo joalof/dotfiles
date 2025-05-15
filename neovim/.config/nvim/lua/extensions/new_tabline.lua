@@ -1,7 +1,6 @@
 local utils = require('heirline.utils')
 local conditions = require('heirline.conditions')
 
-local icons = require('nvim-web-devicons')
 local Color = require("lib.color").Color
 
 
@@ -40,23 +39,20 @@ local hls = {
 -- end
 
 
-function get_filename_component(filename, enable_fileflags)
+local function get_filename_component(filename_provider, include_flags)
 
-    enable_fileflags = enable_fileflags or false
+    include_flags = include_flags or false
 
-    local FileNameBlock = {
-        -- let's first set up some attributes needed by this component and its children
+    local block_comp = {
         init = function(self)
-            self.filename = filename
+            self.filename = filename_provider()
         end,
     }
-    -- We can now define some children separately and add them later
-
-    local FileIcon = {
+    local icon_comp = {
         init = function(self)
             local fname = self.filename
-            local extension = vim.fn.fnamemodify(fname, ":e")
-            self.icon, self.icon_color = icons.get_icon_color(fname, extension, { default = true })
+            local ext = vim.fn.fnamemodify(fname, ":e")
+            self.icon, self.icon_color = require('mini.icons').get('filetype', ext)
         end,
         provider = function(self)
             return self.icon and (self.icon .. " ")
@@ -66,7 +62,7 @@ function get_filename_component(filename, enable_fileflags)
         end
     }
 
-    local FileName = {
+    local filename_comp = {
         provider = function(self)
             -- first, trim the pattern relative to the current directory. For other
             -- options, see :h filename-modifers
@@ -82,7 +78,7 @@ function get_filename_component(filename, enable_fileflags)
         end,
         hl = { fg = utils.get_highlight("Directory").fg },
     }
-    local FileFlags = {
+    local flags_comp = {
         {
             condition = function()
                 return vim.bo.modified
@@ -99,17 +95,15 @@ function get_filename_component(filename, enable_fileflags)
         },
     }
     -- let's add the children to our FileNameBlock component
-    FileNameBlock = utils.insert(FileNameBlock,
-        FileIcon,
-        FileName,
-        FileFlags,
+    block_comp = utils.insert(block_comp,
+        icon_comp,
+        filename_comp,
+        flags_comp,
         { provider = '%<'} -- this means that the statusline is cut here when there's not enough space
     )
 
-    return WedgedFileNameBlock
+    return block_comp
 end
 
-CurrFileBlock = get_filename_component(vim.api.nvim_buf_get_name(0))
-CurrFileBlock = utils.surround({"", ""}, hls.wedge, CurrFileBlock)
-
-
+local curr_file_comp = get_filename_component(function() return vim.api.nvim_buf_get_name(0) end)
+curr_file_comp = utils.surround({"", ""}, hls.wedge.fg, curr_file_comp)

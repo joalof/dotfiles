@@ -17,8 +17,7 @@ return {
         lualine_require.require = require
 
         local project = require("extensions.project")
-        local fallback = "cwd"
-        project.setup_root_caching(fallback)
+        project.setup_root_caching()
 
         local root_icon = require('extensions.icons').kinds.Package
 
@@ -35,7 +34,12 @@ return {
                 lualine_b = {
                     {
                         function()
-                            return root_icon .. vim.fs.basename(vim.g.project_root)
+                            local proj = vim.fs.basename(vim.g.project_root)
+                            if proj then
+                                return root_icon .. proj
+                            else
+                                return ""
+                            end
                         end,
                         separator = "",
                         padding = { left = 1, right = 0 },
