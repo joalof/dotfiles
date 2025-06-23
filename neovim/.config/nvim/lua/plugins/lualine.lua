@@ -19,12 +19,13 @@ return {
         local project = require("extensions.project")
         project.setup_root_caching()
 
-        local root_icon = require('extensions.icons').kinds.Package
+        local root_icon = require("extensions.icons").kinds.Package
 
         vim.o.laststatus = vim.g.lualine_laststatus
 
         local opts = {
             options = {
+                component_separators = { left = "", right = "" },
                 theme = "auto",
                 globalstatus = vim.o.laststatus == 3,
                 disabled_filetypes = { statusline = { "alpha" } },
@@ -41,28 +42,35 @@ return {
                                 return ""
                             end
                         end,
-                        separator = "",
                         padding = { left = 1, right = 0 },
                     },
                     { "branch" },
                 },
                 lualine_c = {
-                    { function() return vim.fs.basename(vim.env.PWD) end, separator = "" },
-                    { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-                    { "filename", path = 4, separator = "" },
+                    {
+                        function()
+                            return vim.fs.basename(vim.env.PWD)
+                        end,
+                        separator = "",
+                    },
+                    { "filetype", icon_only = true, padding = { left = 1, right = 0 } },
+                    { "filename", path = 4 },
                 },
                 lualine_x = {
-                    { require('recorder').recordingStatus, separator = " "},
-                    { "lsp_status", symbols = {spinner = "", done = ""} },
+                    { require("recorder").recordingStatus, separator = " " },
+                    { "diagnostics", sources = { "nvim_diagnostic" } },
+                    { "lsp_status", symbols = { spinner = "", done = "" } },
                 },
                 lualine_y = {
-                    { "progress", separator = " ", padding = { left = 1, right = 0 } },
+                    { "progress", padding = { left = 1, right = 0 } },
                     { "location", padding = { left = 0, right = 1 } },
                 },
                 lualine_z = {
-                    function()
-                        return " " .. os.date("%R")
-                    end,
+                    {
+                        function()
+                            return " " .. os.date("%R")
+                        end,
+                    },
                 },
             },
             -- extensions = { "lazy" },

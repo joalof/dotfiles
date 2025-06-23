@@ -1,0 +1,37 @@
+(defcfg
+  input  (low-level-hook)  ;; Intercepts keypresses globally
+  output (send-event-sink) ;; Sends remapped keys
+  fallthrough true
+)
+
+(defsrc
+         1    2    3    4    5    6    7    8    9    0    -    =
+  tab    q    w    e    r    t    y    u    i    o    p    [    ]
+  caps   a    s    d    f    g    h    j    k    l    ;    '    \
+  lshift  \    z    x    c    v    b    n    m    ,    .    /
+  lctrl lmeta lalt spc ralt rctrl
+)
+
+
+(defalias
+    spcctl (tap-hold-next-release 200 spc lctl)
+    salt (tap-hold-next-release 200 s lalt)
+    shift (layer-toggle shifted)
+    at  S-2
+)
+
+(deflayer base
+         1    2   \_   [  \(    #   \)   ]   =  0   -  @at   
+  tab    q    w    e    r    t    y    u    i    o    p  {   }
+  caps   a  @salt  d    f    g    h    j    k    l    :  '   ~ 
+  @shift  \    z    x    c    v    b    n    m    ,    .    /
+  lctrl lmeta lalt @spcctl ralt rctrl
+)
+
+(deflayer shifted
+         &    $    3    4    5    6    7    8    9    +    -    %
+ tab     Q    W    E    R    T    Y    U    I    O    P    *    ^
+ caps    A    S    D    E    F    H    J    K    L    ;    "    `
+ lshift  |     Z    X    C    V    B    N    M    <    >    ?
+ lctrl lmeta lalt spc ralt rctrl
+)

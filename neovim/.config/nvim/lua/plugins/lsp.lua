@@ -137,7 +137,7 @@ return {
             --     })
             -- end
 
-            local function setup_document_hover(bufnr)
+            local function setup_document_autohover(bufnr)
                 local hover_augroup = vim.api.nvim_create_augroup("LspDocumentHover", { clear = false })
                 vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
                     group = hover_augroup,
@@ -196,15 +196,19 @@ return {
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client then
+
+                        -- disable semantic highlights
+                        client.server_capabilities.semanticTokensProvider = nil
+
                         if
                             client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
                         then
                             setup_document_highlight(event.buf)
                         end
 
-                        if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover, event.buf) then
-                            setup_document_hover(event.buf)
-                        end
+                        -- if client:supports_method(vim.lsp.protocol.Methods.textDocument_hover, event.buf) then
+                        --     setup_document_autohover(event.buf)
+                        -- end
 
                         if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
                             vim.lsp.inlay_hint.enable(false)

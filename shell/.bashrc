@@ -367,10 +367,6 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!**/{.g
 export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 # }}}
 
-# Zoxide {{{
-[[ -f $(command -v zoxide) ]] && eval "$(zoxide init --cmd f bash)"
-# }}}
-
 # Starship {{{
 [[ -f $(command -v starship) ]] && eval "$(starship init bash)"
 # }}}
@@ -482,5 +478,10 @@ alias cmlup='docker-compose -f /opt/clearml/docker-compose.yml up -d'
 alias cmldown='docker-compose -f /opt/clearml/docker-compose.yml down'
 
 # }}}
+#
+# Zoxide {{{
+[[ -f $(command -v zoxide) ]] && eval "$(zoxide init --cmd f bash)"
+# }}}
+
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=bash:

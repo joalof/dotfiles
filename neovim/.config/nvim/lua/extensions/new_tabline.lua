@@ -52,13 +52,15 @@ local function get_filename_component(filename_provider, include_flags)
         init = function(self)
             local fname = self.filename
             local ext = vim.fn.fnamemodify(fname, ":e")
-            self.icon, self.icon_color = require('mini.icons').get('filetype', ext)
+            local icon, icon_color = require('mini.icons').get('filetype', ext)
+            self.icon = icon
+            self.icon_hl = utils.get_highlight(icon_color)
         end,
         provider = function(self)
             return self.icon and (self.icon .. " ")
         end,
         hl = function(self)
-            return { fg = self.icon_color }
+            return self.icon_hl
         end
     }
 
@@ -106,4 +108,6 @@ local function get_filename_component(filename_provider, include_flags)
 end
 
 local curr_file_comp = get_filename_component(function() return vim.api.nvim_buf_get_name(0) end)
-curr_file_comp = utils.surround({"", ""}, hls.wedge.fg, curr_file_comp)
+-- curr_file_comp = utils.surround({"", ""}, hls.wedge.fg, curr_file_comp)
+
+return {curr_file_comp}
