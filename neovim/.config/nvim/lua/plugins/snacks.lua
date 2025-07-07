@@ -81,7 +81,7 @@ return {
         -- git
         -- { "<leader>fg", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
         {
-            "<leader>fs",
+            "<leader>f/",
             function()
                 Snacks.picker.search_history()
             end,

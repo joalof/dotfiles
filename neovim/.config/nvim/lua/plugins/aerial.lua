@@ -2,7 +2,15 @@ return {
     "stevearc/aerial.nvim",
     -- Optional dependencies
     cmd = { "AerialToggle", "AerialOpen", "AerialOpenAll", "AerialNavOpen" },
-    keys = { { "<leader>vv", "<cmd>AerialToggle!<CR>" } },
+    keys = {
+        { "<leader>vv", "<cmd>AerialToggle!<CR>" },
+        {
+            "<leader>fs",
+            function()
+                require("aerial").snacks_picker()
+            end,
+        },
+    },
     dependencies = {
         "nvim-treesitter/nvim-treesitter",
         "nvim-tree/nvim-web-devicons",
