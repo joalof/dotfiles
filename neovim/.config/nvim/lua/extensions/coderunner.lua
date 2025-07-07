@@ -27,10 +27,17 @@ function M.run_script(opts)
         end
     end
 
-    local components = {
-        { "coderunner.autoclose", grace_time = opts.grace_time },
-        "default",
-    }
+    local components
+    if opts.grace_time ~= nil then
+        components = {
+            { "coderunner.autoclose", grace_time = opts.grace_time },
+            "default",
+        }
+    else
+        components = {
+            "default",
+        }
+    end
 
     if vim.bo.errorformat ~= "" then
         components[#components + 1] = { "on_output_quickfix", errorformat = vim.bo.errorformat, open_on_match = true }
@@ -64,12 +71,12 @@ function M.run_lua()
     api.nvim_cmd({ cmd = "Redir", args = { "luafile", "%" } }, {})
 end
 
-function M.run()
+function M.run(opts)
     vim.cmd.update()
     if vim.bo.filetype == "lua" then
         M.run_lua()
     else
-        M.run_script()
+        M.run_script(opts)
     end
 end
 

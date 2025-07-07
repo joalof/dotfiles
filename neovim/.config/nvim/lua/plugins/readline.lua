@@ -1,37 +1,37 @@
 return {
     "assistcontrol/readline.nvim",
-    dev = true,
+    -- dev = true,
     event = "VeryLazy",
     keys = {
         {
-            mode = { "t", "c" },
+            mode = { "!" },
             "<C-a>",
             function()
                 require("readline").beginning_of_line()
             end,
         },
         {
-            mode = { "t", "c" },
+            mode = { "!" },
             "<C-e>",
             function()
                 require("readline").end_of_line()
             end,
         },
         {
-            mode = { "t", "c" },
+            mode = { "!" },
             "<C-w>",
             function()
                 require("readline").unix_word_rubout()
             end,
         },
         {
-            mode = { "t", "c" },
+            mode = { "!" },
             "<C-u>",
             function()
                 require("readline").backward_kill_line()
             end,
         },
-        { mode = { "t", "c" }, "<C-f>", "<Right>" },
-        { mode = { "t", "c" }, "<C-b>", "<Left>" },
+        { mode = { "!" }, "<C-f>", "<Right>" },
+        { mode = { "!" }, "<C-b>", "<Left>" },
     },
 }

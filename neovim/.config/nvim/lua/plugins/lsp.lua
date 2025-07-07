@@ -343,7 +343,7 @@ return {
                         end
                     end,
                 })
-                :map("<leader>ltl")
+                :map("<leader>dtl")
 
             Snacks.toggle
                 .new({
@@ -364,7 +364,7 @@ return {
                         end
                     end,
                 })
-                :map("<leader>ltt")
+                :map("<leader>dtt")
         end,
     },
 }

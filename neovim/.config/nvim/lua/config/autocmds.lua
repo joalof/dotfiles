@@ -42,3 +42,16 @@ vim.api.nvim_create_autocmd("BufWritePre", {
         end
     end,
 })
+
+-- autoclose floating windows if we hop out of them with <c-w>hjkl etc
+vim.api.nvim_create_autocmd("WinLeave", {
+    callback = function()
+        local winid = vim.api.nvim_get_current_win()
+        local config = vim.api.nvim_win_get_config(winid)
+
+        -- Only close if it's a floating window (has a `relative` key set)
+        if config.relative ~= "" then
+            vim.api.nvim_win_close(winid, true)
+        end
+    end,
+})
