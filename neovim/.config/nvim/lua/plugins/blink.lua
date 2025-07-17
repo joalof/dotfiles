@@ -22,8 +22,8 @@ return {
         -- See :h blink-cmp-config-keymap for defining your own keymap
         keymap = {
             preset = "default",
-            ["<C-i>"] = { "select_next", "fallback" },
-            ["<C-k>"] = { "accept", "fallback" },
+            -- ["<C-i>"] = { "select_next", "fallback" },
+            ["<C-i>"] = { "accept", "fallback" },
         },
         appearance = {
             nerd_font_variant = "normal",
