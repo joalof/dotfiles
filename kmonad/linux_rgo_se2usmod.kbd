@@ -1,0 +1,50 @@
+(defcfg
+  ;; input  (low-level-hook)  ;; Windows, Intercepts keypresses globally
+  ;; output (send-event-sink) ;; Windows, Sends remapped keys
+  ;; vion RGO split keyboard
+  input (device-file "/dev/input/by-id/usb-HAILUCK_CO._LTD_USB_KEYBOARD-event-kbd")
+  output (uinput-sink "My KMonad output")
+  fallthrough true
+)
+
+(defsrc
+  esc    1    2    3    4    5    6    7    8    9    0    -    =
+  tab    q    w    e    r    t    y    u    i    o    p    [    ]
+  caps   a    s    d    f    g    h    j    k    l    ;    '    \
+  lshift lsgt    z    x    c    v    b    n    m    ,    .    /
+  lctrl lmeta lalt spc ralt rctrl
+)
+
+
+(defalias
+    spcctl (tap-hold-next-release 200 spc lctl)
+    valt (tap-hold-next-release 200 s lalt)
+    nalt (tap-hold-next-release 200 n lalt)
+    ;; shift (layer-toggle shifted)
+    lcb RA-7 ;; left curly bracket
+    rcb RA-7  ;; right curly bracket
+    lsb RA-8 ;; right square bracket
+    rsb RA-9 ;; left square bracket
+    lp  S-8 ;; right parenthesis
+    rp  S-9 ;; left parenthesis
+    eq  S-0
+    hs  S-3
+    usc S-/
+    
+)
+
+(deflayer base
+  esc    1    2    @usc   @lsb  @lp    @hs   @rp   @rsb   @eq  0   _  _   
+  tab    q     w       e   r    t    y    u    i    o    p   @lcb  _
+  caps   a    s    d   f    g    h    j    k    l    :    '   \
+  lshift  ~    z    x    c    @valt    b    @nalt    m    ,    .    /
+  lctrl lmeta lalt @spcctl ralt rctrl
+)
+
+;;(deflayer shifted
+;; esc     &    $    3    4    5    6    7    8    9    +    -    %
+;; tab     Q    W    E    R    T    Y    U    I    O    P    *    ^
+;; caps    A    S    D    E    F    H    J    K    L    ;    "    |
+;; lshift  ~    Z    X    C    V    B    N    M    <    >    ?
+;; lctrl lmeta lalt spc ralt rctrl
+;;)
