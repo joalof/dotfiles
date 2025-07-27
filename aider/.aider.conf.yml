@@ -2,9 +2,6 @@ Other settings:
 read:
   - CLAUDE.md
 
-Repomap settings:
-map-tokens: 1000
-
 Main model:
 model: gemini/gemini-2.5-pro
 
