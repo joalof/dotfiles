@@ -1,5 +1,6 @@
 return {
     "miroshQa/debugmaster.nvim",
+    keys = {'<leader>dm'},
     config = function()
         local dm = require("debugmaster")
         -- make sure you don't have any other keymaps that starts with "<leader>d" to avoid delay

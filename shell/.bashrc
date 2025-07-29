@@ -369,6 +369,21 @@ export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 
 # Starship {{{
 [[ -f $(command -v starship) ]] && eval "$(starship init bash)"
+
+# if [ -f /etc/bash_completion.d/git-prompt ]; then
+#   source /etc/bash_completion.d/git-prompt
+# elif [ -f /usr/share/git-core/contrib/completion/git-prompt.sh ]; then
+#   source /usr/share/git-core/contrib/completion/git-prompt.sh
+# fi
+#
+# GIT_PS1_SHOWDIRTYSTATE=1
+#
+# PS1='\n'\
+# '\[\e[1;36m\]\w\[\e[0;33m\]$(__git_ps1 " (%s)")\[\e[0m\]'\
+# '\[\e[1;35m\]$(if [[ -n "$VIRTUAL_ENV" ]]; then echo " (venv:$(basename "$VIRTUAL_ENV"))"; fi)\[\e[0m\]\n'\
+# '\[\e[1;32m\]❯ \[\e[0m\]'
+
+
 # }}}
 
 # Julia {{{
@@ -397,6 +412,7 @@ fi
 # }}}
 
 # Ezenv {{{
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 [ -f ~/.local/bin/ezenv ] && source ~/.local/bin/ezenv
 
 last_venv_file="$HOME/.cache/last_venv"
@@ -482,6 +498,5 @@ alias cmldown='docker-compose -f /opt/clearml/docker-compose.yml down'
 # Zoxide {{{
 [[ -f $(command -v zoxide) ]] && eval "$(zoxide init --cmd f bash)"
 # }}}
-
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=bash:
