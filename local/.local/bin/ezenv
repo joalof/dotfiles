@@ -111,13 +111,13 @@ ezenv() {
             fi
 
             # Deactivate current env if one is active
-            if [[ -n "$VIRTUAL_ENV" ]]; then
-                deactivate
-            fi
+            # if [[ -n "$VIRTUAL_ENV" ]]; then
+            #     deactivate
+            # fi
 
             source "$activate_path"
             echo $name > ~/.cache/last_venv
-            echo "Activated virtual environment: $name"
+            # echo "Activated virtual environment: $name"
             ;;
 
         deactivate)

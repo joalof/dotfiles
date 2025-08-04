@@ -53,7 +53,7 @@ function M.run_script(opts)
     })
     task:start()
     -- Don't focus toggleterminal immediately
-    api.nvim_cmd({ cmd = "KittyNavigateUp" }, {})
+    -- vim.cmd.wincmd('k')
 end
 
 function M.abort_script()
