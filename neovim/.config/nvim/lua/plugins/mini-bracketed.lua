@@ -1,7 +1,7 @@
 return {
-    "nvimtools/hydra.nvim",
+    'echasnovski/mini.bracketed',
     dependencies = {
-        'echasnovski/mini.bracketed'
+        "nvimtools/hydra.nvim",
     },
     config = function()
         local hydra = require("hydra")

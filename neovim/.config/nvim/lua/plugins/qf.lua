@@ -9,13 +9,13 @@ return {
             },
         })
         -- stylua: ignore
-        vim.keymap.set("n", "]q", function() require("qf").next("c", true) end)
-        vim.keymap.set("n", "[q", function() require("qf").prev("c", true) end)
+        -- vim.keymap.set("n", "]q", function() require("qf").next("c", true) end)
+        -- vim.keymap.set("n", "[q", function() require("qf").prev("c", true) end)
         vim.keymap.set("n", "<leader>qq", function() require("qf").toggle("c", true) end)
 
         -- general qf stuff
-        vim.keymap.set("n", "]Q", ":clast<cr>")
-        vim.keymap.set("n", "[Q", ":cfirst<cr>")
+        -- vim.keymap.set("n", "]Q", ":clast<cr>")
+        -- vim.keymap.set("n", "[Q", ":cfirst<cr>")
 
         -- autoclose functionality
         local function get_win_type()
