@@ -9,7 +9,7 @@ return {
         local bracketed = require('mini.bracketed')
         local func_maps = {
             buffer = 'b',
-            diagnostic = 'e',
+            diagnostic = 'd',
             file = 'f',
             quickfix = 'q',
         }

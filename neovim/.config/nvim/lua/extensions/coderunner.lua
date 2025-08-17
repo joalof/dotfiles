@@ -22,7 +22,10 @@ function M.run_script(opts)
     for _, task in ipairs(overseer.list_tasks()) do
         if task.name == task_name then
             task:dispose()
-            task.strategy.term:shutdown()
+            local term = task.strategy.term
+            if term ~= nil then
+                term:shutdown()
+            end
             vim.cmd("cclose")
         end
     end
@@ -53,7 +56,7 @@ function M.run_script(opts)
     })
     task:start()
     -- Don't focus toggleterminal immediately
-    -- vim.cmd.wincmd('k')
+    vim.cmd.wincmd('k')
 end
 
 function M.abort_script()

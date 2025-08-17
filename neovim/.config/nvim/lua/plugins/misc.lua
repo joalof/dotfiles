@@ -1,5 +1,5 @@
 return {
     "tpope/vim-repeat",
-    "tpope/vim-abolish",
+    -- "tpope/vim-abolish",
     "romainl/vim-cool",
 }

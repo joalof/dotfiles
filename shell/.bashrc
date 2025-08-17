@@ -430,9 +430,9 @@ alias ......='cd ../../../../..'
 alias python='python3 -u'
 alias py='python3 -u'
 alias pyt='pytest --disable-warnings'
-alias ipy='ipython3'
+alias ipython='ipython3 --no-confirm-exit --no-banner'
+alias ipy='ipython3 --no-confirm-exit --no-banner'
 alias jpy='jupyter-lab'
-alias pipdev='pip install --no-deps -e'
 
 # latex make
 alias lmk='latexmk'

@@ -66,14 +66,14 @@ return {
         {
             "<leader>fn",
             function()
-                Snacks.picker.files({ cwd = vim.fs.abspath('~/.config/nvim/lua/')})
+                Snacks.picker.files({ cwd = vim.fs.abspath("~/.config/nvim/lua/") })
             end,
             desc = "Find neovim configs",
         },
         {
             "<leader>f.",
             function()
-                Snacks.picker.files({ cwd = vim.fs.abspath('~/dotfiles')})
+                Snacks.picker.files({ cwd = vim.fs.abspath("~/dotfiles") })
             end,
             desc = "Find managed dotfiles",
         },
@@ -95,14 +95,14 @@ return {
             desc = "Search History",
         },
         {
-            "<leader>fc",
+            "<leader>fC",
             function()
                 Snacks.picker.command_history()
             end,
             desc = "Command History",
         },
         {
-            "<leader>fC",
+            "<leader>fc",
             function()
                 Snacks.picker.commands()
             end,
@@ -143,13 +143,13 @@ return {
             end,
             desc = "Undo History",
         },
-        {
-            "<leader>af",
-            function()
-                Snacks.rename.rename_file()
-            end,
-            desc = "Rename File",
-        },
+        -- {
+        --     "<leader>af",
+        --     function()
+        --         Snacks.rename.rename_file()
+        --     end,
+        --     desc = "Rename File",
+        -- },
         {
             "<leader>fl",
             function()
@@ -157,19 +157,25 @@ return {
             end,
             desc = "Highlights",
         },
+        {
+            "<leader>ff",
+            function()
+                Snacks.picker.files({
+                    cwd = require("extensions.project").get_root("cwd"),
+                    matcher = {
+                        frecency = true,
+                        sort_empty = true,
+                    },
+                })
+            end,
+            desc = "Find project files",
+        },
+        {
+            "<leader>fz",
+            function()
+                Snacks.picker.zoxide()
+            end,
+            desc = "Highlights",
+        },
     },
-    config = function(_, opts)
-        local Snacks = require("snacks")
-        Snacks.setup(opts)
-
-        vim.keymap.set("n", "<leader>ff", function()
-            Snacks.picker.files({
-                cwd = require("extensions.project").get_root("cwd"),
-                matcher = {
-                    frecency = true,
-                    sort_empty = true,
-                },
-            })
-        end, { desc = "Find project files" })
-    end,
 }
