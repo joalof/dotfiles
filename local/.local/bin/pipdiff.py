@@ -1,0 +1,173 @@
+
+#!/usr/bin/env python
+
+"""
+A script to compare package versions between the current Python environment
+and a given requirements.txt file. It can also generate new requirements
+files based on the environment or the latest available versions.
+"""
+
+import argparse
+import sys
+import re
+from importlib import metadata
+
+# --- Dependency Check ---
+try:
+    from packaging import version as packaging_version
+except ImportError:
+    print("Error: The 'packaging' library is required. Please install it with 'pip install packaging'")
+    sys.exit(1)
+
+# --- Configuration ---
+# ANSI escape codes for colored output
+class Colors:
+    GREEN = '\033[0;32m'
+    YELLOW = '\033[1;33m'
+    RED = '\033[0;31m'
+    BLUE = '\033[0;34m'
+    NC = '\033[0m' # No Color
+
+def parse_requirements(file_path):
+    """
+    Parses a requirements.txt file and returns a dictionary of packages and versions.
+    - Skips comments and empty lines.
+    - Handles lines with '==' for pinned versions.
+    - Handles lines without '==' for unpinned packages, storing the version as None.
+    """
+    packages = {}
+    try:
+        with open(file_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                
+                if '==' in line:
+                    package, ver = line.split('==', 1)
+                    packages[package.strip()] = ver.strip()
+                else:
+                    # Extract package name, ignoring version specifiers like >=, <, etc.
+                    match = re.match(r'^[a-zA-Z0-9_.-]+', line)
+                    if match:
+                        package = match.group(0)
+                        packages[package] = None # Mark as unpinned
+    except FileNotFoundError:
+        print(f"{Colors.RED}Error: File not found at '{file_path}'.{Colors.NC}")
+        sys.exit(1)
+    return packages
+
+def get_installed_packages():
+    """
+    Gets all installed packages in the current environment and returns them
+    as a dictionary of {package_name: version}.
+    """
+    installed = {}
+    for dist in metadata.distributions():
+        installed[dist.metadata['name']] = dist.version
+    return installed
+
+def generate_requirements_file(filename, package_data):
+    """Writes a list of packages and versions to a file."""
+    try:
+        with open(filename, 'w') as f:
+            for package, ver in sorted(package_data.items()):
+                if ver:
+                    f.write(f"{package}=={ver}\n")
+                else:
+                    f.write(f"{package}\n")
+        print(f"\n{Colors.BLUE}Successfully generated requirements file at '{filename}'.{Colors.NC}")
+    except IOError as e:
+        print(f"\n{Colors.RED}Error writing to file '{filename}': {e}{Colors.NC}")
+
+
+def main():
+    """Main function to run the comparison and generation."""
+    parser = argparse.ArgumentParser(
+        description="Compare and generate package version files."
+    )
+    parser.add_argument("requirements_file", help="Path to the input requirements.txt file.")
+    parser.add_argument(
+        "--generate-from-env",
+        metavar="FILENAME",
+        help="Generate a new requirements.txt using versions from the current venv."
+    )
+    parser.add_argument(
+        "--generate-latest",
+        metavar="FILENAME",
+        help="Generate a new requirements.txt using the latest versions found."
+    )
+    args = parser.parse_args()
+
+    # --- Comparison Logic ---
+    print(f"Comparing packages from environment with '{args.requirements_file}'...")
+    print("-------------------------------------------------------------------------")
+
+    req_packages = parse_requirements(args.requirements_file)
+    installed_packages = get_installed_packages()
+
+    if not req_packages:
+        print(f"{Colors.YELLOW}Warning: No packages found in '{args.requirements_file}'.{Colors.NC}")
+        print("-------------------------------------------------------------------------")
+        return
+
+    req_package_names = sorted(req_packages.keys())
+
+    for package in req_package_names:
+        req_version = req_packages[package]
+        installed_version = installed_packages.get(package)
+
+        if req_version is not None:
+            if installed_version:
+                status = f"{Colors.GREEN}✔ MATCH{Colors.NC}" if req_version == installed_version else f"{Colors.YELLOW}❗ MISMATCH{Colors.NC}"
+                print(f"{package:<40} Env: {installed_version:<15} Req: {req_version:<15} {status}")
+            else:
+                status = f"{Colors.RED}❌ NOT FOUND in env{Colors.NC}"
+                print(f"{package:<40} Env: {'-':<15} Req: {req_version:<15} {status}")
+        else:
+            if installed_version:
+                status = f"{Colors.GREEN}ℹ️  INSTALLED{Colors.NC}"
+                print(f"{package:<40} Env: {installed_version:<15} Req: {'any':<15} {status}")
+            else:
+                status = f"{Colors.RED}❌ NOT FOUND in env{Colors.NC}"
+                print(f"{package:<40} Env: {'-':<15} Req: {'any':<15} {status}")
+
+    print("-------------------------------------------------------------------------")
+
+    # --- File Generation Logic ---
+    if args.generate_from_env:
+        new_reqs = {}
+        for package in req_package_names:
+            installed_version = installed_packages.get(package)
+            if installed_version:
+                new_reqs[package] = installed_version
+            else:
+                # If package from input file is not in env, keep it unpinned
+                new_reqs[package] = None
+        generate_requirements_file(args.generate_from_env, new_reqs)
+
+    if args.generate_latest:
+        new_reqs = {}
+        for package in req_package_names:
+            req_version_str = req_packages.get(package)
+            installed_version_str = installed_packages.get(package)
+            
+            latest_version = None
+
+            if req_version_str and installed_version_str:
+                req_v = packaging_version.parse(req_version_str)
+                installed_v = packaging_version.parse(installed_version_str)
+                latest_version = str(max(req_v, installed_v))
+            elif req_version_str:
+                latest_version = req_version_str
+            elif installed_version_str:
+                latest_version = installed_version_str
+            
+            new_reqs[package] = latest_version
+
+        generate_requirements_file(args.generate_latest, new_reqs)
+
+    print("Comparison complete.")
+
+if __name__ == "__main__":
+    main()
