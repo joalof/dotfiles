@@ -26,18 +26,20 @@ local component = {
 
                 local function close_stale()
                     local term = task.strategy.term
-                    if not term:is_open() then
-                        timer:stop()
-                        return
-                    end
-                    local bufnr = task.strategy.term.bufnr
-                    local bufinfo = vim.fn.getbufinfo(bufnr)[1]
-                    local stale = (os.time() - bufinfo.lastused) > params.grace_time
-                    if stale then
-                        term:shutdown()
-                        task:dispose()
-                        vim.cmd('cclose')
-                        timer:stop()
+                    if term ~= nil then
+                        if not term:is_open() then
+                            timer:stop()
+                            return
+                        end
+                        local bufnr = task.strategy.term.bufnr
+                        local bufinfo = vim.fn.getbufinfo(bufnr)[1]
+                        local stale = (os.time() - bufinfo.lastused) > params.grace_time
+                        if stale then
+                            term:shutdown()
+                            task:dispose()
+                            vim.cmd('cclose')
+                            timer:stop()
+                        end
                     end
                 end
 

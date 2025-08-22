@@ -1,6 +1,6 @@
 return {
     "folke/snacks.nvim",
-    priority = 1000,
+    priority = 1100,
     lazy = false,
     ---@type snacks.Config
     opts = {
@@ -66,9 +66,16 @@ return {
         {
             "<leader>fn",
             function()
-                Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+                Snacks.picker.files({ cwd = vim.fs.abspath("~/.config/nvim/lua/") })
             end,
-            desc = "Find Config File",
+            desc = "Find neovim configs",
+        },
+        {
+            "<leader>f.",
+            function()
+                Snacks.picker.files({ cwd = vim.fs.abspath("~/dotfiles") })
+            end,
+            desc = "Find managed dotfiles",
         },
         { "<leader>ff" },
         {
@@ -88,14 +95,14 @@ return {
             desc = "Search History",
         },
         {
-            "<leader>fc",
+            "<leader>fC",
             function()
                 Snacks.picker.command_history()
             end,
             desc = "Command History",
         },
         {
-            "<leader>fC",
+            "<leader>fc",
             function()
                 Snacks.picker.commands()
             end,
@@ -123,39 +130,52 @@ return {
             desc = "Man Pages",
         },
         {
+            "<leader>fk",
+            function()
+                Snacks.picker.keymaps()
+            end,
+            desc = "Key maps",
+        },
+        {
             "<leader>fu",
             function()
                 Snacks.picker.undo()
             end,
             desc = "Undo History",
         },
+        -- {
+        --     "<leader>af",
+        --     function()
+        --         Snacks.rename.rename_file()
+        --     end,
+        --     desc = "Rename File",
+        -- },
         {
-            "<leader>af",
-            function()
-                Snacks.rename.rename_file()
-            end,
-            desc = "Rename File",
-        },
-        {
-            "<leader>fk",
+            "<leader>fl",
             function()
                 Snacks.picker.highlights()
             end,
             desc = "Highlights",
         },
+        {
+            "<leader>ff",
+            function()
+                Snacks.picker.files({
+                    cwd = require("extensions.project").get_root("cwd"),
+                    matcher = {
+                        frecency = true,
+                        sort_empty = true,
+                    },
+                })
+            end,
+            desc = "Find project files",
+        },
+        {
+            "<leader>fz",
+            function()
+                Snacks.picker.zoxide()
+            end,
+            desc = "Highlights",
+        },
     },
-    config = function(_, opts)
-        local Snacks = require("snacks")
-        Snacks.setup(opts)
-
-        vim.keymap.set("n", "<leader>ff", function()
-            Snacks.picker.files({
-                cwd = require("extensions.project").get_root("cwd"),
-                matcher = {
-                    frecency = true,
-                    sort_empty = true,
-                },
-            })
-        end, { desc = "Find project files" })
-    end,
 }

@@ -1,7 +1,7 @@
 return {
     "cbochs/grapple.nvim",
     opts = {
-        scope = "git_branch",
+        -- scope = "git_branch",
     },
     event = { "BufReadPost", "BufNewFile" },
     cmd = "Grapple",
@@ -9,21 +9,19 @@ return {
         local grapple = require('grapple')
         grapple.setup(opts)
 
-        local tabline_toggle = require("extensions.tabline").toggle
-
-        vim.keymap.set('n', 'm', function()
+        -- local tabline_toggle = require("extensions.tabline").toggle
+        --
+        vim.keymap.set('n', '<leader>mm', function()
             grapple.tag()
-            tabline_toggle()
         end)
-        vim.keymap.set('n', '<c-l>', function()
+        vim.keymap.set('n', '<c-n>', function()
             grapple.cycle_tags("next")
         end)
-        vim.keymap.set('n', '<c-h>', function()
+        vim.keymap.set('n', '<c-p>', function()
             grapple.cycle_tags("previous")
         end)
-        vim.keymap.set('n', 'M', function()
+        vim.keymap.set('n', '<leader>ml', function()
             grapple.toggle_tags()
-            tabline_toggle()
         end)
     end,
 }

@@ -22,7 +22,17 @@ return {
         local root_icon = require("extensions.icons").kinds.Package
 
         vim.o.laststatus = vim.g.lualine_laststatus
-
+        
+        local function tab_name(tabnr)
+            local name = vim.t[tabnr].name
+            if name then
+                return name
+            end
+            -- fallback: show buffer name
+            local bufnr = vim.fn.tabpagebuflist(tabnr)[vim.fn.tabpagewinnr(tabnr)]
+            return vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":t")
+        end
+        
         local opts = {
             options = {
                 component_separators = { left = "", right = "" },
@@ -66,15 +76,30 @@ return {
                     { "location", padding = { left = 0, right = 1 } },
                 },
                 lualine_z = {
-                    {
-                        function()
-                            return " " .. os.date("%R")
-                        end,
-                    },
+                    --     {
+                    --         function()
+                    --             return " " .. os.date("%R")
+                    --         end,
+                    --     },
                 },
             },
-            -- extensions = { "lazy" },
+            -- tabline = {
+            --     lualine_a = { 'grapple' },
+            --     lualine_z = {
+            --         {
+            --             function()
+            --                 local s = ''
+            --                 for tabnr = 1, vim.fn.tabpagenr('$') do
+            --                     local hl = (tabnr == vim.fn.tabpagenr()) and '%#TabLineSel#' or '%#TabLine#'
+            --                     s = s .. hl .. ' ' .. tab_name(tabnr) .. ' '
+            --                 end
+            --                 return s .. '%#TabLineFill#'
+            --             end,
+            --             separator = '',
+            --         }
+            --     },
+            -- },
         }
         return opts
-    end,
+    end
 }

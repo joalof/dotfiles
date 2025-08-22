@@ -5,7 +5,6 @@ return {
     config = function()
 
         Color = require('lib.color').Color
-        
         require("tokyonight").setup({
             style = "moon",
             on_highlights = function(hl, c)

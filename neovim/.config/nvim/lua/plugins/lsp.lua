@@ -187,8 +187,8 @@ return {
                     map("gI", function()
                         Snacks.picker.lsp_implementations()
                     end, "[g]oto [I]mplementation")
-                    map("<leader>ll", vim.diagnostic.setloclist, "Open diagnostic [l]sp [l]oclist list")
-                    map("<leader>lq", vim.diagnostic.setqflist, "Open diagnostic [l]sp [q]uickfix list")
+                    map("<leader>dl", vim.diagnostic.setloclist, "Open diagnostic [l]sp [l]oclist list")
+                    map("<leader>dq", vim.diagnostic.setqflist, "Open diagnostic [l]sp [q]uickfix list")
                     map("<leader>ar", vim.lsp.buf.rename, "[a]ction [r]ename")
                     map("<leader>ac", vim.lsp.buf.code_action, "[a]ction [c] action")
                     map("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
@@ -343,7 +343,7 @@ return {
                         end
                     end,
                 })
-                :map("<leader>dtl")
+                :map("<leader>dv")
 
             Snacks.toggle
                 .new({
@@ -364,7 +364,7 @@ return {
                         end
                     end,
                 })
-                :map("<leader>dtt")
+                :map("<leader>dV")
         end,
     },
 }
