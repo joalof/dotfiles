@@ -96,13 +96,13 @@ function has_sudo() {
     fi
 }
 
-function has_wsl ()
-{
-    local wsl1=`grep -vc Microsoft /proc/version`
-    local wsl2=`uname -r | grep -vc microsoft`
-    [[ $wsl1 == 0 || $wsl2 == 0 ]] && res=true || res=false
-    echo $res
-}
+# function is_wsl ()
+# {
+#     local wsl1=`grep -vc Microsoft /proc/version`
+#     local wsl2=`uname -r | grep -vc microsoft`
+#     [[ $wsl1 == 0 || $wsl2 == 0 ]] && res=true || res=false
+#     echo $res
+# }
 
 function stow_app ()
 {
@@ -272,9 +272,9 @@ fi
 # }}}
 
 # WSL {{{
+is_wsl2=$(uname -r | grep -c microsoft)
 
-
-if [[ `has_wsl` == true ]] ; then
+if [[ $is_wsl2 -eq 1 ]] ; then
     export WDESK=/mnt/c/Users/lofgr/Desktop
     export WHOME=/mnt/c/Users/lofgr
 fi
@@ -380,6 +380,14 @@ fi
 [ -f ~/.keychain/$(hostname)-sh ] && source ~/.keychain/$(hostname)-sh
 # }}}
 
+# Zoxide {{{
+[[ -f $(command -v zoxide) ]] && eval "$(zoxide init --cmd f bash)"
+# }}}
+
+# Wezterm {{{
+[[ -f ~/.config/wezterm/shell_integration.sh && $is_wsl2 -eq 1 ]] && source ~/.config/wezterm/shell_integration.sh
+# }}}
+# 
 # end apps }}}
 
 # Aliases {{{
@@ -443,13 +451,7 @@ alias lmklua='latexmk -lualatex'
 # other
 alias feh="feh --zoom=50"
 
-alias cmlup='docker-compose -f /opt/clearml/docker-compose.yml up -d'
-alias cmldown='docker-compose -f /opt/clearml/docker-compose.yml down'
-
 # }}}
 #
-# Zoxide {{{
-[[ -f $(command -v zoxide) ]] && eval "$(zoxide init --cmd f bash)"
-# }}}
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=bash:
