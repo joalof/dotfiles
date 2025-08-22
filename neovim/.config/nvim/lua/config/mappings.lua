@@ -25,6 +25,7 @@ end
 
 
 -- split window navigation
+-- We can only send a single mod + key with wezterm so can't use <c-s>hjkl here
 for _, direction in ipairs({'h', 'j', 'k', 'l'}) do
-    vim.keymap.set({'n', 't'}, '<C-s>'.. direction, function() navigate_window(direction) end)
+    vim.keymap.set({'n', 't'}, string.format('<M-%s>', direction), function() navigate_window(direction) end)
 end
