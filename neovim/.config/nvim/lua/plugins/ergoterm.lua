@@ -75,7 +75,6 @@ return {
                 return
             end
             local filename = vim.api.nvim_buf_get_name(0)
-            -- local cmd = string.format('ipython --no-banner --no-confirm-exit %s', filename)
             local cmd = "ipython --no-banner --no-confirm-exit"
             local term = terminal.Terminal:new({ cmd = cmd, layout = "window", close_on_job_exit = false })
             term:open()
@@ -83,12 +82,10 @@ return {
             term:send({ string.format("run %s", filename) })
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
 
-            -- This maps the escape key back to itself (for this buffer) to fix this problem.
+            -- Skips the "[Process exited 0]" message from the embedded terminal
             vim.api.nvim_create_autocmd({ "TermClose" }, {
                 buffer = vim.api.nvim_get_current_buf(),
                 callback = function()
-                    -- This automated keypress skips for you the "[Process exited 0]" message
-                    -- that the embedded terminal shows.
                     vim.api.nvim_feedkeys("i", "n", false)
                 end,
             })

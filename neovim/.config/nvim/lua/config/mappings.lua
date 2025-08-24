@@ -14,13 +14,13 @@ end, { expr = true })
 
 local function navigate_window(direction)
     vim.cmd.wincmd(direction)
-    local buf_id = vim.api.nvim_win_get_buf(0)
+    -- local buf_id = vim.api.nvim_win_get_buf(0)
     -- local opt = vim.api.nvim_get_option_value('buftype', {buf=buf_id}) 
     -- local mode = vim.api.nvim_get_mode()
     -- vim.print(mode)
-    if vim.api.nvim_get_option_value('buftype', {buf=buf_id}) == 'terminal' and vim.api.nvim_get_mode().mode == 'nt' then
-        vim.cmd.normal('i')
-    end
+    -- if vim.api.nvim_get_option_value('buftype', {buf=buf_id}) == 'terminal' and vim.api.nvim_get_mode().mode == 'nt' then
+    --     vim.cmd.normal('i')
+    -- end
 end
 
 

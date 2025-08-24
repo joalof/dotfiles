@@ -56,7 +56,7 @@ function M.run_script(opts)
     })
     task:start()
     -- Don't focus toggleterminal immediately
-    vim.cmd.wincmd('k')
+    vim.cmd.wincmd("k")
 end
 
 function M.abort_script()
