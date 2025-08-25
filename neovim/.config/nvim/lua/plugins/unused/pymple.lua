@@ -9,7 +9,6 @@ return {
         'stevearc/oil.nvim',
     },
     build = ":PympleBuild",
-    cmd = 'Oil',
     config = function()
         require("pymple").setup()
     end,
