@@ -1,0 +1,56 @@
+(defcfg
+  process-unmapped-keys no
+  log-layer-changes no
+  linux-x11-repeat-delay-rate 200,25
+)
+
+(defsrc
+  grv    1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]      ret
+  caps a    s    d    f    g    h    j    k    l    ;    '    \   
+  lsft 102d   z   x   c    v    b    n    m    ,    .    /  rsft
+  lctl lmet lalt                spc
+)
+
+(defalias
+  ;; shifted keys
+  lbrc S-[
+  rbrc S-]
+  excl S-1 
+  at S-2
+  hash S-3
+  dol S-4
+  per S-5
+  pow S-6
+  amp S-7
+  mul S-8
+  lpar S-9
+  rpar S-0
+  usc S--
+  plus S-=
+  til S-`
+  col S-;
+  quo S-'
+  bar S-\ 
+  ls (layer-while-held shifted)
+  less S-,
+  gtr S-.
+  que S-/
+  spct (multi f24 (tap-hold-press 0 150 spc lctl))
+)
+
+(deflayer default
+grv    1    2  @usc  [   @lpar   @hash  @rpar  ]  =    0    -   @at    _
+  _    _    _    _    _    _    _    _    _    _    _    @lbrc @rbrc _
+  _    _    _    _    _    _    _    _    _    _   @col  '   \ 
+  @ls  ;   _    _    _    _    _    _    _    ,    .    /  _
+  _     _    _              @spct
+)
+
+(deflayer shifted
+  @til @amp @dol 3    4    5    6    7    8    9    @plus  @excl  @per    _
+  _    S-q    S-w    S-e    S-r    S-t    S-y    S-u    S-i    S-o    S-p    @mul @pow  _
+  _    S-a    S-s    S-d   S-f    S-g    S-h    S-j    S-k    S-l    XX   @quo  @bar
+  _    XX     S-z    S-x   S-c    S-v    S-b    S-n    S-m    @less  @gtr  @que         _
+  _     _    _              _ 
+)
