@@ -1,0 +1,20 @@
+#!/bin/bash
+
+KANATA_CONFIG="$HOME/.config/kanata/nordic_usmod.kbd"
+
+if [ ! -f "$KANATA_CONFIG" ]; then
+    echo "Error: Kanata config file not found at: $KANATA_CONFIG"
+    exit 1
+fi
+
+if pgrep -x "kanata" > /dev/null; then
+    echo "Kanata is running. Stopping it..."
+    pkill -x "kanata"
+    echo "Kanata stopped."
+else
+    echo "Kanata is not running. Starting it..."
+    nohup kanata -c "${KANATA_CONFIG}" >/dev/null 2>&1 &
+    echo "Kanata started in the background with config: ${KANATA_CONFIG}"
+fi
+
+exit 0
