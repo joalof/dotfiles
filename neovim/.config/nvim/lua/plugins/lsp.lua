@@ -229,16 +229,18 @@ return {
             })
 
             vim.lsp.set_log_level("off")
-
-            local signature_help = vim.lsp.buf.signature_help
-            ---@diagnostic disable-next-line: duplicate-set-field
-            vim.lsp.buf.signature_help = function()
-                return signature_help({
-                    border = "rounded",
-                    max_height = math.floor(vim.o.lines * 0.5),
-                    max_width = math.floor(vim.o.columns * 0.4),
-                })
-            end
+            
+            -- signature is currently handled by Noice, but if we remove Noice
+            -- we can enable this
+            -- local signature_help = vim.lsp.buf.signature_help
+            -- ---@diagnostic disable-next-line: duplicate-set-field
+            -- vim.lsp.buf.signature_help = function()
+            --     return signature_help({
+            --         border = "rounded",
+            --         max_height = math.floor(vim.o.lines * 0.5),
+            --         max_width = math.floor(vim.o.columns * 0.4),
+            --     })
+            -- end
 
             local function truncate_message(message, max_length)
                 if #message > max_length then

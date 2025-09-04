@@ -70,11 +70,31 @@ return {
                 ["vim.lsp.util.stylize_markdown"] = true,
                 -- ["cmp.entry.get_documentation"] = true,
             },
-
             hover = {
                 enabled = true,
                 silent = true,
-            }
+                view = "hover",
+                opts = {
+                    size = {
+                        width = "auto",
+                        height = "auto",
+                        max_height = 15,
+                        max_width = 120,
+                    },
+                },
+            },
+            signature = {
+                enabled = true,
+                view = "hover",
+                opts = {
+                    size = {
+                        width = "auto",
+                        height = "auto",
+                        max_height = 15,
+                        max_width = 120,
+                    },
+                },
+            },
         },
         -- you can enable a preset for easier configuration
         presets = {
@@ -91,8 +111,24 @@ return {
                 position = { row = "20%", col = "50%" },
             },
         },
-        signature = {
-            enabled = false,
-        },
     },
+    config = function(_, opts)
+        require("noice").setup(opts)
+
+        vim.keymap.set({ "i", "s" }, "<C-d>", function()
+            if require("noice.lsp").scroll(4) then
+                return ""
+            else
+                return "<C-d>"
+            end
+        end, { silent = true, expr = true })
+
+        vim.keymap.set({ "i", "s" }, "<C-u>", function()
+            if require("noice.lsp").scroll(-4) then
+                return ""
+            else
+                return "<C-u>"
+            end
+        end, { silent = true, expr = true })
+    end,
 }
