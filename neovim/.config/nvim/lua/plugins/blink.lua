@@ -1,9 +1,9 @@
 return {
     "saghen/blink.cmp",
     -- dependencies = { 'rafamadriz/friendly-snippets' },
-    version = "1.*",
-
-    dependencies = {'onsails/lspkind.nvim', 'nvim-tree/nvim-web-devicons'},
+    -- version = "1.*",
+    build = 'cargo build --release',
+    dependencies = { "onsails/lspkind.nvim", "nvim-tree/nvim-web-devicons" },
 
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -22,7 +22,6 @@ return {
         -- See :h blink-cmp-config-keymap for defining your own keymap
         keymap = {
             preset = "default",
-            -- ["<C-i>"] = { "select_next", "fallback" },
             ["<C-i>"] = { "accept", "fallback" },
         },
         appearance = {
@@ -32,6 +31,7 @@ return {
             documentation = { auto_show = true },
             list = { selection = { preselect = true, auto_insert = true } },
             accept = { auto_brackets = { enabled = true } },
+            keyword = { range = "full" },
             menu = {
                 draw = {
                     components = {
@@ -87,5 +87,9 @@ return {
             },
         },
         fuzzy = { implementation = "prefer_rust_with_warning" },
+        cmdline = {
+            keymap = { preset = "inherit" },
+            completion = { menu = { auto_show = true }, ghost_text = { enabled = false } },
+        },
     },
 }
