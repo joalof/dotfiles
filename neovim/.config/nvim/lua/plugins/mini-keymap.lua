@@ -1,5 +1,5 @@
 return {
-    "echasnovski/mini.keymap",
+    "nvim-mini/mini.keymap",
     version = "*",
     config = function()
         require('mini.keymap').setup()
