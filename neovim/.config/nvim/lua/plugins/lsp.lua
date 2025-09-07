@@ -54,6 +54,23 @@ vim.g.lsp_servers = {
             },
         },
     },
+    vtsls = {
+        settings = {
+            vtsls = {
+                inlayHints = {
+                    includeInlayParameterNameHints = "all",
+                    includeInlayFunctionLikeReturnTypeHints = true,
+                    includeInlayVariableTypeHints = false,
+                    includeInlayPropertyDeclarationTypeHints = false,
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                    includeInlayEnumMemberValueHints = false,
+                },
+                preferences = {
+                    importModuleSpecifier = "non-relative",
+                },
+            },
+        },
+    },
 }
 
 vim.g.other_mason_servers = { "stylua" }
@@ -164,6 +181,9 @@ return {
                 })
             end
 
+            -- enables stuff like automatic f-strings in python
+            vim.lsp.on_type_formatting.enable()
+
             -- Disable the new 0.11 default keybinds
             for _, bind in ipairs({ "grn", "gra", "gri", "grr" }) do
                 pcall(vim.keymap.del, "n", bind)
@@ -196,7 +216,6 @@ return {
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client then
-
                         -- disable semantic highlights
                         client.server_capabilities.semanticTokensProvider = nil
 
@@ -228,8 +247,8 @@ return {
                 end,
             })
 
-            vim.lsp.set_log_level("off")
-            
+            vim.lsp.log.set_level("off")
+
             -- signature is currently handled by Noice, but if we remove Noice
             -- we can enable this
             -- local signature_help = vim.lsp.buf.signature_help

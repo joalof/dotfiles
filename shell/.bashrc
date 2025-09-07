@@ -243,7 +243,7 @@ o() {
  # Defaults {{{
 export SHELL=/bin/bash
 export PLATFORM=$(uname -s)
-export EDITOR=nvim
+export EDITOR=vim
 export BROWSER=firefox
 export XDG_CONFIG_HOME=$HOME/.config
 
@@ -455,3 +455,7 @@ alias feh="feh --zoom=50"
 #
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=bash:
+
+# tabtab source for electron-forge package
+# uninstall by removing these lines or running `tabtab uninstall electron-forge`
+[ -f /home/autarch/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.bash ] && . /home/autarch/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.bash
