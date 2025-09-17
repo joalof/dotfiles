@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# ==============================================================================
+# img-info.sh - A script to display metadata for one or more image files.
+#
+# It displays the filename, extension, file size, resolution, and aspect ratio.
+# Dependencies: exiftool, bc
+# ==============================================================================
+
+# --- Configuration ---
+# Define colors for pretty printing
+BOLD='\033[1m'
+BLUE='\033[94m'
+NC='\033[0m' # No Color
+
+# --- Prerequisite Check ---
+# Check if exiftool and bc are installed
+if ! command -v exiftool &> /dev/null; then
+    echo -e "${BOLD}Error: exiftool is not installed.${NC}" >&2
+    echo "Please install it to run this script (e.g., 'sudo apt install libimage-exiftool-perl')." >&2
+    exit 1
+fi
+
+if ! command -v bc &> /dev/null; then
+    echo -e "${BOLD}Error: bc (basic calculator) is not installed.${NC}" >&2
+    echo "Please install it to run this script (e.g., 'sudo apt install bc')." >&2
+    exit 1
+fi
+
+
+# --- Argument Check ---
+# Show usage information if no files are provided
+if [ "$#" -eq 0 ]; then
+    echo "Usage: $0 <image_file1> [<image_file2> ...]"
+    exit 1
+fi
+
+# --- Main Loop ---
+# Process each file provided as an argument
+for file in "$@"; do
+    # Check if the argument is a valid file
+    if [ ! -f "$file" ]; then
+        echo -e "${BOLD}Skipping '$file': Not a valid file.${NC}"
+        echo "----------------------------------------"
+        continue
+    fi
+
+    # Extract data in one go: FileSize, ImageWidth, ImageHeight
+    # The -s3 flag provides clean values without descriptions.
+    # The -p flag formats the output into a comma-separated string.
+    data=$(exiftool -s3 -p '$FileSize,$ImageWidth,$ImageHeight' "$file")
+
+    # Check if exiftool returned any data. If not, it's likely not an image file.
+    if [ -z "$data" ]; then
+        echo -e "${BOLD}Skipping '$file': Not a recognized image file or missing data.${NC}"
+        echo "----------------------------------------"
+        continue
+    fi
+
+    # Use IFS (Internal Field Separator) to parse the comma-separated data
+    IFS=',' read -r filesize width height <<< "$data"
+
+    # Calculate aspect ratio using 'bc' for floating-point math
+    if [ -n "$width" ] && [ -n "$height" ] && [ "$height" -gt 0 ]; then
+        # 'scale=2' sets the precision to two decimal places
+        aspect_ratio=$(echo "scale=2; $width / $height" | bc)
+    else
+        aspect_ratio="N/A"
+    fi
+
+    # Get filename and extension
+    filename=$(basename -- "$file")
+    extension="${filename##*.}"
+
+    # --- Pretty Print the Results ---
+    echo -e "${BOLD}${BLUE}${filename}${NC}"
+    printf "  %-15s %s\n" "Extension:" "${extension}"
+    printf "  %-15s %s\n" "Size:" "${filesize}"
+    printf "  %-15s %s x %s\n" "Resolution:" "${width:-N/A}" "${height:-N/A}"
+    printf "  %-15s %s:1\n" "Aspect Ratio:" "${aspect_ratio}"
+    echo "----------------------------------------"
+
+done
