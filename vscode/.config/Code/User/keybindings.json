@@ -1,42 +1,80 @@
 [
-    {
-      "key": "ctrl+h",
-      "command": "-editor.action.replace",
-      "when": "editorTextFocus"
-    },
-    {
-      "key": "ctrl+l",
-      "command": "-editor.action.selectLine",
-      "when": "editorTextFocus"
-    },
   {
-    "key": "h",
-    "command": "list.collapse",
-    "when": "explorerViewletVisible && explorerViewletFocus"
+    "key": "ctrl+h",
+    "command": "-editor.action.replace",
+    "when": "editorTextFocus"
   },
   {
-    "key": "l",
-    "command": "list.expand",
-    "when": "explorerViewletVisible && explorerViewletFocus"
+    "key": "ctrl+l",
+    "command": "-editor.action.selectLine",
+    "when": "editorTextFocus"
   },
   {
-    "key": "j",
+    "key": "ctrl+n",
     "command": "list.focusDown",
     "when": "explorerViewletVisible && explorerViewletFocus"
   },
   {
-    "key": "k",
+    "key": "ctrl+p",
     "command": "list.focusUp",
-    "when": "explorerViewletVisible && explorerViewletFocus"
-  },
-  {
-    "key": "ctrl+j",
-    "command": "list.select",
     "when": "explorerViewletVisible && explorerViewletFocus"
   },
   {
     "key": "escape",
     "command": "workbench.action.toggleSidebarVisibility",
     "when": "explorerViewletVisible && explorerViewletFocus"
+  },
+  {
+    "key": ", f n",
+    "command": "workbench.action.openSettingsJson",
+    "when": "!editorTextFocus"
+  },
+  {
+    "key": ", f k",
+    "command": "workbench.action.openGlobalKeybindingsFile",
+    "when": "!editorTextFocus"
+  },
+  {
+    "key": ", f f",
+    "command": "workbench.action.quickOpen",
+    "when": "!editorTextFocus"
+  },
+  // Accept selected suggestion from IntelliSense
+  {
+    "key": "ctrl+i",
+    "command": "acceptSelectedSuggestion",
+    "when": "suggestWidgetVisible && textInputFocus"
+  },
+  // Insert newline in editor
+  {
+    "key": "ctrl+j",
+    "command": "type",
+    "args": { "text": "\n" },
+    "when": "editorTextFocus && !suggestWidgetVisible && !findWidgetVisible"
+  },
+  // Confirm/accept in dropdown lists (command palette, quick open, etc.)
+  {
+    "key": "ctrl+j",
+    "command": "list.select",
+    "when": "listFocus && !inputFocus"
+  },
+
+  // Confirm in input boxes (search, rename, settings input, etc.)
+  {
+    "key": "ctrl+j",
+    "command": "acceptSelectedSuggestion",
+    "when": "inputFocus && suggestWidgetVisible"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "acceptRenameInput",
+    "when": "editorFocus && renameInputVisible"
+  },
+
+  // Confirm in debug console input
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.acceptSelectedQuickOpenItem",
+    "when": "inQuickOpen"
   }
-  ]
+]

@@ -1,7 +1,7 @@
 {
     "security.workspace.trust.untrustedFiles": "open",
     "editor.fontFamily": "'JetBrains Mono NF'",
-    "editor.fontSize": 14,
+    "editor.fontSize": 15,
     "editor.fontLigatures": true,
     "editor.tabSize": 4,
     "window.zoomLevel": 0.5,
@@ -10,7 +10,8 @@
     "vim.useSystemClipboard": true,
     "vim.useCtrlKeys": true,
     "vim.insertModeKeyBindings": [
-        { "before": ["j", "k"], "after": ["<Esc>"] }
+      { "before": ["j", "k"], "after": ["<Esc>"] }
+      // {"before": ["<C-l>"], "commands": ["editor.action.jumpToBracket"]}
     ],
     "vim.hlsearch": true,
     "vim.incsearch": true,
@@ -49,21 +50,34 @@
           "commands": ["workbench.action.openSettingsJson"]
         },
         {
+          "before": ["<leader>", "f", "k"],
+          "commands": ["workbench.action.openGlobalKeybindingsFile"]
+        },
+        {
           "before": ["<leader>", "f", "e"],
           "commands": ["workbench.view.explorer"]
         },
         {
-          "before": ["<C-h>"],
+          "before": ["H"],
           "commands": ["workbench.action.previousEditor"]
         },
         {
-          "before": ["<C-l>"],
+          "before": ["L"],
           "commands": ["workbench.action.nextEditor"]
         },
         {
-          "before": [":"],
-          "commands": ["workbench.action.showCommands"]
+          "before": ["<leader>", "a", "r"],
+          "commands": ["editor.action.rename"]
+        },
+        {
+          "before": ["K"],
+          "commands": ["editor.action.showHover"]
         }
       ],
-      "terminal.integrated.fontFamily": "monospace"
+      "terminal.integrated.fontFamily": "monospace",
+      // "python.defaultInterpreterPath": "/bin/python3",
+      "workbench.editor.empty.hint": "hidden",
+      "workbench.colorTheme": "Default Dark+",
+      "editor.autoIndentOnPaste": true,
+      "git.openRepositoryInParentFolders": "always"
 }
