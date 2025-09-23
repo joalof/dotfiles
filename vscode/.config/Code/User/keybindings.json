@@ -24,6 +24,7 @@
     "command": "workbench.action.toggleSidebarVisibility",
     "when": "explorerViewletVisible && explorerViewletFocus"
   },
+  // finding stuff
   {
     "key": ", f n",
     "command": "workbench.action.openSettingsJson",
@@ -49,7 +50,9 @@
   {
     "key": "ctrl+j",
     "command": "type",
-    "args": { "text": "\n" },
+    "args": {
+      "text": "\n"
+    },
     "when": "editorTextFocus && !suggestWidgetVisible && !findWidgetVisible"
   },
   // Confirm/accept in dropdown lists (command palette, quick open, etc.)
@@ -58,7 +61,6 @@
     "command": "list.select",
     "when": "listFocus && !inputFocus"
   },
-
   // Confirm in input boxes (search, rename, settings input, etc.)
   {
     "key": "ctrl+j",
@@ -70,11 +72,46 @@
     "command": "acceptRenameInput",
     "when": "editorFocus && renameInputVisible"
   },
-
   // Confirm in debug console input
   {
     "key": "ctrl+j",
     "command": "workbench.action.acceptSelectedQuickOpenItem",
     "when": "inQuickOpen"
+  },
+  // terminal stuff
+  {
+    "key": "ctrl+k",
+    "command": "workbench.action.terminal.clear",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+b",
+    "command": "-workbench.action.toggleSidebarVisibility",
+  },
+  {
+    "key": "ctrl+p",
+    "command": "-workbench.action.quickOpen",
+  },
+  {
+    "key": "ctrl+n",
+    "command": "-editor.action.insertLineAfter",
+  },
+  {
+    "key": "ctrl+a",
+    "command": "-editor.action.selectAll",
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-workbench.action.terminal.focusFind",
+  },
+  {
+    "key": "ctrl+e",
+    "command": "-workbench.action.quickOpen",
+  },
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u000D" },
+    "when": "terminalFocus"
   }
 ]
