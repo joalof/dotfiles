@@ -88,8 +88,14 @@ return {
         },
         fuzzy = { implementation = "prefer_rust_with_warning" },
         cmdline = {
-            -- keymap = { preset = "inherit" },
-            completion = { menu = { auto_show = true }, ghost_text = { enabled = false } },
+            keymap = {
+                ["<C-i>"] = { "accept", "fallback" },
+            },
+            completion = {
+                menu = { auto_show = true },
+                ghost_text = { enabled = false },
+                list = { selection = { preselect = true, auto_insert = true } },
+            },
         },
     },
 }
