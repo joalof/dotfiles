@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Usage: source ./load_env.sh [path/to/.env]
+# Loads environment variables from a .env file into the current shell.
+
+set -euo pipefail
+
+# Determine .env file path
+ENV_FILE="${1:-.env}"
+
+# Check that file exists
+if [[ ! -f "$ENV_FILE" ]]; then
+  echo "Error: .env file not found at '$ENV_FILE'" >&2
+  return 1 2>/dev/null || exit 1
+fi
+
+# Export variables (ignore empty lines and comments)
+export $(grep -vE '^(#|$)' "$ENV_FILE" | xargs)
+
+echo "Loaded environment variables from $ENV_FILE"
