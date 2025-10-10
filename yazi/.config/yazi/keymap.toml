@@ -1,9 +1,6 @@
-# examples
-# [mgr]
-# prepend_keymap = [
-# 	{ on = "<C-a>", run = "my-cmd1", desc = "Single command with `Ctrl + a`" },
-# ]
-# append_keymap = [
-# 	{ on = [ "g", "b" ], run = "my-cmd2",          desc = "Single command with `g => b`" },
-# 	{ on = "c",          run = [ "cmd1", "cmd2" ], desc = "Multiple commands with `c`" }
-# ]
+[mgr]
+# to override a default keymap use prepend
+prepend_keymap = [
+	{ on = ["f"], run = "plugin zoxide", desc = "Run zoxide" }
+	# { on = [ "g", "b" ], run = ["my-cmd2", "cmd1"],          desc = "Single command with `g => b`" },
+]
