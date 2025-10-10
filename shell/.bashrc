@@ -458,12 +458,9 @@ alias lmklua='latexmk -lualatex'
 
 # other
 alias feh="feh --zoom=50"
+alias gemini-flash='gemini --model gemini-2.5-flash'
 
 # }}}
 #
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=bash:
-
-# tabtab source for electron-forge package
-# uninstall by removing these lines or running `tabtab uninstall electron-forge`
-[ -f /home/autarch/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.bash ] && . /home/autarch/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.bash
