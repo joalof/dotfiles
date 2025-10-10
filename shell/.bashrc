@@ -235,7 +235,15 @@ o() {
     fi
 }
 
-
+loadenv() {
+    local env_file="${1:-.env}"
+    if [[ ! -f "$env_file" ]]; then
+        echo "Error: .env file not found at '$env_file'" >&2
+        return 1
+    fi
+    export $(grep -vE '^(#|$)' "$env_file" | xargs)
+    echo "Loaded environment variables from $env_file"
+}
 
 
 # }}}
