@@ -2,5 +2,9 @@
 # to override a default keymap use prepend
 prepend_keymap = [
 	{ on = ["f"], run = "plugin zoxide", desc = "Run zoxide" }
-	# { on = [ "g", "b" ], run = ["my-cmd2", "cmd1"],          desc = "Single command with `g => b`" },
+]
+
+[input]
+prepend_keymap = [
+	{ on = [ "<C-j>" ], run = "close --submit", desc = "Submit the input" },
 ]
