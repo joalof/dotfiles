@@ -44,15 +44,12 @@ config.cursor_blink_ease_out = "Constant"
 local prefix = "LEADER"
 
 config.keys = {
+	{ key = "C", mods = "CTRL|SHIFT", action = wezterm.action.CopyTo("Clipboard") },
+	{ key = "V", mods = "CTRL|SHIFT", action = wezterm.action.PasteFrom("Clipboard") },
 	{ key = "r", mods = prefix, action = wezterm.action.ReloadConfiguration },
 	{ key = "f", mods = prefix, action = wezterm.action.ToggleFullScreen },
-	{
-		key = "/",
-		mods = prefix,
-		action = wezterm.action.SplitPane({
-			direction = "Right",
-		}),
-	},
+	{ key = "/", mods = prefix, action = wezterm.action.SplitPane({direction = "Right"})},
+	{ key = "v", mods = prefix, action = wezterm.action.SplitPane({direction = "Right"})},
 	{
 		key = "s",
 		mods = prefix,
@@ -78,7 +75,6 @@ config.keys = {
 	{ key = "d", mods = prefix, action = wezterm.action.CloseCurrentPane({ confirm = false }) },
 	{ key = ",", mods = prefix, action = wezterm.action.DecreaseFontSize },
 	{ key = ".", mods = prefix, action = wezterm.action.IncreaseFontSize },
-	{ key = "V", mods = "CTRL|SHIFT", action = wezterm.action.PasteFrom("Clipboard") },
 	{ key = "x", mods = prefix, action = wezterm.action.ActivateCopyMode },
 }
 
