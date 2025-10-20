@@ -251,7 +251,7 @@ loadenv() {
  # Defaults {{{
 export SHELL=/bin/bash
 export PLATFORM=$(uname -s)
-export EDITOR=vim
+export EDITOR=nvim
 export BROWSER=firefox
 export XDG_CONFIG_HOME=$HOME/.config
 
@@ -432,6 +432,7 @@ fi
 # if we have nvim use it over vim
 if [ -f $(command -v nvim) ] ; then
     alias vi='nvim'
+    alias vim='nvim'
 fi
 
 # quality of life
@@ -459,6 +460,8 @@ alias lmklua='latexmk -lualatex'
 # other
 alias feh="feh --zoom=50"
 alias gemini-flash='gemini --model gemini-2.5-flash'
+
+alias gsearch='function _search(){ google-chrome "https://www.google.com/search?q=$(printf "%s+" "$@" | sed "s/+$//")"; }; _search'
 
 # }}}
 #
