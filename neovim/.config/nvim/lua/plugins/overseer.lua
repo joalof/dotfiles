@@ -1,6 +1,7 @@
 return {
     "stevearc/overseer.nvim",
     dependencies = { "akinsho/toggleterm.nvim", version = "*", opts = {} },
+    version = "v1.6.0",
     cmd = { "OverseerRun", "OverseerToggle" },
     keys = { "<leader>rr" },
     opts = {

@@ -9,7 +9,7 @@ return {
         require("ergoterm").setup({})
         Color = require("lib.color").Color
 
-        local terminal = require("ergoterm.terminal")
+        local terminal = require("ergoterm")
 
         -- Autocmd to apply when entering a terminal buffer
         -- vim.api.nvim_create_autocmd("TermOpen", {
