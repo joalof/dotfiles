@@ -395,7 +395,10 @@ fi
 # Wezterm {{{
 [[ -f ~/.config/wezterm/shell_integration.sh && $is_wsl2 -eq 1 ]] && source ~/.config/wezterm/shell_integration.sh
 # }}}
-# 
+
+# Modal {{{
+export MODAL_ENVIRONMENT='joakim-dev'
+# }}}
 # end apps }}}
 
 # Aliases {{{
