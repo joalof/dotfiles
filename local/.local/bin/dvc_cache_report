@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""
+dvc-cache-report.py
+
+Scans .dvc/cache/files/md5 for largest cache blobs and maps them back to
+the tracked file paths using .dvc and dvc.lock metadata.
+
+Usage:
+  python3 dvc-cache-report.py        # show top 20
+  python3 dvc-cache-report.py -n 50  # show top 50
+"""
+
+import os
+import sys
+import argparse
+import pathlib
+import yaml
+import re
+from collections import defaultdict
+
+CACHE_DIR = ".dvc/cache/files/md5"
+HEX32_RE = re.compile(r'\b[0-9a-f]{32}\b', flags=re.IGNORECASE)
+
+def human(size):
+    for unit in ("B","KB","MB","GB","TB"):
+        if size < 1024:
+            return f"{size:.2f}{unit}"
+        size /= 1024
+    return f"{size:.2f}PB"
+
+def gather_cache_blobs(cache_dir):
+    blobs = []
+    if not os.path.isdir(cache_dir):
+        return blobs
+    for root, _, files in os.walk(cache_dir):
+        for f in files:
+            full = os.path.join(root, f)
+            try:
+                sz = os.path.getsize(full)
+            except OSError:
+                continue
+            # DVC splits hash: first 2 chars = dir, remaining 30 = filename
+            # Reconstruct full 32-char hash from parent dir + filename
+            parent_dir = os.path.basename(root)
+            if re.match(r'^[0-9a-f]{2}$', parent_dir, re.IGNORECASE) and \
+               re.match(r'^[0-9a-f]{30}$', f, re.IGNORECASE):
+                h = (parent_dir + f).lower()
+                blobs.append((sz, h, full))
+            else:
+                # Fallback: search for 32-hex inside the path
+                m = HEX32_RE.search(full)
+                if m:
+                    h = m.group(0).lower()
+                    blobs.append((sz, h, full))
+    blobs.sort(reverse=True, key=lambda x: x[0])
+    return blobs
+
+def parse_metadata_files(root="."):
+    # find all .dvc and dvc.lock files
+    meta_files = []
+    for dirpath, _, files in os.walk(root):
+        for fn in files:
+            if fn.endswith(".dvc") or fn == "dvc.lock":
+                meta_files.append(os.path.join(dirpath, fn))
+    md5_to_paths = defaultdict(list)
+    for mf in meta_files:
+        try:
+            with open(mf, "r", encoding="utf-8") as fh:
+                txt = fh.read()
+        except Exception:
+            continue
+        parsed = None
+        try:
+            parsed = yaml.safe_load(txt)
+        except Exception:
+            parsed = None
+
+        found = False
+        if isinstance(parsed, dict):
+            # top level outs (simple .dvc)
+            outs = parsed.get("outs", []) or []
+            # for dvc.lock style, there might be "stages" mapping
+            if "stages" in parsed and isinstance(parsed["stages"], dict):
+                for s in parsed["stages"].values():
+                    outs += s.get("outs", []) if isinstance(s, dict) else []
+            # also pipelines format might nest stages under "pipeline" or similar; above covers most cases
+            if outs:
+                for o in outs:
+                    # common keys: md5, hash
+                    if not isinstance(o, dict):
+                        continue
+                    possible = []
+                    if "md5" in o and isinstance(o["md5"], str):
+                        possible.append(o["md5"])
+                    if "hash" in o and isinstance(o["hash"], str):
+                        possible.append(o["hash"])
+                    # sometimes older dvc uses {"outs": [{"md5": "...", "path": "..."}]}
+                    # try to find any 32-hex inside the out dict
+                    for v in o.values():
+                        if isinstance(v, str):
+                            mm = HEX32_RE.search(v)
+                            if mm:
+                                possible.append(mm.group(0))
+                    # when we have a path, map it
+                    path = o.get("path") or o.get("outs") or o.get("out") or None
+                    if path is None and "path" in o and isinstance(o["path"], str):
+                        path = o["path"]
+                    # normalize path relative to repo if needed
+                    if possible:
+                        chosen = possible[0].lower()
+                        if isinstance(path, str):
+                            md5_to_paths[chosen].append((path, mf))
+                        else:
+                            # if we don't have explicit path, still record the metadata file as reference
+                            md5_to_paths[chosen].append((f"(from {os.path.relpath(mf)})", mf))
+                        found = True
+
+        if not found:
+            # fallback: search raw text for 32-hex tokens
+            for m in HEX32_RE.findall(txt):
+                md = m.lower()
+                # try to find a "path:" near it (simple heuristic)
+                # look ahead few lines
+                snippet = txt
+                pos = snippet.find(m)
+                line_snip = snippet[max(0,pos-200):pos+200]
+                psearch = re.search(r'path:\s*(.+)', line_snip)
+                if psearch:
+                    path = psearch.group(1).strip().strip('"').strip("'")
+                    md5_to_paths[md].append((path, mf))
+                else:
+                    md5_to_paths[md].append((f"(found in {os.path.relpath(mf)})", mf))
+    return md5_to_paths
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-n", "--top", type=int, default=20, help="number of top cache blobs to show")
+    ap.add_argument("--cache-dir", default=CACHE_DIR, help="path to .dvc cache dir (default .dvc/cache/files/md5)")
+    args = ap.parse_args()
+
+    print("Scanning cache blobs (this only reads filenames/sizes)...")
+    blobs = gather_cache_blobs(args.cache_dir)
+    if not blobs:
+        print("No blobs found under", args.cache_dir)
+        sys.exit(1)
+
+    top = blobs[:args.top]
+    print(f"Found {len(blobs)} blobs, loading metadata to map hashes -> file paths (this may take a few seconds)...")
+    md5_map = parse_metadata_files(".")
+
+    print()
+    print(f"{'SIZE':>10}  {'HASH':<32}  PATH(S) (metadata file)")
+    print("-"*90)
+    for sz, h, fullpath in top:
+        human_sz = human(sz)
+        refs = md5_map.get(h)
+        if refs:
+            # show up to 5 reference paths
+            ref_text = "; ".join([f"{p} ({os.path.relpath(mf)})" for (p,mf) in refs[:5]])
+            more = ""
+            if len(refs) > 5:
+                more = f" (+{len(refs)-5} more)"
+            print(f"{human_sz:>10}  {h}  {ref_text}{more}")
+        else:
+            print(f"{human_sz:>10}  {h}  UNREFERENCED")
+    print()
+    print("Notes:")
+    print(" - 'UNREFERENCED' means no .dvc or dvc.lock file in the repo mentioned that hash.")
+    print(" - If you see a path like '(from <meta-file>)' the metadata didn't expose a 'path' string near the hash; inspect that metadata file.")
+    print(" - You can run this script with a larger -n to show more entries.")
+
+if __name__ == "__main__":
+    main()
