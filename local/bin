@@ -1,0 +1,255 @@
+#!/bin/bash
+
+set -e
+
+# Color codes for output
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+# Print usage information
+print_usage() {
+    cat << EOF
+Usage: $0 <instance-name> [--zone ZONE] [--project PROJECT] [--instance-user USER]
+
+Configure SSH access to a GCP instance via IAP tunnel for VSCode remote development.
+
+Arguments:
+  instance-name                   (REQUIRED)  The name you gave the VM instance (e.g., my-experiments)
+  --zone ZONE                     (OPTIONAL)  GCP zone to use
+  --project PROJECT               (OPTIONAL)  GCP project ID
+  --instance-user USER            (OPTIONAL)  The GCP username (e.g., name_company_com)
+
+If zone, project, or instance-user are not provided, they will be parsed from 'gcloud config list'.
+For instance-user, the account email will be converted (e.g., john.doe@company.com → john_doe_company_com).
+
+Examples:
+  $0 torch-experiments
+  $0 torch-experiments --zone us-west1-a --project my-project
+  $0 torch-experiments --instance-user john_company_com
+
+EOF
+}
+
+# Convert email to instance-user format
+email_to_instance_user() {
+    local email="$1"
+    echo "$email" | tr '@.' '__'
+}
+
+# Parse gcloud config list output
+get_gcloud_config() {
+    local key="$1"
+    local section="$2"
+    local config_output
+
+    config_output=$(gcloud config list 2>&1) || {
+        echo -e "${RED}Error: Failed to run 'gcloud config list'${NC}" >&2
+        return 1
+    }
+
+    # Parse the config output for the key in the specified section
+    local in_section=false
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^\[${section}\] ]]; then
+            in_section=true
+            continue
+        elif [[ "$line" =~ ^\[.*\] ]]; then
+            in_section=false
+            continue
+        fi
+
+        if [[ "$in_section" == true && "$line" =~ ^${key}[[:space:]]*=[[:space:]]*(.+)$ ]]; then
+            echo "${BASH_REMATCH[1]}"
+            return 0
+        fi
+    done <<< "$config_output"
+
+    return 1
+}
+
+# Check if help is requested
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    print_usage
+    exit 0
+fi
+
+# Validate required arguments
+if [[ -z "$1" ]]; then
+    echo -e "${RED}Error: Missing required argument: instance-name${NC}" >&2
+    echo
+    print_usage
+    exit 1
+fi
+
+# Parse arguments
+INSTANCE_NAME="$1"
+shift
+
+ZONE=""
+PROJECT=""
+INSTANCE_USER=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --zone)
+            ZONE="$2"
+            shift 2
+            ;;
+        --project)
+            PROJECT="$2"
+            shift 2
+            ;;
+        --instance-user)
+            INSTANCE_USER="$2"
+            shift 2
+            ;;
+        *)
+            echo -e "${RED}Error: Unknown argument: $1${NC}" >&2
+            echo
+            print_usage
+            exit 1
+            ;;
+    esac
+done
+
+# Parse missing values from gcloud config
+if [[ -z "$ZONE" ]]; then
+    echo "Zone not provided, attempting to parse from 'gcloud config list'..."
+    if ZONE=$(get_gcloud_config "zone" "compute"); then
+        echo -e "${GREEN}Using zone from gcloud config: ${ZONE}${NC}"
+    else
+        echo -e "${RED}Error: Could not parse zone from 'gcloud config list'${NC}" >&2
+        echo "Please provide --zone explicitly." >&2
+        exit 1
+    fi
+fi
+
+if [[ -z "$PROJECT" ]]; then
+    echo "Project not provided, attempting to parse from 'gcloud config list'..."
+    if PROJECT=$(get_gcloud_config "project" "core"); then
+        echo -e "${GREEN}Using project from gcloud config: ${PROJECT}${NC}"
+    else
+        echo -e "${RED}Error: Could not parse project from 'gcloud config list'${NC}" >&2
+        echo "Please provide --project explicitly." >&2
+        exit 1
+    fi
+fi
+
+if [[ -z "$INSTANCE_USER" ]]; then
+    echo "Instance user not provided, attempting to parse from 'gcloud config list'..."
+    if ACCOUNT=$(get_gcloud_config "account" "core"); then
+        INSTANCE_USER=$(email_to_instance_user "$ACCOUNT")
+        echo -e "${GREEN}Using instance user from gcloud config account: ${INSTANCE_USER}${NC}"
+    else
+        echo -e "${RED}Error: Could not parse account from 'gcloud config list'${NC}" >&2
+        echo "Please provide --instance-user explicitly." >&2
+        exit 1
+    fi
+fi
+
+# Print configuration summary
+echo
+echo -e "${GREEN}Configuration Summary:${NC}"
+echo "  Instance Name:  ${INSTANCE_NAME}"
+echo "  Project:        ${PROJECT}"
+echo "  Zone:           ${ZONE}"
+echo "  Instance User:  ${INSTANCE_USER}"
+echo
+
+# Print prerequisite warnings
+echo -e "${YELLOW}⚠️  PREREQUISITES${NC}"
+echo "Before running this script, ensure you have completed the following setup steps:"
+echo
+echo "1. Connect once to the fresh instance using:"
+echo "   gcloud compute ssh ${INSTANCE_NAME} --project=\"${PROJECT}\" --zone=\"${ZONE}\" --tunnel-through-iap"
+echo
+echo "   This ensures SSH keys are created and uploaded."
+echo
+echo -e "${YELLOW}⚠️  VERTEX AI WORKBENCH NOTEBOOKS${NC}"
+echo "If you're configuring SSH for a Vertex AI Workbench notebook instance, be aware that"
+echo "this setup may not work unless you have the required IAM permissions."
+echo "Standard Compute Engine instances are fully supported."
+echo
+read -p "Have you completed these prerequisites? (Y/n): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Nn]$ ]]; then
+    echo -e "${YELLOW}Please complete the prerequisites before running this script.${NC}"
+    exit 0
+fi
+
+# Get instance ID
+echo
+echo "Fetching instance ID..."
+INSTANCE_ID=$(gcloud compute instances describe "${INSTANCE_NAME}" \
+    --project="${PROJECT}" \
+    --zone="${ZONE}" \
+    --format='value(id)' 2>&1)
+
+if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: Failed to fetch instance ID. Please check that the instance exists.${NC}" >&2
+    echo "$INSTANCE_ID" >&2
+    exit 1
+fi
+
+echo -e "${GREEN}Instance ID: ${INSTANCE_ID}${NC}"
+
+# Check if Host already exists in SSH config
+SSH_CONFIG="${HOME}/.ssh/config"
+if [[ -f "$SSH_CONFIG" ]] && grep -q "^Host ${INSTANCE_NAME}$" "$SSH_CONFIG"; then
+    echo -e "${RED}Error: Host '${INSTANCE_NAME}' already exists in ${SSH_CONFIG}${NC}" >&2
+    echo "Please remove or rename the existing entry before running this script." >&2
+    exit 1
+fi
+
+# Create ~/.ssh directory if it doesn't exist
+mkdir -p "${HOME}/.ssh"
+chmod 700 "${HOME}/.ssh"
+
+# Ask for permission to modify SSH config
+echo
+echo -e "${YELLOW}The following entry will be added to ${SSH_CONFIG}:${NC}"
+echo
+echo "Host ${INSTANCE_NAME}"
+echo "  HostName compute.${INSTANCE_ID}"
+echo "  IdentityFile ${HOME}/.ssh/google_compute_engine"
+echo "  User ${INSTANCE_USER}"
+echo "  ProxyCommand /usr/bin/python3 /usr/lib/google-cloud-sdk/lib/gcloud.py compute start-iap-tunnel ${INSTANCE_NAME} %p --listen-on-stdin --project=${PROJECT} --zone=${ZONE} --verbosity=warning"
+echo "  UserKnownHostsFile /dev/null"
+echo
+read -p "Do you want to proceed with modifying ${SSH_CONFIG}? (Y/n): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Nn]$ ]]; then
+    echo -e "${YELLOW}Operation cancelled by user.${NC}"
+    exit 0
+fi
+
+# Create backup of SSH config if it exists
+if [[ -f "$SSH_CONFIG" ]]; then
+    BACKUP_FILE="${SSH_CONFIG}.backup"
+    echo "Creating backup: ${BACKUP_FILE}"
+    cp "$SSH_CONFIG" "$BACKUP_FILE"
+    echo -e "${GREEN}✓ Backup created successfully${NC}"
+fi
+
+# Append SSH config entry
+echo
+echo "Adding SSH config entry..."
+
+cat >> "$SSH_CONFIG" << EOF
+
+Host ${INSTANCE_NAME}
+  HostName compute.${INSTANCE_ID}
+  IdentityFile ${HOME}/.ssh/google_compute_engine
+  User ${INSTANCE_USER}
+  ProxyCommand /usr/bin/python3 /usr/lib/google-cloud-sdk/lib/gcloud.py compute start-iap-tunnel ${INSTANCE_NAME} %p --listen-on-stdin --project=${PROJECT} --zone=${ZONE} --verbosity=warning
+  UserKnownHostsFile /dev/null
+EOF
+
+echo -e "${GREEN}✓ SSH config entry added successfully!${NC}"
+echo
+echo "You can now connect to the instance using:"
+echo "  ssh ${INSTANCE_NAME}"
+echo
+echo "Or configure VSCode Remote SSH to use the host: ${INSTANCE_NAME}"

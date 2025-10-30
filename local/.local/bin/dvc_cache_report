@@ -15,6 +15,7 @@ import sys
 import argparse
 import pathlib
 import yaml
+import json
 import re
 from collections import defaultdict
 
@@ -54,6 +55,44 @@ def gather_cache_blobs(cache_dir):
                     blobs.append((sz, h, full))
     blobs.sort(reverse=True, key=lambda x: x[0])
     return blobs
+
+def parse_dir_files(cache_dir, md5_to_paths):
+    """Parse .dir files in cache to find hashes of files within tracked directories."""
+    dir_hash_to_dir_info = {}  # hash of .dir file -> dir metadata
+
+    # First, find which .dir file hashes are referenced in metadata
+    for h, refs in list(md5_to_paths.items()):
+        for path, mf in refs:
+            # Check if this is a directory reference (path ends with .dir or has 'dir' marker)
+            # In DVC, when you track a directory, the .dvc file references a .dir hash
+            cache_path = os.path.join(cache_dir, h[:2], h[2:])
+            if os.path.exists(cache_path):
+                try:
+                    with open(cache_path, 'r') as fh:
+                        content = fh.read()
+                        # Try to parse as JSON - .dir files are JSON arrays
+                        if content.strip().startswith('['):
+                            entries = json.loads(content)
+                            if isinstance(entries, list) and len(entries) > 0:
+                                # This is a .dir file!
+                                dir_hash_to_dir_info[h] = (entries, path, mf)
+                except:
+                    continue
+
+    # Now extract individual file hashes from .dir files and map them
+    for dir_hash, (entries, dir_path, mf) in dir_hash_to_dir_info.items():
+        for entry in entries:
+            if isinstance(entry, dict) and 'md5' in entry and 'relpath' in entry:
+                file_hash = entry['md5'].lower()
+                relpath = entry['relpath']
+                # Construct full path: directory path + relative path
+                if dir_path.startswith('(from'):
+                    # Fallback path format
+                    full_path = f"{dir_path}:{relpath}"
+                else:
+                    # Clean directory path
+                    full_path = os.path.join(dir_path, relpath)
+                md5_to_paths[file_hash].append((full_path, mf))
 
 def parse_metadata_files(root="."):
     # find all .dvc and dvc.lock files
@@ -148,6 +187,9 @@ def main():
     print(f"Found {len(blobs)} blobs, loading metadata to map hashes -> file paths (this may take a few seconds)...")
     md5_map = parse_metadata_files(".")
 
+    # Also parse .dir files to find files within tracked directories
+    parse_dir_files(args.cache_dir, md5_map)
+
     print()
     print(f"{'SIZE':>10}  {'HASH':<32}  PATH(S) (metadata file)")
     print("-"*90)
@@ -166,6 +208,7 @@ def main():
     print()
     print("Notes:")
     print(" - 'UNREFERENCED' means no .dvc or dvc.lock file in the repo mentioned that hash.")
+    print(" - Files within tracked directories are resolved via .dir files in the cache.")
     print(" - If you see a path like '(from <meta-file>)' the metadata didn't expose a 'path' string near the hash; inspect that metadata file.")
     print(" - You can run this script with a larger -n to show more entries.")
 
