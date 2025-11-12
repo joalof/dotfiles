@@ -111,7 +111,9 @@
   {
     "key": "ctrl+j",
     "command": "workbench.action.terminal.sendSequence",
-    "args": { "text": "\u000D" },
+    "args": {
+      "text": "\u000D"
+    },
     "when": "terminalFocus"
   }
 ]

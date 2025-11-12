@@ -7,8 +7,18 @@
   "editor.fontWeight": "500",
   "window.zoomLevel": 0.5,
   "editor.insertSpaces": true,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "path-intellisense.mappings": {
+    "/": "/"
+  },
   "editor.detectIndentation": true,
-  // python stuff
+  "editor.minimap.enabled": false,
+  "editor.formatOnSave": true,
+  "editor.stickyScroll.enabled": true,
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
@@ -16,8 +26,23 @@
   "vim.useSystemClipboard": true,
   "vim.useCtrlKeys": true,
   "vim.insertModeKeyBindings": [
-    { "before": ["j", "k"], "after": ["<Esc>"] },
-    {"before": ["<C-l>"], "after": ["<Right>"]}
+    {
+      "before": [
+        "j",
+        "k"
+      ],
+      "after": [
+        "<Esc>"
+      ]
+    },
+    {
+      "before": [
+        "<C-l>"
+      ],
+      "after": [
+        "<Right>"
+      ]
+    }
   ],
   "vim.hlsearch": true,
   "vim.incsearch": true,
@@ -45,11 +70,21 @@
   "vim.normalModeKeyBindingsNonRecursive": [
     // running stuff
     {
-      "before": ["<leader>", "r", "t"],
-      "commands": ["workbench.action.terminal.toggleTerminal"]
+      "before": [
+        "<leader>",
+        "r",
+        "t"
+      ],
+      "commands": [
+        "workbench.action.terminal.toggleTerminal"
+      ]
     },
     {
-      "before": ["<leader>", "r", "r"],
+      "before": [
+        "<leader>",
+        "r",
+        "r"
+      ],
       "commands": [
         {
           "command": "python.execInTerminal",
@@ -59,50 +94,106 @@
     },
     // finding stuff
     {
-      "before": ["<leader>", "f", "f"],
-      "commands": ["workbench.action.quickOpen"]
+      "before": [
+        "<leader>",
+        "f",
+        "f"
+      ],
+      "commands": [
+        "workbench.action.quickOpen"
+      ]
     },
     {
-      "before": ["<leader>", "f", "n"],
-      "commands": ["workbench.action.openSettingsJson"]
+      "before": [
+        "<leader>",
+        "f",
+        "n"
+      ],
+      "commands": [
+        "workbench.action.openSettingsJson"
+      ]
     },
     {
-      "before": ["<leader>", "f", "k"],
-      "commands": ["workbench.action.openGlobalKeybindingsFile"]
+      "before": [
+        "<leader>",
+        "f",
+        "k"
+      ],
+      "commands": [
+        "workbench.action.openGlobalKeybindingsFile"
+      ]
     },
     {
-      "before": ["<leader>", "f", "e"],
-      "commands": ["workbench.view.explorer"]
+      "before": [
+        "<leader>",
+        "f",
+        "e"
+      ],
+      "commands": [
+        "workbench.view.explorer"
+      ]
     },
     {
-      "before": ["<leader>", "f", "s"],
-      "commands": ["editor.action.showAllSymbols"]
+      "before": [
+        "<leader>",
+        "f",
+        "s"
+      ],
+      "commands": [
+        "editor.action.showAllSymbols"
+      ]
     },
     {
-      "before": ["H"],
-      "commands": ["workbench.action.previousEditor"]
+      "before": [
+        "H"
+      ],
+      "commands": [
+        "workbench.action.previousEditor"
+      ]
     },
     {
-      "before": ["L"],
-      "commands": ["workbench.action.nextEditor"]
+      "before": [
+        "L"
+      ],
+      "commands": [
+        "workbench.action.nextEditor"
+      ]
     },
     // LSP action stuff
     {
-      "before": ["<leader>", "a", "r"],
-      "commands": ["editor.action.rename"]
+      "before": [
+        "<leader>",
+        "a",
+        "r"
+      ],
+      "commands": [
+        "editor.action.rename"
+      ]
     },
     {
-      "before": ["K"],
-      "commands": ["editor.action.showHover"]
+      "before": [
+        "K"
+      ],
+      "commands": [
+        "editor.action.showHover"
+      ]
     },
     {
-        "before": ["<leader>", "a", "f"],
-        "commands": ["editor.action.formatDocument"]
+      "before": [
+        "<leader>",
+        "a",
+        "f"
+      ],
+      "commands": [
+        "editor.action.formatDocument"
+      ]
     }
   ],
-    "terminal.integrated.fontFamily": "monospace",
-    "workbench.editor.empty.hint": "hidden",
-    "workbench.colorTheme": "Ayu Mirage",
-    "editor.autoIndentOnPaste": true,
-    "git.openRepositoryInParentFolders": "always"
+  "terminal.integrated.fontFamily": "monospace",
+  "workbench.editor.empty.hint": "hidden",
+  "workbench.colorTheme": "Kanagawa",
+  "editor.autoIndentOnPaste": true,
+  "git.openRepositoryInParentFolders": "always",
+  "python.analysis.typeCheckingMode": "basic",
+  "terminal.integrated.stickyScroll.enabled": false
 }
