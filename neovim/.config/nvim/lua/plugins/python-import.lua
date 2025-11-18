@@ -79,7 +79,7 @@ return  {
             ---@type table<string, string|vim.NIL>
             import_from = {
                 -- tqdm = vim.NIL,
-                -- tqdm = "tqdm",
+                -- codetiming = "Timer",
             },
 
             ---@type table<string, string[]|vim.NIL>

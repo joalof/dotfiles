@@ -9,18 +9,17 @@ return {
         local grapple = require('grapple')
         grapple.setup(opts)
 
-        -- local tabline_toggle = require("extensions.tabline").toggle
         --
-        vim.keymap.set('n', '<leader>mm', function()
-            grapple.tag()
+        vim.keymap.set('n', 'm', function()
+            grapple.tag({name=vim.fn.expand('%:t')})
         end)
-        vim.keymap.set('n', '<c-n>', function()
+        vim.keymap.set('n', 'L', function()
             grapple.cycle_tags("next")
         end)
-        vim.keymap.set('n', '<c-p>', function()
+        vim.keymap.set('n', 'H', function()
             grapple.cycle_tags("previous")
         end)
-        vim.keymap.set('n', '<leader>ml', function()
+        vim.keymap.set('n', 'M', function()
             grapple.toggle_tags()
         end)
     end,

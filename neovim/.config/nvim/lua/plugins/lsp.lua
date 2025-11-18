@@ -15,6 +15,7 @@ vim.g.lsp_servers = {
                 },
             },
             python = {
+                pythonPath = vim.fn.exepath("python"),
                 venvPath = Path(vim.env["VIRTUAL_ENV"]):parent().filename,
                 venv = Path(vim.env["VIRTUAL_ENV"]):name(),
             },

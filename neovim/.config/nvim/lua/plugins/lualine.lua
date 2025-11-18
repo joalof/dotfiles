@@ -22,7 +22,7 @@ return {
         local root_icon = require("extensions.icons").kinds.Package
 
         vim.o.laststatus = vim.g.lualine_laststatus
-        
+
         local function tab_name(tabnr)
             local name = vim.t[tabnr].name
             if name then
@@ -32,7 +32,7 @@ return {
             local bufnr = vim.fn.tabpagebuflist(tabnr)[vim.fn.tabpagewinnr(tabnr)]
             return vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":t")
         end
-        
+
         local opts = {
             options = {
                 component_separators = { left = "", right = "" },
@@ -83,23 +83,33 @@ return {
                     --     },
                 },
             },
-            -- tabline = {
-            --     lualine_a = { 'grapple' },
-            --     lualine_z = {
-            --         {
-            --             function()
-            --                 local s = ''
-            --                 for tabnr = 1, vim.fn.tabpagenr('$') do
-            --                     local hl = (tabnr == vim.fn.tabpagenr()) and '%#TabLineSel#' or '%#TabLine#'
-            --                     s = s .. hl .. ' ' .. tab_name(tabnr) .. ' '
-            --                 end
-            --                 return s .. '%#TabLineFill#'
-            --             end,
-            --             separator = '',
-            --         }
-            --     },
-            -- },
+            tabline = {
+                lualine_a = { 'grapple' },
+                -- lualine_b = {
+                --     {
+                --         function()
+                --             return require("grapple").name_or_index()
+                --         end,
+                --         cond = function()
+                --             return package.loaded["grapple"] and require("grapple").exists()
+                --         end,
+                --     },
+                -- },
+                --     lualine_z = {
+                --         {
+                --             function()
+                --                 local s = ''
+                --                 for tabnr = 1, vim.fn.tabpagenr('$') do
+                --                     local hl = (tabnr == vim.fn.tabpagenr()) and '%#TabLineSel#' or '%#TabLine#'
+                --                     s = s .. hl .. ' ' .. tab_name(tabnr) .. ' '
+                --                 end
+                --                 return s .. '%#TabLineFill#'
+                --             end,
+                --             separator = '',
+                --         }
+                --     },
+            },
         }
         return opts
-    end
+    end,
 }
