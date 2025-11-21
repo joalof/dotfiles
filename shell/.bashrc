@@ -96,13 +96,6 @@ function has_sudo() {
     fi
 }
 
-# function is_wsl ()
-# {
-#     local wsl1=`grep -vc Microsoft /proc/version`
-#     local wsl2=`uname -r | grep -vc microsoft`
-#     [[ $wsl1 == 0 || $wsl2 == 0 ]] && res=true || res=false
-#     echo $res
-# }
 
 function stow_app ()
 {
@@ -119,48 +112,9 @@ function stow_app ()
         esac
     done
     shift $((OPTIND-1))
-    stow -d $HOME/apps -t $HOME/.local $del_flag $1
+    xstow -d $HOME/apps -t $HOME/.local $del_flag $1
 }
 
-prepend_env() {
-    local var_name="$1"
-    local dir="$2"
-    
-    # Resolve symlink if applicable
-    dir=$(realpath -m "$dir")
-
-    local current_value="${!var_name:-}"
-
-    # Remove existing occurrences of $dir
-    local cleaned_value=$(echo ":$current_value:" | sed -E "s#:?$dir:?##g" | sed 's/^:*//;s/:*$//')
-
-    # Prepend
-    if [[ -z "$cleaned_value" ]]; then
-        export "$var_name"="$dir"
-    else
-        export "$var_name"="$dir:$cleaned_value"
-    fi
-}
-
-append_env() {
-    local var_name="$1"
-    local dir="$2"
-
-    # Resolve symlink if applicable
-    dir=$(realpath -m "$dir")
-
-    local current_value="${!var_name:-}"
-
-    # Remove existing occurrences of $dir
-    local cleaned_value=$(echo ":$current_value:" | sed -E "s#:?$dir:?##g" | sed 's/^:*//;s/:*$//')
-
-    # Append
-    if [[ -z "$cleaned_value" ]]; then
-        export "$var_name"="$dir"
-    else
-        export "$var_name"="$cleaned_value:$dir"
-    fi
-}
 
 o() {
     declare -A openers
@@ -252,10 +206,10 @@ loadenv() {
 export SHELL=/bin/bash
 export PLATFORM=$(uname -s)
 export EDITOR=nvim
-export BROWSER=firefox
+export BROWSER=chrome
 export XDG_CONFIG_HOME=$HOME/.config
 
-prepend_env PATH ~/.local/bin
+export PATH=$HOME/.local/bin:$PATH
 export LIBRARY_PATH=$HOME/.local/lib
 export LD_LIBRARY_PATH=$HOME/.local/lib
 export CPLUS_INCLUDE_PATH=$HOME/.local/include
@@ -270,6 +224,7 @@ export TF_CPP_MIN_LOG_LEVEL=3
 # }}}
 
 # Rust {{{
+export PATH=$PATH:$HOME/apps/rust/cargo/bin
 export CARGO_HOME=$HOME/apps/rust/cargo
 export RUSTUP_HOME=$HOME/apps/rust/rustup
 
@@ -349,11 +304,11 @@ export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 
 # Julia {{{
 case ":$PATH:" in
-    *:/home/autarch/.juliaup/bin:*)
+    *"$HOME/.juliaup/bin:"*)
         ;;
 
     *)
-        export PATH=/home/autarch/.juliaup/bin${PATH:+:${PATH}}
+        export PATH=$HOME/.juliaup/bin${PATH:+:${PATH}}
         ;;
 esac
 
@@ -435,7 +390,7 @@ fi
 # if we have nvim use it over vim
 if [ -f $(command -v nvim) ] ; then
     alias vi='nvim'
-    alias vim='nvim'
+    alias vim='/usr/bin/vi'
 fi
 
 # quality of life
@@ -470,3 +425,17 @@ alias gsearch='function _search(){ google-chrome "https://www.google.com/search?
 #
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :
 # vim: set filetype=bash:
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/apps/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/path.bash.inc"; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f "$HOME/apps/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/completion.bash.inc"; fi
