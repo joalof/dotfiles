@@ -1,0 +1,81 @@
+[user]
+    # Update with your information
+    name = Your Name
+    email = your.email@example.com
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[merge]
+    ff = false
+
+[alias]
+    # Status and info
+    st = status
+    s = status -s
+
+    # Branching
+    br = branch
+    co = checkout
+    cob = checkout -b
+
+    # Committing
+    ci = commit -m
+    ca = commit --amend
+    can = commit --amend --no-edit
+
+    # Logs and history
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lga = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+    ll = log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%Cblue [%cn]' --decorate --numstat
+    ls = log --pretty=format:'%C(yellow)%h %Cred%d %Creset%s%Cblue [%cn]' --decorate
+
+    # Diff
+    d = diff
+    ds = diff --staged
+    dc = diff --cached
+
+    # Remote
+    f = fetch
+    fa = fetch --all
+    p = push
+    pl = pull
+
+    # Stash
+    sl = stash list
+    sa = stash apply
+    ss = stash save
+
+    # Undo
+    unstage = reset HEAD --
+    undo = reset --soft HEAD^
+
+    # Misc
+    last = log -1 HEAD
+    alias = config --get-regexp ^alias\\.
+
+[core]
+    editor = vi
+    autocrlf = input
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
