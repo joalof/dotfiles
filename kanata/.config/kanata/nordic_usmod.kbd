@@ -1,7 +1,7 @@
 (defcfg
   process-unmapped-keys no
   log-layer-changes no
-  linux-x11-repeat-delay-rate 200,25
+  ;; linux-x11-repeat-delay-rate 200,25
 )
 
 (defsrc
@@ -48,8 +48,8 @@ grv    1    2  @usc  [   @lpar   @hash  @rpar  ]  =    0    -   @at    _
 )
 
 (deflayer shifted
-  @til @amp @dol 3    4    5    6    7    8    9    @plus  @excl  @per    _
-  _    S-q    S-w    S-e    S-r    S-t    S-y    S-u    S-i    S-o    S-p    @mul @pow  _
+  @til @amp @dol 3    4    5    6    7    8    9    @plus  @excl  @per    S-bspc
+  S-tab    S-q    S-w    S-e    S-r    S-t    S-y    S-u    S-i    S-o    S-p    @mul @pow  S-ret
   _    S-a    S-s    S-d   S-f    S-g    S-h    S-j    S-k    S-l    XX   @quo  @bar
   _    XX     S-z    S-x   S-c    S-v    S-b    S-n    S-m    @less  @gtr  @que         _
   _     _    _              _ 
