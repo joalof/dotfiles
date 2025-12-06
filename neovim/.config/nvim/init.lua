@@ -15,18 +15,29 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup(
-    'plugins',
-    {
-        ui = { border = 'rounded' },
-        dev = { path = "~/code/neovim" },
-        concurrency = 20,
-        rocks = { hererocks = true },
-    }
-)
+require("lazy").setup("plugins", {
+    ui = { border = "rounded" },
+    dev = { path = "~/code/neovim" },
+    concurrency = 20,
+    rocks = { enabled = false },
+    change_detection = { notify = false },
+    performance = {
+        rtp = {
+            disabled_plugins = {
+                "gzip",
+                "netrwPlugin",
+                "rplugin",
+                "tarPlugin",
+                "tohtml",
+                "tutor",
+                "zipPlugin",
+            },
+        },
+    },
+})
 
-require('config.options')
-require('config.mappings')
-require('config.commands')
-require('config.autocmds')
-require('config.filetypes')
+require("config.options")
+require("config.mappings")
+require("config.commands")
+require("config.autocmds")
+require("config.filetypes")

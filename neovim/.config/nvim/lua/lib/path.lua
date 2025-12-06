@@ -3,7 +3,7 @@
 -- https://github.com/nvim-lua/plenary.nvim
 --- Goal: Create objects that are extremely similar to Python's `Path` Objects.
 --- Reference: https://docs.python.org/3/library/pathlib.html
-local bit = require("plenary.bit")
+local bit = require("lib.bit")
 local uv = vim.uv
 
 

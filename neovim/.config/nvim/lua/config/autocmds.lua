@@ -54,3 +54,21 @@ vim.api.nvim_create_autocmd("WinLeave", {
         end
     end,
 })
+
+
+vim.api.nvim_create_autocmd('FileType', {
+    group = vim.api.nvim_create_augroup('close_with_q', { clear = true }),
+    desc = 'Close with <q>',
+    pattern = {
+        'git',
+        'help',
+        'man',
+        'qf',
+        'scratch',
+    },
+    callback = function(args)
+        if args.match ~= 'help' or not vim.bo[args.buf].modifiable then
+            vim.keymap.set('n', 'q', '<cmd>quit<cr>', { buffer = args.buf })
+        end
+    end,
+})
