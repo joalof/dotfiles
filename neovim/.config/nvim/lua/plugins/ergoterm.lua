@@ -1,73 +1,42 @@
 return {
     "waiting-for-dev/ergoterm.nvim",
-    keys = { "<C-s>c", "<C-s>/", "<C-s>_", "<leader>ri" },
+    keys = { "<leader>ri", "<leader>re" },
     dependencies = {
-        "nvimtools/hydra.nvim",
         "carbon-steel/detour.nvim",
     },
     config = function()
-        require("ergoterm").setup({})
-        Color = require("lib.color").Color
 
-        local terminal = require("ergoterm")
+        local ergoterm = require("ergoterm")
+        local stringx = require("lib.stringx")
 
-        -- Autocmd to apply when entering a terminal buffer
-        -- vim.api.nvim_create_autocmd("TermOpen", {
-        --     callback = function()
-        --         local win = vim.api.nvim_get_current_win()
-        --         local ns = vim.api.nvim_create_namespace("local_term_bg")
-        --         -- get Normal background from global hl
-        --         local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
-        --         local bg_darker = Color.from_css(normal.bg):shade(-0.65):to_css()
-        --         vim.api.nvim_set_hl(ns, "Normal", { bg = bg_darker, fg = normal.fg })
-        --         vim.api.nvim_win_set_hl_ns(win, ns)
-        --     end,
-        -- })
-        
-        -- keymaps to use nvim as multiplexer
-        -- vim.keymap.set({ "n", "t" }, "<C-s>c", function()
-        --     local term = terminal.Terminal:new({ layout = "tab" })
-        --     term:focus()
-        -- end)
-        -- vim.keymap.set({ "n", "t" }, "<C-s>/", function()
-        --     local term = terminal.Terminal:new({ layout = "right" })
-        --     term:focus()
-        --     -- local ns = vim.api.nvim_create_namespace("local_term_bg")
-        --     -- local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
-        --     -- local bg_darker = Color.from_css(normal.bg):to_css()
-        --     -- vim.api.nvim_win_set_hl_ns(term:get_state('window'), ns)
-        --     -- vim.api.nvim_set_hl(ns, "Normal", { bg = bg_darker, fg = normal.fg })
-        -- end)
-        -- vim.keymap.set({ "n", "t" }, "<C-s>_", function()
-        --     local term = terminal.Terminal:new({ layout = "below" })
-        --     term:focus()
-        -- end)
+        local interpreters = {
+            python = "python",
+            julia = "julia",
+            mojo = "mojo",
+            r = "R",
+            lua = 'nvim -l',
+            sh = "bash",
+        }
 
-        -- hydra for tab navigation, not strictly related
-        -- to terminals but I probably only want these keyamps
-        -- if we're using nvims built-in terminal instead of
-        -- terminal emulator multiplexing
-        -- local hydra = require("hydra")
-        -- hydra({
-        --     name = "tab navigation",
-        --     mode = { "n", "t" },
-        --     body = "<C-s>",
-        --     config = { hint = false },
-        --     heads = {
-        --         {
-        --             "n",
-        --             function()
-        --                 vim.api.nvim_command("tabnext")
-        --             end,
-        --         },
-        --         {
-        --             "p",
-        --             function()
-        --                 vim.api.nvim_command("tabprevious")
-        --             end,
-        --         },
-        --     },
-        -- })
+        vim.keymap.set("n", "<leader>re", function()
+            local filename = vim.api.nvim_buf_get_name(0)
+            local cmd = (interpreters[vim.bo.filetype] .. ' %s'):format(filename)
+            local term = ergoterm:new(
+                {
+                    cmd = cmd,
+                    cleanup_on_success = false,
+                    start_in_insert = false,
+                    sticky = false,
+                    on_job_stderr = function(t, channel_id, data, name)
+                        vim.notify(stringx.join(data))
+                        -- vim.fn.setqflist({}, "r", { lines = data })
+                        -- vim.cmd("copen")
+                    end,
+                }
+            )
+            term:open("below")
+        end)
+
 
         vim.keymap.set("n", "<leader>ri", function()
             local popup_id = require("detour").Detour()
@@ -76,8 +45,8 @@ return {
             end
             local filename = vim.api.nvim_buf_get_name(0)
             local cmd = "ipython --no-banner --no-confirm-exit"
-            local term = terminal.Terminal:new({ cmd = cmd, layout = "window", close_on_job_exit = false })
-            term:open()
+            local term = ergoterm:new({ cmd = cmd, cleanup_on_success = false })
+            term:open("window")
             vim.cmd.startinsert() -- needed since ergoterm insert_on_start doesnt work with detour
             term:send({ string.format("run %s", filename) })
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
