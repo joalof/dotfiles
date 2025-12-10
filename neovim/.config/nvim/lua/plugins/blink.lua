@@ -77,7 +77,7 @@ return {
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         -- -- can add snipper
         sources = {
-            default = { "lsp", "path", "buffer", "cmdline", "lazydev" },
+            default = { "lazydev", "lsp", "path", "buffer", "cmdline" },
             providers = {
                 lazydev = {
                     name = "LazyDev",

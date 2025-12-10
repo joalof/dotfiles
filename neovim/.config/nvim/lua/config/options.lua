@@ -3,7 +3,6 @@ vim.opt.sidescrolloff = 5
 
 vim.opt.cursorline = true
 
-
 vim.opt.listchars = {
     eol = "$",
     tab = ">-",
@@ -30,9 +29,10 @@ vim.opt.synmaxcol = 500
 vim.opt.tabpagemax = 50
 vim.opt.updatetime = 1000
 
--- searching
+-- searching / replacing
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+vim.o.gdefault = true  -- Use 'g' flag by default with :s/foo/bar
 
 -- highlight match
 vim.opt.showmatch = true
@@ -42,12 +42,10 @@ vim.opt.autowriteall = true
 vim.opt.swapfile = false
 vim.opt.backup = false
 
--- wildmenu
 vim.opt.wildignore = {
     "*.o", "*.obj", "*~", "*.png", "*.jpg", "*.gif", "*.eps",
 }
 
--- colors
 vim.opt.termguicolors = true
 
  -- Sync with system clipboard

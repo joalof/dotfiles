@@ -78,7 +78,6 @@ return {
             end,
             desc = "Find managed dotfiles",
         },
-        { "<leader>ff" },
         {
             "<leader>fp",
             function()
