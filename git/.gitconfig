@@ -1,17 +1,16 @@
 [user]
-    # Update with your information
-    name = Your Name
-    email = your.email@example.com
+    name = Joakim Lofgren
+    email = joakim@vionlabs.com
 
 [init]
     defaultBranch = main
-
-[pull]
-    rebase = false
-
+    
 [merge]
-    ff = false
-
+	ff = true
+    
+[pull]
+	ff = only
+    
 [alias]
     # Status and info
     st = status
@@ -24,7 +23,7 @@
 
     # Committing
     ci = commit -m
-    ca = commit --amend
+    ca = commit --amend -m
     can = commit --amend --no-edit
 
     # Logs and history
@@ -79,3 +78,9 @@
     added = green
     changed = yellow
     untracked = red
+    
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
