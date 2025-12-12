@@ -129,7 +129,7 @@ o() {
         [mkv]="mpv"
         [mp3]="mpv"
         [wav]="mpv"
-        [html]="firefox"
+        [html]="chrome"
         [py]="nvim"
         [sh]="nvim"
         [c]="nvim"
@@ -199,20 +199,32 @@ loadenv() {
     echo "Loaded environment variables from $env_file"
 }
 
+realize() {
+    cp -Lr "$1" "$1.copy" 
+    rm -r "$1"
+    mv "$1.copy" "$1"
+}
+
 
 # }}}
 
  # Defaults {{{
+ 
+is_wsl2=$(uname -r | grep -c microsoft)
+
 export SHELL=/bin/bash
 export PLATFORM=$(uname -s)
 export EDITOR=nvim
-export BROWSER=chrome
+
+if [[ "$is_wsl2" -eq 1 ]] ; then
+    export BROWSER=firefox
+else 
+    export BROWSER=chrome
+fi
+    
 export XDG_CONFIG_HOME=$HOME/.config
 
 export PATH=$HOME/.local/bin:$PATH
-export LIBRARY_PATH=$HOME/.local/lib
-export LD_LIBRARY_PATH=$HOME/.local/lib
-export CPLUS_INCLUDE_PATH=$HOME/.local/include
 # }}}
 
 #  Apps {{{
@@ -234,10 +246,14 @@ fi
 
 # }}}
 
-# WSL {{{
-is_wsl2=$(uname -r | grep -c microsoft)
+# Go {{{
+export PATH=$PATH:$HOME/go/bin
 
-if [[ $is_wsl2 -eq 1 ]] ; then
+# }}}
+# 
+# WSL {{{
+
+if [[ "$is_wsl2" -eq 1 ]] ; then
     export WDESK=/mnt/c/Users/lofgr/Desktop
     export WHOME=/mnt/c/Users/lofgr
 fi
@@ -278,7 +294,8 @@ export NVM_DIR="$HOME/apps/nvm"
 # }}}
 
 # FZF {{{
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+# [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(fzf --bash)"
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!**/{.git,node_modules,__pycache__}/*" 2> /dev/null'
 export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 # }}}
@@ -421,10 +438,6 @@ alias gemini-flash='gemini --model gemini-2.5-flash'
 
 alias gsearch='function _search(){ google-chrome "https://www.google.com/search?q=$(printf "%s+" "$@" | sed "s/+$//")"; }; _search'
 
-# }}}
-#
-# vim: set fdm=marker fmr={{{,}}} fdl=0 :
-# vim: set filetype=bash:
 
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
@@ -439,3 +452,7 @@ if [ -f "$HOME/apps/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/apps/google
 
 # The next line enables shell command completion for gcloud.
 if [ -f "$HOME/apps/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/completion.bash.inc"; fi
+# }}}
+
+# vim: set fdm=marker fmr={{{,}}} fdl=0 :
+# vim: set filetype=bash:
