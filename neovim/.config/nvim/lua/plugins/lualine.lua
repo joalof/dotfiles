@@ -16,10 +16,10 @@ return {
         local lualine_require = require("lualine_require")
         lualine_require.require = require
 
-        local project = require("extensions.project")
+        local project = require("project")
         project.setup_root_caching()
 
-        local root_icon = require("extensions.icons").kinds.Package
+        local root_icon = require("icons").kinds.Package
 
         vim.o.laststatus = vim.g.lualine_laststatus
 

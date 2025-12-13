@@ -161,7 +161,7 @@ return {
             "<leader>ff",
             function()
                 Snacks.picker.files({
-                    cwd = require("extensions.project").get_root("cwd"),
+                    cwd = require("project").get_root("cwd"),
                     matcher = {
                         frecency = true,
                         sort_empty = true,

@@ -36,8 +36,8 @@ require("lazy").setup("plugins", {
     },
 })
 
-require("config.options")
-require("config.mappings")
-require("config.commands")
-require("config.autocmds")
-require("config.filetypes")
+require("options")
+require("mappings")
+require("commands")
+require("autocmds")
+require("filetypes")
