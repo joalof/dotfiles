@@ -134,7 +134,7 @@ return {
                 })
 
                 vim.api.nvim_create_autocmd("LspDetach", {
-                    group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+                    group = vim.api.nvim_create_augroup("joakim.lsp.detach", { clear = true }),
                     callback = function(event2)
                         vim.lsp.buf.clear_references()
                         vim.api.nvim_clear_autocmds({ group = "LspDocumentHighlight", buffer = event2.buf })
@@ -191,7 +191,7 @@ return {
             end
 
             vim.api.nvim_create_autocmd("LspAttach", {
-                group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
+                group = vim.api.nvim_create_augroup("joakim.lsp.attach", { clear = true }),
                 callback = function(event)
                     local map = function(keys, func, desc)
                         vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
@@ -337,9 +337,8 @@ return {
             }
             vim.diagnostic.config(default_diagnostic_config)
 
-            local diagnostic_augroup = vim.api.nvim_create_augroup("VimDiagnostic", { clear = false })
             vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-                group = diagnostic_augroup,
+                group = vim.api.nvim_create_augroup("joakim.lsp.diagnostic", { clear = true }),
                 callback = function()
                     vim.diagnostic.open_float(nil, { focusable = false, scope = "cursor" })
                 end,

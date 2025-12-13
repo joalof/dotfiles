@@ -10,7 +10,7 @@ function M.get_git_branch()
 end
 
 function M.setup_root_caching(fallback)
-    local augroup = vim.api.nvim_create_augroup("Project", { clear = true })
+    local augroup = vim.api.nvim_create_augroup("joakim.project", { clear = true })
     vim.api.nvim_create_autocmd("DirChanged", {
         group = augroup,
         callback = function()

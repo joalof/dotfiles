@@ -4,6 +4,8 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     init = function()
         vim.api.nvim_create_autocmd("FileType", {
+            group = vim.api.nvim_create_augroup('joakim.indentscope', {clear = true}),
+            desc = 'Disable mini-indentscope for special filetypes',
             pattern = {
                 "help",
                 "alpha",

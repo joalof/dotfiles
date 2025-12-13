@@ -1,39 +1,32 @@
--- highlight yank
 vim.api.nvim_create_autocmd("TextYankPost", {
+    group = vim.api.nvim_create_augroup('joakim.highlight_yank', { clear = true }),
+    desc = 'Highlight yanked text',
     callback = function()
         vim.highlight.on_yank()
     end,
 })
 
--- Enter terminal mode when moving to/opening terminal
--- local augroup_term = vim.api.nvim_create_augroup("augroup_term", { clear = true })
--- vim.api.nvim_create_autocmd({ "WinEnter", "TermOpen" }, {
---     group = augroup_term,
---     pattern = 'term://*',
---     callback = function()
---         -- vim.cmd.normal("i")
---         if vim.api.nvim_buf_get_option(0, "buftype") == "terminal" then
---             vim.cmd.normal("i")
---         end
---     end
--- })
 
-local augroup = vim.api.nvim_create_augroup("augroup_cursorline", { clear = true })
+local aug_cursorline = vim.api.nvim_create_augroup("joakim.toggle_cursorline", { clear = true })
 vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
-    group = augroup,
+    group = aug_cursorline,
+    desc = "Turn on cursorline when we enter a buffer/window",
     callback = function()
         vim.opt_local.cursorline = true
     end,
 })
 vim.api.nvim_create_autocmd({ "WinLeave" }, {
-    group = augroup,
+    group = aug_cursorline,
+    desc = "Turn off cursorline when we leave a window",
     callback = function()
         vim.opt_local.cursorline = false
     end,
 })
 
--- remove dos carriage returns on save (only in unix files)
+
 vim.api.nvim_create_autocmd("BufWritePre", {
+    group = vim.api.nvim_create_augroup('joakim.remove_dos_cr', { clear = true }),
+    desc = "Remove dos carriage returns on saving unix files",
     pattern = "*",
     callback = function()
         if vim.bo.fileformat == "unix" then
@@ -42,8 +35,9 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     end,
 })
 
--- autoclose floating windows if we hop out of them with <c-w>hjkl etc
 vim.api.nvim_create_autocmd("WinLeave", {
+    group = vim.api.nvim_create_augroup('joakim.close_float', { clear = true }),
+    desc = "Close floating windows if we leave them with <c-w>hjkl etc",
     callback = function()
         local winid = vim.api.nvim_get_current_win()
         local config = vim.api.nvim_win_get_config(winid)
@@ -56,18 +50,11 @@ vim.api.nvim_create_autocmd("WinLeave", {
 })
 
 
-vim.api.nvim_create_autocmd('FileType', {
-    group = vim.api.nvim_create_augroup('close_with_q', { clear = true }),
-    desc = 'Close with <q>',
-    pattern = {
-        'git',
-        'help',
-        'man',
-        'qf',
-        'scratch',
-    },
+vim.api.nvim_create_autocmd('BufEnter', {
+    group = vim.api.nvim_create_augroup('joakim.close_with_q', { clear = true }),
+    desc = 'Close non-modifiable buffers with <q>',
     callback = function(args)
-        if args.match ~= 'help' or not vim.bo[args.buf].modifiable then
+        if not vim.bo[args.buf].modifiable then
             vim.keymap.set('n', 'q', '<cmd>quit<cr>', { buffer = args.buf })
         end
     end,

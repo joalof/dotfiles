@@ -1,21 +1,21 @@
 local function set_dapui_keymaps()
-    local tmpmap = require('extensions.tmpmap')
+    -- local tmpmap = require('extensions.tmpmap')
     -- tmpmap.set(
     --     'n',
     --     "<leader>dB",
     --     function()require("dap").set_breakpoint(vim.fn.input("Breakpoint condition:"))end,
     --     { desc = "DAP: Breakpoint Condition" }
     -- )
-    tmpmap.set('n', "M", function() require("dap").toggle_breakpoint() end, { desc = "Toggle Breakpoint" })
-    tmpmap.set('n', "J", function() require("dap").step_over() end, { desc = "DAP: Step over" })
-    tmpmap.set('n', "K", function() require("dap").step_back() end, { desc = "DAP: Step back" })
-    tmpmap.set('n', "L", function() require("dap").step_into() end, { desc = "DAP: Step into" })
-    tmpmap.set('n', "H", function() require("dap").step_out() end, { desc = "DAP: Step out" })
-    tmpmap.set('n', "N", function() require("dap").down() end, { desc = "DAP: Frame down" })
-    tmpmap.set('n', "P", function() require("dap").up() end, { desc = "DAP: Frame up" })
-    tmpmap.set('n', "X", function() require("dap").terminate() end, { desc = "DAP: Terminate" })
-    tmpmap.set('n', "C", function() require("dap").continue() end, { desc = "DAP: Continue" })
-    tmpmap.set('n', "R", function() require("dap").restart() end, { desc = "DAP: Toggle REPL" })
+    -- tmpmap.set('n', "M", function() require("dap").toggle_breakpoint() end, { desc = "Toggle Breakpoint" })
+    -- tmpmap.set('n', "J", function() require("dap").step_over() end, { desc = "DAP: Step over" })
+    -- tmpmap.set('n', "K", function() require("dap").step_back() end, { desc = "DAP: Step back" })
+    -- tmpmap.set('n', "L", function() require("dap").step_into() end, { desc = "DAP: Step into" })
+    -- tmpmap.set('n', "H", function() require("dap").step_out() end, { desc = "DAP: Step out" })
+    -- tmpmap.set('n', "N", function() require("dap").down() end, { desc = "DAP: Frame down" })
+    -- tmpmap.set('n', "P", function() require("dap").up() end, { desc = "DAP: Frame up" })
+    -- tmpmap.set('n', "X", function() require("dap").terminate() end, { desc = "DAP: Terminate" })
+    -- tmpmap.set('n', "C", function() require("dap").continue() end, { desc = "DAP: Continue" })
+    -- tmpmap.set('n', "R", function() require("dap").restart() end, { desc = "DAP: Toggle REPL" })
     -- { "<leader>dg", function() require("dap").goto_() end, desc = "Go to line (no execute)" },
     -- { "<leader>dp", function() require("dap").pause() end, desc = "Pause" },
     -- { "<leader>ds", function() require("dap").session() end, desc = "Session" },
@@ -24,23 +24,23 @@ local function set_dapui_keymaps()
 end
 
 local function del_dapui_keymaps()
-    local tmpmap = require('lib.tmpmap')
+    -- local tmpmap = require('lib.tmpmap')
     -- tmpmap.set(
     --     'n',
     --     "<leader>dB",
     --     function()require("dap").set_breakpoint(vim.fn.input("Breakpoint condition:"))end,
     --     { desc = "DAP: Breakpoint Condition" }
     -- )
-    tmpmap.del('n', "M")
-    tmpmap.del('n', "J")
-    tmpmap.del('n', "K")
-    tmpmap.del('n', "L")
-    tmpmap.del('n', "H")
-    tmpmap.del('n', "N")
-    tmpmap.del('n', "P")
-    tmpmap.del('n', "X")
-    tmpmap.del('n', "C")
-    tmpmap.del('n', "R")
+    -- tmpmap.del('n', "M")
+    -- tmpmap.del('n', "J")
+    -- tmpmap.del('n', "K")
+    -- tmpmap.del('n', "L")
+    -- tmpmap.del('n', "H")
+    -- tmpmap.del('n', "N")
+    -- tmpmap.del('n', "P")
+    -- tmpmap.del('n', "X")
+    -- tmpmap.del('n', "C")
+    -- tmpmap.del('n', "R")
     -- { "<leader>dg", function() require("dap").goto_() end, desc = "Go to line (no execute)" },
     -- { "<leader>dp", function() require("dap").pause() end, desc = "Pause" },
     -- { "<leader>ds", function() require("dap").session() end, desc = "Session" },
