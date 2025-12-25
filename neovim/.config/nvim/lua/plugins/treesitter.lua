@@ -1,75 +1,93 @@
 return {
     "nvim-treesitter/nvim-treesitter",
-    version = false,
-    build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" },
     dependencies = {
+        "nvim-treesitter/nvim-treesitter-context",
         {
             "nvim-treesitter/nvim-treesitter-textobjects",
-            init = function()
-                -- disable rtp plugin, as we only need its queries for mini.ai
-                -- In case other textobject modules are enabled, we will load them
-                -- once nvim-treesitter is loaded
-                --
-                require("lazy.core.loader").disable_rtp_plugin("nvim-treesitter-textobjects")
-                load_textobjects = true
-            end,
+            branch = "main",
         },
     },
-    cmd = { "TSUpdateSync" },
+    event = "VeryLazy",
+    branch = "main",
+    build = ":TSUpdate",
     opts = {
-        highlight = { enable = true },
-        indent = { enable = true, disable = { "python" } },
-        -- indent = { enable = true},
+        highlight = { disable = {} },
+        indent = { disable = { python = true } },
         ensure_installed = {
             "bash",
             "c",
+            "comment",
             "cpp",
+            "css",
+            "diff",
+            "git_config",
+            "git_rebase",
+            "gitcommit",
+            "gitignore",
             "html",
+            "javascript",
             "json",
+            "julia",
             "lua",
             "luadoc",
             "luap",
+            "make",
             "markdown",
             "markdown_inline",
             "python",
             "query",
             "regex",
+            "toml",
+            "tsx",
+            "typescript",
             "vim",
             "vimdoc",
+            "xml",
             "yaml",
-            "julia",
-            "typescript",
-            "javascript",
         },
     },
     config = function(_, opts)
-        if type(opts.ensure_installed) == "table" then
-            local added = {}
-            opts.ensure_installed = vim.tbl_filter(function(lang)
-                if added[lang] then
-                    return false
+        local ts = require("nvim-treesitter")
+        ts.install(opts.ensure_installed)
+
+        local ignore_filetypes = {
+            checkhealth = true,
+            lazy = true,
+            mason = true,
+            snacks_dashboard = true,
+            snacks_notif = true,
+            snacks_win = true,
+            snacks_input = true,
+            prompt = true,
+        }
+
+        -- Enable highlighting/indent on FileType
+        vim.api.nvim_create_autocmd("FileType", {
+            group = vim.api.nvim_create_augroup("joakim.treesitter_setup", { clear = true }),
+            desc = "Enable treesitter highlighting and indentation",
+            callback = function(event)
+                if ignore_filetypes[event.match] then
+                    return
                 end
-                added[lang] = true
-                return true
-            end, opts.ensure_installed)
-        end
 
-        require("nvim-treesitter.configs").setup(opts)
+                local lang = vim.treesitter.language.get_lang(event.match)
+                local ft = vim.bo[event.buf].ft
 
-        if load_textobjects then
-            -- PERF: no need to load the plugin, if we only need its queries for mini.ai
-            if opts.textobjects then
-                for _, mod in ipairs({ "move", "select", "swap", "lsp_interop" }) do
-                    if opts.textobjects[mod] and opts.textobjects[mod].enable then
-                        local Loader = require("lazy.core.loader")
-                        Loader.disabled_rtp_plugins["nvim-treesitter-textobjects"] = nil
-                        local plugin = require("lazy.core.config").plugins["nvim-treesitter-textobjects"]
-                        require("lazy.core.loader").source_runtime(plugin.dir, "plugin")
-                        break
+                ts.install({ lang }):await(function(err)
+                    if err then
+                        vim.notify("Treesitter install error for ft: " .. ft .. " err: " .. err)
+                        return
                     end
-                end
-            end
-        end
+
+                    if not opts.highlight.disable.lang then
+                        pcall(vim.treesitter.start, event.buf)
+                    end
+                    if not opts.indent.disable.lang then
+                        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                        -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+                    end
+                end)
+            end,
+        })
     end,
 }

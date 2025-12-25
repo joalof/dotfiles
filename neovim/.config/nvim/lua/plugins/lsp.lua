@@ -2,22 +2,35 @@ local Path = require("lib.path").Path
 
 -- adapted from https://github.com/rijulkap/dotfiles/blob/master/nvim/lua/plugins/lsp.lua
 vim.g.lsp_servers = {
-    basedpyright = {
+    -- basedpyright = {
+    --     settings = {
+    --         basedpyright = {
+    --             analysis = {
+    --                 autoImportCompletions = true,
+    --                 typeCheckingMode = "basic",
+    --                 useLibraryCodeForTypes = true,
+    --                 diagnosticMode = "openFilesOnly",
+    --                 autoSearchPaths = true,
+    --                 stubPath = vim.uv.os_homedir() .. "/.local/share/stubs",
+    --             },
+    --         },
+    --         python = {
+    --             pythonPath = vim.fn.exepath("python"),
+    --             venvPath = Path(vim.env["VIRTUAL_ENV"]):parent().filename,
+    --             venv = Path(vim.env["VIRTUAL_ENV"]):name(),
+    --         },
+    --     },
+    -- },
+    ty = {
         settings = {
-            basedpyright = {
-                analysis = {
-                    autoImportCompletions = true,
-                    typeCheckingMode = "basic",
-                    useLibraryCodeForTypes = true,
-                    diagnosticMode = "openFilesOnly",
-                    autoSearchPaths = true,
-                    stubPath = vim.uv.os_homedir() .. "/.local/share/stubs",
+            ty = {
+                diagnosticMode = "openFilesOnly",
+                inlayHints = {
+                    variableTypes = false,
                 },
-            },
-            python = {
-                pythonPath = vim.fn.exepath("python"),
-                venvPath = Path(vim.env["VIRTUAL_ENV"]):parent().filename,
-                venv = Path(vim.env["VIRTUAL_ENV"]):name(),
+                completions = {
+                    autoImport = false,
+                },
             },
         },
     },
@@ -115,7 +128,7 @@ return {
 
             require("mason-lspconfig").setup({
                 ensure_installed = lsp_server_names,
-                automatic_enable = true,
+                automatic_enable = lsp_server_names,
             })
 
             local function setup_document_highlight(bufnr)

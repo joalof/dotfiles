@@ -21,6 +21,7 @@ require("lazy").setup("plugins", {
     concurrency = 20,
     rocks = { enabled = false },
     change_detection = { notify = false },
+    install = { missing = false },
     performance = {
         rtp = {
             disabled_plugins = {
