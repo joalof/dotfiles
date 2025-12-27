@@ -10,7 +10,7 @@ return {
         local func_maps = {
             buffer = 'b',
             diagnostic = 'e',
-            file = 'f',
+            -- file = 'f',
             quickfix = 'q',
         }
 

@@ -57,13 +57,13 @@ return {
             end,
             desc = "Select scratch buffer",
         },
-        {
-            "<leader>fb",
-            function()
-                Snacks.picker.buffers()
-            end,
-            desc = "Buffers",
-        },
+        -- {
+        --     "<leader>fb",
+        --     function()
+        --         Snacks.picker.buffers()
+        --     end,
+        --     desc = "Buffers",
+        -- },
         {
             "<leader>fn",
             function()
@@ -176,6 +176,25 @@ return {
                 Snacks.picker.zoxide()
             end,
             desc = "Highlights",
+        },
+        {
+            "<leader>fs",
+            function()
+                Snacks.picker.lsp_symbols({
+                    tree = true, workspace = false
+                })
+            end,
+            desc = "LSP symbols",
+            
+        },
+        {
+            "<leader>fg",
+            function()
+                Snacks.picker.grep({
+                })
+            end,
+            desc = "Grep",
+            
         },
     },
 }
