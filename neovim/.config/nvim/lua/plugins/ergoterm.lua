@@ -7,6 +7,8 @@ return {
     config = function()
         local ergoterm = require("ergoterm")
 
+        local is_wsl = type(os.getenv("WSL_DISTRO_NAME")) == "string"
+
         local interpreters = {
             python = "python",
             julia = "julia",
@@ -15,6 +17,7 @@ return {
             lua = "nvim -l",
             sh = "bash",
         }
+        -- local stringx = require('lib.stringx')
         vim.keymap.set("n", "<leader>rr", function()
             local filename = vim.api.nvim_buf_get_name(0)
             local cmd = (interpreters[vim.bo.filetype] .. " %s"):format(filename)
@@ -23,12 +26,21 @@ return {
                 cleanup_on_success = false,
                 start_in_insert = false,
                 size = { below = "30%" },
-                meta = { efm = vim.api.nvim_get_option_value("errorformat", { buf = 0 }) },
-                on_job_exit = function(t, channel_id, data, name)
-                    local lines = vim.api.nvim_buf_get_lines(t._state.bufnr, 0, -1, true)
+                meta = {
+                    efm = vim.api.nvim_get_option_value("errorformat", { buf = 0 }),
+                },
+                on_job_stdout = function(t, channel_id, data, name)
+                    -- if we're on wsl the stdout data from the terminal may
+                    -- contain windows carriage returns
+                    if is_wsl and vim.bo.fileformat == "unix" then
+                        for i, line in ipairs(data) do
+                            data[i] = line:gsub("\r\n?", "\n")
+                        end
+                    end
+
                     local efm = t.meta.efm
                     vim.fn.setqflist({}, "a", {
-                        lines = lines,
+                        lines = data,
                         efm = efm,
                     })
                     -- vim.cmd("copen")
