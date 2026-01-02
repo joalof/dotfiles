@@ -11,7 +11,7 @@ return {
     branch = "main",
     build = ":TSUpdate",
     opts = {
-        highlight = { disable = {} },
+        highlight = { disable = { csv = true } },
         indent = { disable = { python = true } },
         ensure_installed = {
             "bash",
