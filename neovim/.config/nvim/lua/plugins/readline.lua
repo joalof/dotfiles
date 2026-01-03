@@ -30,7 +30,7 @@ return {
                 require("readline").backward_kill_line()
             end,
         },
-        { mode = { "c" }, "<C-f>", "<Right>" },
+        { mode = { "!" }, "<C-f>", "<Right>" },
         { mode = { "!" }, "<C-b>", "<Left>" },
     },
 }

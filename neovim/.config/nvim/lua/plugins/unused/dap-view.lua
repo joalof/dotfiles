@@ -27,9 +27,11 @@ return {
                 },
             },
         })
-        local dap = require("dap")
-        vim.keymap.set("n", "<leader>dm", dap_view.toggle)
-        vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
-        vim.keymap.set("n", "<leader>dc", dap.continue)
+
+
+        local layers = require("layers")
+        debug_mode = layers.mode.new
+        
+        vim.keymap.set("n", "<leader>dm", function() end)
     end,
 }
