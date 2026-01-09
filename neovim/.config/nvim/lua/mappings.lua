@@ -25,7 +25,13 @@ end
 
 
 -- split window navigation
+local term_program = os.getenv('TERM_PROGRAM')
+local navigate_prefix = '<c-s>%s'
 -- We can only send a single mod + key with wezterm so can't use <c-s>hjkl here
+if term_program == 'WezTerm' then
+    navigate_prefix = '<M-%s>'
+end
+
 for _, direction in ipairs({'h', 'j', 'k', 'l'}) do
-    vim.keymap.set({'n', 't'}, string.format('<M-%s>', direction), function() navigate_window(direction) end)
+    vim.keymap.set({'n', 't'}, string.format(navigate_prefix, direction), function() navigate_window(direction) end)
 end

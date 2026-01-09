@@ -65,10 +65,10 @@ return {
                     return
                 end
                 
-                if not opts.highlight.disable.lang then
+                if not opts.highlight.disable[lang] then
                     pcall(vim.treesitter.start, event.buf)
                 end
-                if not opts.indent.disable.lang then
+                if not opts.indent.disable[lang] then
                     vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
                     -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
                 end

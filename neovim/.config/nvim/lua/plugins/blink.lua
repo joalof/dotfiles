@@ -2,7 +2,7 @@ return {
     "saghen/blink.cmp",
     -- dependencies = { 'rafamadriz/friendly-snippets' },
     -- version = "1.*",
-    build = 'cargo build --release',
+    build = "cargo build --release",
     dependencies = { "onsails/lspkind.nvim", "nvim-tree/nvim-web-devicons" },
 
     ---@module 'blink.cmp'
@@ -23,6 +23,13 @@ return {
         keymap = {
             preset = "default",
             ["<C-i>"] = { "accept", "fallback" },
+            ["jk"] = {
+                function()
+                    require("blink.cmp").cancel()
+                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<BS><BS><Esc>", true, false, true), "n", false)
+                end,
+                "fallback",
+            },
         },
         appearance = {
             nerd_font_variant = "normal",
