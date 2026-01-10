@@ -1,5 +1,6 @@
 return {
-    "carlos-algms/agentic.nvim",
+    "joalof/agentic.nvim",
+    dev = true,
     opts = {
         -- Available by default: "claude-acp" | "gemini-acp" | "codex-acp" | "opencode-acp" | "cursor-acp"
         provider = "claude-acp",
@@ -42,6 +43,14 @@ return {
             end,
             mode = { "n" },
             desc = "New Agentic Session",
+        },
+        {
+            "<leader>cx",
+            function()
+                require("agentic").stop_generation()
+            end,
+            mode = { "n" },
+            desc = "Stop generation",
         },
     },
 }
