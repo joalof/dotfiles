@@ -8,38 +8,21 @@ return {
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
-        -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
-        -- 'super-tab' for mappings similar to vscode (tab to accept)
-        -- 'enter' for enter to accept
-        -- 'none' for no mappings
-        --
-        -- All presets have the following mappings:
-        -- C-space: Open menu or open docs if already open
-        -- C-n/C-p or Up/Down: Select next/previous item
-        -- C-e: Hide menu
-        -- C-k: Toggle signature help (if signature.enabled = true)
-        --
-        -- See :h blink-cmp-config-keymap for defining your own keymap
         keymap = {
             preset = "default",
             ["<C-i>"] = { "accept", "fallback" },
-            ["jk"] = {
-                function()
-                    require("blink.cmp").cancel()
-                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<BS><BS><Esc>", true, false, true), "n", false)
-                end,
-                "fallback",
-            },
         },
         appearance = {
             nerd_font_variant = "normal",
         },
         completion = {
-            documentation = { auto_show = true },
-            list = { selection = { preselect = true, auto_insert = true } },
+            documentation = { auto_show = true, window = {border = 'rounded'} },
+            list = { selection = { preselect = true, auto_insert = false } },
             accept = { auto_brackets = { enabled = true } },
             keyword = { range = "full" },
+            ghost_text = { enabled = true },
             menu = {
+                border = "rounded",
                 draw = {
                     components = {
                         kind_icon = {
@@ -82,7 +65,6 @@ return {
         },
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
-        -- -- can add snipper
         sources = {
             default = { "lazydev", "lsp", "path", "buffer", "cmdline" },
             providers = {
@@ -100,8 +82,8 @@ return {
             },
             completion = {
                 menu = { auto_show = true },
-                ghost_text = { enabled = false },
-                list = { selection = { preselect = true, auto_insert = true } },
+                ghost_text = { enabled = true },
+                list = { selection = { preselect = true, auto_insert = false } },
             },
         },
     },
