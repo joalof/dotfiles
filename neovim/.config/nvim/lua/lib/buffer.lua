@@ -116,18 +116,22 @@ function Buffer:new(id, verify)
     return buf
 end
 
+---@class BufferCreateArgs
+---@field name? string Name of the new buffer
+---@field listed? boolean
+---@field scratch? boolean
+
 --- Creates a new Buffer in neovim
---- @param name string? Name of the new buffer
---- @param listed boolean?
---- @param scratch boolean?
---- @return Buffer
-function Buffer:create(name, listed, scratch)
-    listed = listed or true
-    scratch = scratch or false
+---@param args BufferCreateArgs
+---@return Buffer
+function Buffer:create(args)
+    args = args or {}
+    local listed = args.listed or true
+    local scratch = args.scratch or false
     local id = api.nvim_create_buf(listed, scratch)
     local buf = Buffer:new(id, false)
-    if name then
-        buf.name = name
+    if args.name then
+        buf.name = args.name
     end
     return buf
 end
@@ -146,15 +150,20 @@ function Buffer:from_name(name)
     error(string.format("Buffer with name %s does not exist", name))
 end
 
---- @param file string file to open
---- @return Buffer
-function Buffer:from_file(file, listed, scratch)
-    listed = listed or true
-    scratch = scratch or false
-    file = File(file)
+---@class BufferFromFileArgs
+---@field file string file to open
+---@field listed? boolean
+---@field scratch? boolean
+
+---@param args BufferFromFileArgs
+---@return Buffer
+function Buffer:from_file(args)
+    local listed = args.listed or true
+    local scratch = args.scratch or false
+    local file = File(args.file)
     local lines = file:read_lines()
-    local buf = Buffer:create(tostring(file.path), listed, scratch)
-    buf:set_lines(lines)
+    local buf = Buffer:create({ name = tostring(file.path), listed = listed, scratch = scratch })
+    buf:set_lines({ lines = lines })
     return buf
 end
 
@@ -218,37 +227,68 @@ function Buffer:delete(opts)
     api.nvim_buf_delete(self.id, opts)
 end
 
-function Buffer:set_lines(lines, start, stop, strict_indexing)
-    start = start or 0
-    stop = stop or (start + #lines)
-    local strict = strict_indexing ~= false
-    api.nvim_buf_set_lines(self.id, start, stop, strict, lines)
+---@class BufferSetLinesArgs
+---@field lines string[]
+---@field start? integer
+---@field stop? integer
+---@field strict_indexing? boolean
+
+---@param args BufferSetLinesArgs
+function Buffer:set_lines(args)
+    local start = args.start or 0
+    local stop = args.stop or (start + #args.lines)
+    local strict = args.strict_indexing ~= false
+    api.nvim_buf_set_lines(self.id, start, stop, strict, args.lines)
 end
 
 
----@param start? integer 0-based, inclusive
----@param stop? integer 0-based, exclusive
----@param strict_indexing? boolean
+---@class BufferGetLinesArgs
+---@field start? integer 0-based, inclusive
+---@field stop? integer 0-based, exclusive
+---@field strict_indexing? boolean
+
+---@param args BufferGetLinesArgs
 ---@return string[]
-function Buffer:get_lines(start, stop, strict_indexing)
-  start = start or 0
-  stop = stop or self.line_count
-  local strict = strict_indexing ~= false
+function Buffer:get_lines(args)
+  args = args or {}
+  local start = args.start or 0
+  local stop = args.stop or self.line_count
+  local strict = args.strict_indexing ~= false
 
   return api.nvim_buf_get_lines(self.id, start, stop, strict)
 end
 
 
-function Buffer:set_text(text, start_row, start_col, stop_row, stop_col)
-    stop_row = stop_row or start_row
-    stop_col = stop_col or start_col
-    api.nvim_buf_set_text(self.id, start_row, start_col, stop_row, stop_col, text)
+---@class BufferSetTextArgs
+---@field text string[]
+---@field start_row integer
+---@field start_col integer
+---@field stop_row integer
+---@field stop_col integer
+
+---@param args BufferSetTextArgs
+function Buffer:set_text(args)
+    api.nvim_buf_set_text(self.id, args.start_row, args.start_col, args.stop_row, args.stop_col, args.text)
 end
 
-function Buffer:get_text(start_row, start_col, stop_row, stop_col, opts)
-    opts = opts or {}
-    local text = api.nvim_buf_get_text(self.id, start_row, start_col, stop_row, stop_col, opts)
-    return text
+---@class BufferGetTextArgs
+---@field start_row integer
+---@field start_col integer
+---@field stop_row integer
+---@field stop_col integer
+---@field opts? table
+
+---@param args BufferGetTextArgs
+---@return string[]
+function Buffer:get_text(args)
+    return api.nvim_buf_get_text(
+        self.id,
+        args.start_row,
+        args.start_col,
+        args.stop_row,
+        args.stop_col,
+        args.opts or {}
+    )
 end
 
 function Buffer:get_offset(index)
@@ -256,11 +296,18 @@ function Buffer:get_offset(index)
     return offset
 end
 
-function Buffer:set_keymap(lhs, rhs, mode, opts)
-    mode = mode or "n"
-    opts = opts or {}
+---@class BufferSetKeymapArgs
+---@field lhs string
+---@field rhs string|function
+---@field mode? string
+---@field opts? table
+
+---@param args BufferSetKeymapArgs
+function Buffer:set_keymap(args)
+    local mode = args.mode or "n"
+    local opts = args.opts or {}
     opts.buffer = 0
-    vim.keymap.set(mode, lhs, rhs, opts)
+    vim.keymap.set(mode, args.lhs, args.rhs, opts)
 end
 
 function Buffer:get_keymap(mode)
@@ -283,9 +330,16 @@ function Buffer:del_var(name)
     api.nvim_buf_set_var(self.id, name)
 end
 
-function Buffer:set_mark(name, line, col, opts)
-    opts = opts or {}
-    local success = api.nvim_buf_set_mark(self.id, name, line, col, opts)
+---@class BufferSetMarkArgs
+---@field name string
+---@field line integer
+---@field col integer
+---@field opts? table
+
+---@param args BufferSetMarkArgs
+---@return boolean
+function Buffer:set_mark(args)
+    local success = api.nvim_buf_set_mark(self.id, args.name, args.line, args.col, args.opts or {})
     return success
 end
 
@@ -320,27 +374,53 @@ function Buffer:call(fun)
     return res
 end
 
-function Buffer:clear_namespace(ns_id, line_start, line_stop)
-    line_start = line_start or 0
-    line_stop = line_stop or -1
-    api.nvim_buf_clear_namespace(self.id, ns_id, line_start, line_stop)
+---@class BufferClearNamespaceArgs
+---@field ns_id integer
+---@field line_start? integer
+---@field line_stop? integer
+
+---@param args BufferClearNamespaceArgs
+function Buffer:clear_namespace(args)
+    local line_start = args.line_start or 0
+    local line_stop = args.line_stop or -1
+    api.nvim_buf_clear_namespace(self.id, args.ns_id, line_start, line_stop)
 end
 
-function Buffer:set_extmark(ns_id, line, col, opts)
-    opts = opts or {}
-    local id = api.nvim_buf_set_extmark(self.id, ns_id, line, col, opts)
+---@class BufferSetExtmarkArgs
+---@field ns_id integer
+---@field line integer
+---@field col integer
+---@field opts? table
+
+---@param args BufferSetExtmarkArgs
+---@return integer
+function Buffer:set_extmark(args)
+    local id = api.nvim_buf_set_extmark(self.id, args.ns_id, args.line, args.col, args.opts or {})
     return id
 end
 
-function Buffer:get_extmarks(ns_id, start, stop, opts)
-    opts = opts or {}
-    local extmarks = api.nvim_buf_get_extmarks(self.id, ns_id, start, stop, opts)
+---@class BufferGetExtmarksArgs
+---@field ns_id integer
+---@field start any
+---@field stop any
+---@field opts? table
+
+---@param args BufferGetExtmarksArgs
+---@return table
+function Buffer:get_extmarks(args)
+    local extmarks = api.nvim_buf_get_extmarks(self.id, args.ns_id, args.start, args.stop, args.opts or {})
     return extmarks
 end
 
-function Buffer:get_extmark_by_id(ns_id, id, opts)
-    opts = opts or {}
-    local extmark = api.nvim_buf_get_extmark_by_id(self.id, ns_id, id, opts)
+---@class BufferGetExtmarkByIdArgs
+---@field ns_id integer
+---@field id integer
+---@field opts? table
+
+---@param args BufferGetExtmarkByIdArgs
+---@return table
+function Buffer:get_extmark_by_id(args)
+    local extmark = api.nvim_buf_get_extmark_by_id(self.id, args.ns_id, args.id, args.opts or {})
     return extmark
 end
 
@@ -354,13 +434,13 @@ function Buffer:set_current()
 end
 
 function Buffer:clear()
-    self:set_lines({}, 0, -1)
+    self:set_lines({ lines = {}, start = 0, stop = -1 })
 end
 
 function Buffer:write(path)
     path = tostring(path)
     local file = File(path)
-    local lines = self:get_lines()
+    local lines = self:get_lines({})
     file:write_lines(lines, "w")
 end
 
