@@ -12,7 +12,7 @@ return {
     build = ":TSUpdate",
     opts = {
         highlight = { disable = { csv = true } },
-        indent = { disable = { python = true } },
+        indent = { disable = { python = true, lua = true } },
         parsers = {
             bash = true,
             c = true,
