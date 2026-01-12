@@ -32,7 +32,6 @@ vim.opt.updatetime = 1000
 -- searching / replacing
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.o.gdefault = true  -- Use 'g' flag by default with :s/foo/bar
 
 -- highlight match
 vim.opt.showmatch = true
