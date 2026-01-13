@@ -33,8 +33,8 @@ vim.opt.updatetime = 1000
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- highlight match
-vim.opt.showmatch = true
+-- jump to matching parentheses pair
+vim.opt.showmatch = false
 
 -- saving
 vim.opt.autowriteall = true

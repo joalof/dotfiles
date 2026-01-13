@@ -196,5 +196,14 @@ return {
             desc = "Grep",
             
         },
+        {
+            "<leader>fa",
+            function()
+                Snacks.picker.autocmds({
+                })
+            end,
+            desc = "autocmds",
+            
+        },
     },
 }

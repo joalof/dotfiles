@@ -1,16 +1,17 @@
 local routes = {
     -- route various messages to mini view instead of notification
     -- buffer write messages
-    { filter = { event = "msg_show", find = "%d+B written$" }, view = "mini" },
-    { filter = { event = "msg_show", find = "%d+L, %d+B$" }, view = "mini" },
+    -- { filter = { event = "msg_show", find = "%d+B written$" }, view = "mini" },
+    -- { filter = { event = "msg_show", find = "%d+L, %d+B$" }, view = "mini" },
+    --
+    -- -- undo
+    -- { filter = { event = "msg_show", find = "%d+ more line" }, view = "mini" },
+    -- { filter = { event = "msg_show", find = "1 line less" }, view = "mini" },
+    -- { filter = { event = "msg_show", find = "%d+ fewer lines" }, view = "mini" },
+    -- { filter = { event = "msg_show", find = "%d+ lines yanked" }, view = "mini" },
 
-    -- undo
-    { filter = { event = "msg_show", find = "%d+ more line" }, view = "mini" },
-    { filter = { event = "msg_show", find = "1 line less" }, view = "mini" },
-    { filter = { event = "msg_show", find = "%d+ fewer lines" }, view = "mini" },
-    { filter = { event = "msg_show", find = "%d+ lines yanked" }, view = "mini" },
-
-    -- { filter = { cmdline = true}, view = "split" },
+    -- Searching
+    { filter = { event = "msg_show", find = "^E486: Pattern not found" }, view = "mini" },
 
     { -- nvim-early-retirement
         filter = {
@@ -23,8 +24,8 @@ local routes = {
     },
 
     -- Treesitter
-    { filter = { event = "msg_show", find = "^%[nvim%-treesitter%]" }, view = "mini" },
-    { filter = { event = "notify", find = "All parsers are up%-to%-date" }, view = "mini" },
+    -- { filter = { event = "msg_show", find = "^%[nvim%-treesitter%]" }, view = "mini" },
+    -- { filter = { event = "notify", find = "All parsers are up%-to%-date" }, view = "mini" },
 
     -- Mason
     { filter = { event = "notify", find = "%[mason%-tool%-installer%]" }, view = "mini" },
@@ -37,20 +38,26 @@ local routes = {
         },
         view = "mini",
     },
-
-    -- Searching
-    { filter = { event = "msg_show", find = "^E486: Pattern not found" }, view = "mini" },
-
+    -- {
+    --     filter = { cmdline = true },  view = "notify", opts = { level = "info", skip = false, replace = false },
+    -- },
     -- code actions, especially annoying with ruff where the fixall code action
     -- is triggered on every format
-    { filter = { event = "notify", find = "^No code actions available$" }, skip = true },
+    -- { filter = { event = "notify", find = "^No code actions available$" }, skip = true },
 
     -- dap
-    { filter = { event = "notify", find = "^Session terminated$" }, view = "mini" },
+    -- { filter = { event = "notify", find = "^Session terminated$" }, view = "mini" },
 
-    -- { filter = { event = "msg_show", find = "E5108" }, view = "split" },
-    -- { filter = { event = "msg_show", min_height = 10 }, view = "popup" },
-    -- { filter = { event = "notify", min_height = 10 }, view = "popup" },
+    -- show output of shell commands in a notification
+    {
+        filter = { event = "msg_show", kind = { "shell_out", "shell_err" } },
+        view = "notify",
+        opts = {
+            level = "info",
+            skip = false,
+            replace = false,
+        },
+    },
 }
 
 return {
