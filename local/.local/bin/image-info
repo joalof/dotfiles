@@ -76,7 +76,7 @@ for file in "$@"; do
     echo -e "${BOLD}${BLUE}${filename}${NC}"
     printf "  %-15s %s\n" "Extension:" "${extension}"
     printf "  %-15s %s\n" "Size:" "${filesize}"
-    printf "  %-15s %s x %s\n" "Resolution:" "${width:-N/A}" "${height:-N/A}"
+    printf "  %-15s %s x %s\n" "Resolution (width x height):" "${width:-N/A}" "${height:-N/A}"
     printf "  %-15s %s:1\n" "Aspect Ratio:" "${aspect_ratio}"
     echo "----------------------------------------"
 

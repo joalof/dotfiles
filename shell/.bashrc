@@ -225,6 +225,8 @@ fi
 export XDG_CONFIG_HOME=$HOME/.config
 
 export PATH=$HOME/.local/bin:$PATH
+export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
+
 # }}}
 
 #  Apps {{{
@@ -371,6 +373,11 @@ fi
 # Modal {{{
 export MODAL_ENVIRONMENT='joakim-dev'
 # }}}
+
+# Claude code {{{
+export DISABLE_AUTOUPDATER=1
+# }}}
+
 # end apps }}}
 
 # Aliases {{{
