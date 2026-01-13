@@ -225,8 +225,6 @@ fi
 export XDG_CONFIG_HOME=$HOME/.config
 
 export PATH=$HOME/.local/bin:$PATH
-export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
-
 # }}}
 
 #  Apps {{{
@@ -318,7 +316,6 @@ export FZF_DEFAULT_OPTS='--bind ctrl-j:accept'
 # '\[\e[1;35m\]$(if [[ -n "$VIRTUAL_ENV" ]]; then echo " (venv:$(basename "$VIRTUAL_ENV"))"; fi)\[\e[0m\]\n'\
 # '\[\e[1;32m\]❯ \[\e[0m\]'
 
-
 # }}}
 
 # Julia {{{
@@ -340,10 +337,6 @@ if grep -q "microsoft" /proc/version > /dev/null 2>&1; then
             --exec /usr/sbin/service docker start > /dev/null 2>&1
     fi
 fi
-# }}}
-
-# {{{ Pixi
-# prepend_env PATH "$HOME/.pixi/bin"
 # }}}
 
 # Ezenv {{{
@@ -372,6 +365,24 @@ fi
 
 # Modal {{{
 export MODAL_ENVIRONMENT='joakim-dev'
+# }}}
+
+ # pnpm {{{
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+# }}}
+
+# Google cloud SDK {{{
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/apps/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/path.bash.inc"; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f "$HOME/apps/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/completion.bash.inc"; fi
 # }}}
 
 # Claude code {{{
@@ -445,20 +456,6 @@ alias gemini-flash='gemini --model gemini-2.5-flash'
 
 alias gsearch='function _search(){ google-chrome "https://www.google.com/search?q=$(printf "%s+" "$@" | sed "s/+$//")"; }; _search'
 
-
-# pnpm
-export PNPM_HOME="$HOME/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/apps/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/path.bash.inc"; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f "$HOME/apps/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/completion.bash.inc"; fi
 # }}}
 
 # vim: set fdm=marker fmr={{{,}}} fdl=0 :

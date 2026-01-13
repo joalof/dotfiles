@@ -7,7 +7,6 @@ return {
             branch = "main",
         },
     },
-    event = "VeryLazy",
     branch = "main",
     build = ":TSUpdate",
     opts = {
@@ -52,9 +51,7 @@ return {
     config = function(_, opts)
         local ts = require("nvim-treesitter")
 
-        local ensure_installed = vim.tbl_filter(function(val)
-            return val
-        end, opts.parsers)
+        local ensure_installed = vim.tbl_keys(opts.parsers)
         ts.install(ensure_installed)
 
         -- Enable highlighting/indent on FileType

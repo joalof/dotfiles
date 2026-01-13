@@ -9,7 +9,7 @@ return {
             mode,
             "jk",
             function()
-                require("blink.cmp").cancel()
+                -- require("blink.cmp").cancel()
                 vim.api.nvim_feedkeys(
                     vim.api.nvim_replace_termcodes(
                         "<BS><BS><Esc>",
@@ -26,7 +26,7 @@ return {
             "t",
             "jk",
             function()
-                require("blink.cmp").cancel()
+                -- require("blink.cmp").cancel()
                 vim.api.nvim_feedkeys(
                     vim.api.nvim_replace_termcodes(
                         "<BS><BS><C-\\><C-n>",

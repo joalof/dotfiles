@@ -1,7 +1,6 @@
 return {
     "saghen/blink.cmp",
     -- dependencies = { 'rafamadriz/friendly-snippets' },
-    -- version = "1.*",
     build = "cargo build --release",
     dependencies = { "onsails/lspkind.nvim", "nvim-tree/nvim-web-devicons" },
 
@@ -20,7 +19,7 @@ return {
             list = { selection = { preselect = true, auto_insert = false } },
             accept = { auto_brackets = { enabled = true } },
             keyword = { range = "full" },
-            ghost_text = { enabled = true },
+            ghost_text = { enabled = false },
             menu = {
                 border = "rounded",
                 draw = {
@@ -87,4 +86,16 @@ return {
             },
         },
     },
+    config = function(_, opts)
+        local blink = require('blink.cmp')
+        blink.setup(opts)
+
+        vim.api.nvim_create_autocmd("InsertLeave", {
+            group = vim.api.nvim_create_augroup('joakim.blink_close', { clear = true }),
+            desc = "Close blink completion menu",
+            callback = function()
+                require('blink.cmp').cancel()
+            end,
+        })
+    end
 }
