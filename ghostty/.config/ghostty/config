@@ -1,22 +1,31 @@
+# start by clearing all builtin keybinds
 keybind = clear
+
+# fonts
 font-size = 14
+keybind = ctrl+s>.=increase_font_size:1
+keybind = ctrl+s>,=decrease_font_size:1
 
-mouse-hide-while-typing = true
-
-keybind = ctrl+i=text:\t
-
+# styling
+theme = "tokyonight_moon"
 window-padding-x = 8
 window-padding-y = 4, 6
 
-theme = "tokyonight_moon"
+# misc optios
+mouse-hide-while-typing = true
 
-confirm-close-surface = false
 
 # tabs
+gtk-wide-tabs = false
 keybind = ctrl+s>c=new_tab
 keybind = ctrl+s>n=next_tab
 keybind = ctrl+s>p=previous_tab
 keybind = ctrl+s>d=close_tab
+
+# general surfaces
+keybind = ctrl+s>t=prompt_surface_title
+confirm-close-surface = false
+keybind = ctrl+s>q=close_surface
 
 # splits
 keybind = ctrl+s>v=new_split:right
@@ -27,11 +36,10 @@ keybind = performable:ctrl+s>j=goto_split:bottom
 keybind = performable:ctrl+s>h=goto_split:left
 keybind = performable:ctrl+s>l=goto_split:right
 
+# misc keybinds
 keybind = ctrl+s>r=reload_config
-keybind = ctrl+s>q=close_surface
-keybind = ctrl+s>.=increase_font_size:1
-keybind = ctrl+s>,=decrease_font_size:1
 keybind = ctrl+shift+c=copy_to_clipboard
 keybind = ctrl+shift+v=paste_from_clipboard
 keybind = ctrl+s>f=toggle_fullscreen
+keybind = ctrl+i=text:\t
 
