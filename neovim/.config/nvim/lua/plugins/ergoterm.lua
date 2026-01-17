@@ -1,11 +1,14 @@
 return {
     "waiting-for-dev/ergoterm.nvim",
-    keys = { "<leader>ri", "<leader>rr", "<leader>rx", "<leader>cc" },
-    dependencies = {
-        "carbon-steel/detour.nvim",
-    },
+    keys = { "<leader>ri", "<leader>rr", "<leader>rx", "<leader>cc", "<leader>ot" },
     config = function()
         local ergoterm = require("ergoterm")
+
+        -- open a terminal
+        vim.keymap.set("n", "<leader>ot", function()
+            local term = ergoterm.new({ name = "bash", start_in_insert = true, size = { below = "30%" } })
+            term:focus('float')
+        end)
 
         -- Lightwieght coderunner
         local is_wsl = type(os.getenv("WSL_DISTRO_NAME")) == "string"
@@ -69,15 +72,9 @@ return {
         end)
 
         vim.keymap.set("n", "<leader>ri", function()
-            local popup_id = require("detour").Detour()
-            if not popup_id then
-                return
-            end
             local filename = vim.api.nvim_buf_get_name(0)
             local cmd = "ipython --no-banner --no-confirm-exit"
-            local term = ergoterm:new({ cmd = cmd, cleanup_on_success = false })
-            term:open("window")
-            vim.cmd.startinsert() -- needed since ergoterm insert_on_start doesnt work with detour
+            local term = ergoterm:new{ cmd = cmd, cleanup_on_success = false, start_in_insert=true, layout = "float" }
             term:send({ string.format("run %s", filename) })
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
 
