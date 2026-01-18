@@ -222,6 +222,7 @@ function Buffer:set_options(opts)
     end
 end
 
+--- @param opts vim.api.keyset.buf_delete
 function Buffer:delete(opts)
     opts = opts or {}
     api.nvim_buf_delete(self.id, opts)
@@ -403,7 +404,7 @@ end
 ---@field ns_id integer
 ---@field start any
 ---@field stop any
----@field opts? table
+---@field opts? vim.api.keyset.get_extmark
 
 ---@param args BufferGetExtmarksArgs
 ---@return table
@@ -415,7 +416,7 @@ end
 ---@class BufferGetExtmarkByIdArgs
 ---@field ns_id integer
 ---@field id integer
----@field opts? table
+---@field opts? vim.api.keyset.get_extmark
 
 ---@param args BufferGetExtmarkByIdArgs
 ---@return table

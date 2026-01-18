@@ -44,14 +44,14 @@ return {
     },
     keys = {
         {
-            "<leader>bs",
+            "<leader>os",
             function()
                 Snacks.scratch()
             end,
             desc = "Toggle Scratch Buffer",
         },
         {
-            "<leader>bS",
+            "<leader>oS",
             function()
                 Snacks.scratch.select()
             end,
@@ -109,7 +109,7 @@ return {
             desc = "Commands",
         },
         {
-            "<leader>fd",
+            "<leader>fe",
             function()
                 Snacks.picker.diagnostics_buffer()
             end,
@@ -171,7 +171,7 @@ return {
             desc = "Find project files",
         },
         {
-            "<leader>fz",
+            "<leader>fd",
             function()
                 Snacks.picker.zoxide()
             end,

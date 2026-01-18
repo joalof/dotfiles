@@ -1,18 +1,19 @@
 local api = vim.api
-local la = require("lib.linalg")
 
+--- @class Cursor
+--- @field pos number [integer, integer]
+--- @field window_id integer
 local Cursor = setmetatable({}, {})
 
-
 local Cursor_getters = {
-    position = function(cursor)
-        return la.vector(api.nvim_win_get_cursor(cursor.window_handle))
+    pos = function(cursor)
+        return api.nvim_win_get_cursor(cursor.window_id)
     end,
 }
 
 local Cursor_setters = {
-    position = function(cursor, pos)
-        api.nvim_win_set_cursor(cursor.window_handle, pos)
+    pos = function(cursor, pos)
+        api.nvim_win_set_cursor(cursor.window_id, pos)
     end,
 }
 
@@ -36,40 +37,35 @@ Cursor.__newindex = function(tbl, key, value)
     end
 end
 
-function Cursor:new(win_handle, verify)
-    if win_handle == 0 then
-        win_handle = api.nvim_get_current_win()
+function Cursor:new(win_id, verify)
+    if win_id == 0 then
+        win_id = api.nvim_get_current_win()
     else
         verify = verify or true
         if verify then
-            if api.nvim_win_is_valid(win_handle) then
-                error(string.format('Window with handle %d is not valid', win_handle))
+            if api.nvim_win_is_valid(win_id) then
+                error(string.format("Window with id %d is not valid", win_id))
             end
         end
     end
     local cursor = {
-        window_handle = win_handle,
+        window_id = win_id,
     }
     setmetatable(cursor, Cursor)
     return cursor
 end
 
 function Cursor:get()
-    local pos = api.nvim_win_get_cursor(self.window_handle)
-    return la.vector(pos)
+    local pos = api.nvim_win_get_cursor(self.window_id)
+    return pos
 end
 
+--- @param pos [integer, integer] (row, col) tuple representing the new position
 function Cursor:set(pos)
-    api.nvim_win_set_cursor(self.window_handle, pos)
+    api.nvim_win_set_cursor(self.window_id, pos)
 end
 
-function Cursor:translate(vec)
-    local pos_new = self.position + vec
-    self.position = pos_new
-    return pos_new
-end
-
-function Cursor:with_rebound(fun, ...)
+function Cursor:rebound(fun, ...)
     local pos = self:get()
     fun(...)
     self:set(pos)
@@ -89,4 +85,4 @@ function Cursor:search(pattern, opts)
     return res == 0
 end
 
-return {Cursor = Cursor}
+return { Cursor = Cursor }

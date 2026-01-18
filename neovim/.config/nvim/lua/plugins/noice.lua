@@ -1,7 +1,13 @@
 local routes = {
     -- route various messages to mini view instead of notification
+
+    -- { filter = { cmdline = true}, view = "notify", opts = {skip = false} },
+    
+    -- use a popup to show prints from lua code executed in cmdline
+    { filter = { event = "msg_show", kind = 'lua_print' }, view = "popup", opts = {skip = false, replace = false} },
+    
     -- buffer write messages
-    -- { filter = { event = "msg_show", find = "%d+B written$" }, view = "mini" },
+    { filter = { event = "msg_show", find = "%d+B written$" }, view = "mini" },
     -- { filter = { event = "msg_show", find = "%d+L, %d+B$" }, view = "mini" },
     --
     -- -- undo
@@ -10,6 +16,7 @@ local routes = {
     -- { filter = { event = "msg_show", find = "%d+ fewer lines" }, view = "mini" },
     -- { filter = { event = "msg_show", find = "%d+ lines yanked" }, view = "mini" },
 
+    
     -- Searching
     { filter = { event = "msg_show", find = "^E486: Pattern not found" }, view = "mini" },
 
@@ -38,16 +45,11 @@ local routes = {
         },
         view = "mini",
     },
-    -- {
-    --     filter = { cmdline = true },  view = "notify", opts = { level = "info", skip = false, replace = false },
-    -- },
-    -- code actions, especially annoying with ruff where the fixall code action
+    -- code actions: especially annoying with ruff where the fixall code action
     -- is triggered on every format
     -- { filter = { event = "notify", find = "^No code actions available$" }, skip = true },
-
     -- dap
-    -- { filter = { event = "notify", find = "^Session terminated$" }, view = "mini" },
-
+    { filter = { event = "notify", find = "^Session terminated$" }, view = "mini" },
     -- show output of shell commands in a notification
     {
         filter = { event = "msg_show", kind = { "shell_out", "shell_err" } },
@@ -110,9 +112,9 @@ return {
             inc_rename = false, -- enables an input dialog for inc-rename.nvim
             lsp_doc_border = true, -- add a border to hover docs and signature help
         },
-        -- messages = {
-        --     view_error = "split",
-        -- },
+        messages = {
+            view_error = "mini",
+        },
         views = {
             cmdline_popup = {
                 position = { row = "20%", col = "50%" },

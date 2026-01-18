@@ -63,7 +63,7 @@ vim.g.lsp_servers = {
         settings = {
             Lua = {
                 completion = {
-                    callSnippet = "Replace",
+                    callSnippet = "Disable",
                 },
             },
         },

@@ -1,6 +1,6 @@
 return {
     "waiting-for-dev/ergoterm.nvim",
-    keys = { "<leader>ri", "<leader>rr", "<leader>rx", "<leader>cc", "<leader>ot" },
+    keys = { "<leader>ri", "<leader>rr", "<leader>rx", "<leader>cc", "<leader>ot", "<leader>oi" },
     config = function()
         local ergoterm = require("ergoterm")
 
@@ -76,6 +76,23 @@ return {
             local cmd = "ipython --no-banner --no-confirm-exit"
             local term = ergoterm:new{ cmd = cmd, cleanup_on_success = false, start_in_insert=true, layout = "float" }
             term:send({ string.format("run %s", filename) })
+            vim.bo.bufhidden = "delete" -- close the terminal when window closes
+
+            -- Skips the "[Process exited 0]" message from the embedded terminal
+            vim.api.nvim_create_autocmd({ "TermClose" }, {
+                buffer = vim.api.nvim_get_current_buf(),
+                callback = function()
+                    vim.api.nvim_feedkeys("i", "n", false)
+                end,
+            })
+        end)
+
+        vim.keymap.set("n", "<leader>oi", function()
+            -- local filename = vim.api.nvim_buf_get_name(0)
+            local cmd = "ipython --no-banner --no-confirm-exit"
+            local term = ergoterm:new{ cmd = cmd, cleanup_on_success = false, start_in_insert=true, layout = "float" }
+            -- term:send({ string.format("run %s", filename) })
+            term:focus()
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
 
             -- Skips the "[Process exited 0]" message from the embedded terminal

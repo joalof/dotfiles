@@ -49,6 +49,11 @@ local function calc_hue(r, g, b)
 end
 
 
+---@class Color
+---@field red number
+---@field blue number
+---@field green number
+---@field alpha number
 local Color = setmetatable({}, {})
 Color.__index = Color
 
@@ -70,29 +75,18 @@ function Color.get_hl(name, attribute, opts)
     end
 end
 
-function Color.new(opts)
-    if type(opts) == "string" then
-        return Color.from_css(opts)
-    end
-    if opts.red then
-        return Color.from_rgba(opts.red, opts.green, opts.blue, opts.alpha)
-    end
-    if opts.value then
-        return Color.from_hsv(opts.hue, opts.saturation, opts.value)
-    end
-    if opts.lightness then
-        return Color.from_hsv(opts.hue, opts.saturation, opts.lightness)
-    end
-    if opts.name then
-        return Color.from_hl(opts.name, opts.attribute, opts.opts)
-    end
-end
-
+---@return string
 function Color.__tostring(self)
-    return self:to_css()
+    return self:to_css(true)
 end
 
-function Color.init(r, g, b, a)
+
+---@param r number
+---@param g number
+---@param b number
+---@param a number
+---@return Color
+function Color.new(r, g, b, a)
     local self = setmetatable({}, Color)
     self.red = mathx.clamp(r, 0, 1)
     self.green = mathx.clamp(g, 0, 1)
@@ -110,7 +104,7 @@ end
 ---@param a number Float [0,1]
 ---@return Color
 function Color.from_rgba(r, g, b, a)
-    return Color.init(r / 0xff, g / 0xff, b / 0xff, a or 1)
+    return Color.new(r / 0xff, g / 0xff, b / 0xff, a or 1)
 end
 
 ---Create a color from a hex number
@@ -126,7 +120,7 @@ function Color.from_css(c)
         end
     end
 
-    return Color.init(
+    return Color.new(
         bitop.rshift(n, 24) / 0xff,
         bitop.band(bitop.rshift(n, 16), 0xff) / 0xff,
         bitop.band(bitop.rshift(n, 8), 0xff) / 0xff,
@@ -140,7 +134,6 @@ end
 ---@param v number Value. Float [0,100]
 ---@param a number (Optional) Alpha. Float [0,1]
 ---@return Color
-
 function Color.from_hsv(h, s, v, a)
     h = h % 360
     s = mathx.clamp(s, 0, 100) / 100
@@ -152,7 +145,7 @@ function Color.from_hsv(h, s, v, a)
         return v - v * s * math.max(math.min(k, 4 - k, 1), 0)
     end
 
-    return Color.init(f(5), f(3), f(1), a)
+    return Color.new(f(5), f(3), f(1), a)
 end
 
 ---Create a Color from HSL value
@@ -161,7 +154,6 @@ end
 ---@param l number Lightness. Float [0,100]
 ---@param a number (Optional) Alpha. Float [0,1]
 ---@return Color
-
 function Color.from_hsl(h, s, l, a)
     h = h % 360
     s = mathx.clamp(s, 0, 100) / 100
@@ -175,12 +167,12 @@ function Color.from_hsl(h, s, l, a)
 
     end
 
-    return Color.init(f(0), f(8), f(4), a)
+    return Color.new(f(0), f(8), f(4), a)
 end
 
 -- create a Color from vim hl
 ---@param opts GetColorOpts
----@return table
+---@return Color
 function Color.from_hl(name, attribute, opts)
     local hex = Color.get_hl(name, attribute, opts)
     return Color.from_css(hex)
@@ -239,6 +231,7 @@ end
 ---@param with_alpha boolean Include the alpha component.
 ---@return string
 function Color:to_css(with_alpha)
+    with_alpha = with_alpha or false
     local n = self:to_hex(with_alpha)
     local l = with_alpha and 8 or 6
     return string.format("#%0" .. l .. "x", n)
@@ -261,7 +254,7 @@ end
 ---@param f number Float [0,1]. 0 being this and 1 being other
 ---@return Color
 function Color:blend(other, f)
-    return Color.init(
+    return Color.new(
         (other.red - self.red) * f + self.red,
         (other.green - self.green) * f + self.green,
         (other.blue - self.blue) * f + self.blue,
@@ -276,7 +269,7 @@ function Color:shade(f)
     local t = f < 0 and 0 or 1.0
     local p = f < 0 and f * -1.0 or f
 
-    return Color.init(
+    return Color.new(
         (t - self.red) * p + self.red,
         (t - self.green) * p + self.green,
         (t - self.blue) * p + self.blue,
@@ -324,8 +317,8 @@ function Color:rotate(v)
 end
 
 
-Color.WHITE = Color.init(1, 1, 1, 1)
-Color.BLACK = Color.init(0, 0, 0, 1)
+Color.WHITE = Color.new(1, 1, 1, 1)
+Color.BLACK = Color.new(0, 0, 0, 1)
 
 function Color:is_bright()
     -- Counting the perceptive luminance - human eye favors green color
@@ -353,10 +346,24 @@ function Color:valid_wcag_aa(background)
     return ratio >= 4.5, ratio
 end
 
-
+---@return Color
 local mt = getmetatable(Color)
 function mt.__call(_, opts)
-    return Color.new(opts)
+    if type(opts) == "string" then
+        return Color.from_css(opts)
+    end
+    if opts.red then
+        return Color.from_rgba(opts.red, opts.green, opts.blue, opts.alpha)
+    end
+    if opts.value then
+        return Color.from_hsv(opts.hue, opts.saturation, opts.value)
+    end
+    if opts.lightness then
+        return Color.from_hsv(opts.hue, opts.saturation, opts.lightness)
+    end
+    if opts.name then
+        return Color.from_hl(opts.name, opts.attribute, opts.opts)
+    end
 end
 
 local exports = { Color = Color }
