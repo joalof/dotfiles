@@ -2,7 +2,10 @@ return {
     "saghen/blink.cmp",
     -- dependencies = { 'rafamadriz/friendly-snippets' },
     build = "cargo build --release",
-    dependencies = { "echasnovski/mini.icons" },
+    dependencies = {
+        "echasnovski/mini.icons",
+        'daliusd/blink-cmp-fuzzy-path',
+    },
 
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -55,12 +58,20 @@ return {
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
-            default = { "lazydev", "lsp", "path", "buffer", "cmdline" },
+            default = { 'fuzzy-path', "lazydev", "lsp", "path", "buffer", "cmdline" },
             providers = {
                 lazydev = {
                     name = "LazyDev",
                     module = "lazydev.integrations.blink",
                     score_offset = 100, -- make lazydev completions top priority (see `:h blink.cmp`)
+                },
+                ['fuzzy-path'] = {
+                    name = 'Fuzzy Path',
+                    module = 'blink-cmp-fuzzy-path',
+                    score_offset = 0,
+                    opts = {
+                        filetypes = { 'markdown', 'json' }, -- optional
+                    },
                 },
             },
         },

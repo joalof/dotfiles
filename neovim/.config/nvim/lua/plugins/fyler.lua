@@ -11,6 +11,7 @@ return {
                         git = { enabled = false },
                         diagnostic = { enabled = false },
                     },
+                    close_on_select = false,
                     mappings = {
                         ["q"] = "CloseView",
                         ["<CR>"] = "Select",

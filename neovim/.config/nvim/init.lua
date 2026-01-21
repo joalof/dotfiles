@@ -38,6 +38,7 @@ require("lazy").setup("plugins", {
 })
 
 require("options")
+require("highlights")
 require("mappings")
 require("commands")
 require("autocmds")

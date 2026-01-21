@@ -4,10 +4,20 @@ return {
     config = function()
         local ergoterm = require("ergoterm")
 
+        ergoterm.setup({
+            -- use darker background by default
+            terminal_defaults = {
+                on_open = function(t)
+                    local winid = t._state.window
+                    vim.wo[winid].winhighlight = "Normal:TermNormal,NormalNC:TermNormal"
+                end,
+            },
+        })
+
         -- open a terminal
         vim.keymap.set("n", "<leader>ot", function()
             local term = ergoterm.new({ name = "bash", start_in_insert = true, size = { below = "30%" } })
-            term:focus('float')
+            term:focus("float")
         end)
 
         -- Lightwieght coderunner
@@ -74,7 +84,8 @@ return {
         vim.keymap.set("n", "<leader>ri", function()
             local filename = vim.api.nvim_buf_get_name(0)
             local cmd = "ipython --no-banner --no-confirm-exit"
-            local term = ergoterm:new{ cmd = cmd, cleanup_on_success = false, start_in_insert=true, layout = "float" }
+            local term =
+                ergoterm:new({ cmd = cmd, cleanup_on_success = false, start_in_insert = true, layout = "float" })
             term:send({ string.format("run %s", filename) })
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
 
@@ -90,7 +101,8 @@ return {
         vim.keymap.set("n", "<leader>oi", function()
             -- local filename = vim.api.nvim_buf_get_name(0)
             local cmd = "ipython --no-banner --no-confirm-exit"
-            local term = ergoterm:new{ cmd = cmd, cleanup_on_success = false, start_in_insert=true, layout = "float" }
+            local term =
+                ergoterm:new({ cmd = cmd, cleanup_on_success = false, start_in_insert = true, layout = "float" })
             -- term:send({ string.format("run %s", filename) })
             term:focus()
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
@@ -119,9 +131,6 @@ return {
         local claude = ai_chats:new({
             cmd = "claude --model sonnet",
             name = "claude",
-            on_focus = function()
-                vim.print("Focused")
-            end,
             meta = {
                 add_file = function(file)
                     return "@" .. file
