@@ -1,9 +1,0 @@
-Other settings:
-read:
-  - CLAUDE.md
-
-Main model:
-model: gemini/gemini-2.5-pro
-
-Model settings:
-weak-model: gemini/gemini-2.5-flash
