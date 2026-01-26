@@ -385,10 +385,6 @@ if [ -f "$HOME/apps/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/apps/google
 if [ -f "$HOME/apps/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/completion.bash.inc"; fi
 # }}}
 
-# Claude code {{{
-export DISABLE_AUTOUPDATER=1
-# }}}
-
 # end apps }}}
 
 # Aliases {{{
