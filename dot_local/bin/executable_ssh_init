@@ -1,0 +1,3 @@
+#!/bin/bash
+keychain ~/.ssh/id_ed25519
+[ -f ~/.keychain/$(hostname)-sh ] && source ~/.keychain/$(hostname)-sh

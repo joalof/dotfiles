@@ -1,0 +1,10 @@
+[mgr]
+# to override a default keymap use prepend
+prepend_keymap = [
+	{ on = ["f"], run = "plugin zoxide", desc = "Run zoxide" }
+]
+
+[input]
+prepend_keymap = [
+	{ on = [ "<C-j>" ], run = "close --submit", desc = "Submit the input" },
+]

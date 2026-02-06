@@ -1,0 +1,126 @@
+#!/bin/bash
+
+# A script to search for a package on a PyPI index and display details.
+# It uses curl to fetch data and jq to parse the JSON response.
+
+# --- Default Configuration ---
+# The default PyPI index URL. Can be overridden with the -i flag.
+# For example, you could use TestPyPI: https://test.pypi.org/pypi
+INDEX_URL="https://pypi.org/pypi"
+
+# The default fields to extract from the JSON response using jq syntax.
+# Can be overridden with the -f flag.
+# This default string will display the package name, version, summary, and home page.
+DEFAULT_FIELDS='"Name:\t\t\(.info.name)\nVersion:\t\(.info.version)\nSummary:\t\(.info.summary)\nHomepage:\t\(.info.home_page)"'
+
+# --- Function Definitions ---
+
+# Function to display usage information and exit.
+usage() {
+  echo "Usage: $0 [-i INDEX_URL] [-f JQ_FILTER] PACKAGE_NAME"
+  echo
+  echo "Arguments:"
+  echo "  PACKAGE_NAME     The name of the package to search for (required)."
+  echo
+  echo "Options:"
+  echo "  -i INDEX_URL     The PyPI index URL. Defaults to 'https://pypi.org/pypi'."
+  echo "  -f JQ_FILTER     A jq filter string to select fields from the JSON response."
+  echo "                   Defaults to a filter that shows name, version, summary, and homepage."
+  echo "  -h               Display this help message."
+  echo
+  echo "Examples:"
+  echo "  # Search for 'requests' on the default PyPI"
+  echo "  $0 requests"
+  echo
+  echo "  # Search for 'numpy' and only get its latest version"
+  echo "  $0 -f '.info.version' numpy"
+  echo
+  echo "  # Search for a package on TestPyPI"
+  echo "  $0 -i https://test.pypi.org/pypi my-test-package"
+  exit 1
+}
+
+# --- Argument Parsing ---
+
+# Use getopts to parse command-line flags.
+while getopts "i:f:h" opt; do
+  case ${opt} in
+    i )
+      INDEX_URL=$OPTARG
+      ;;
+    f )
+      FIELDS=$OPTARG
+      ;;
+    h )
+      usage
+      ;;
+    \? )
+      # Handle invalid options.
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1)) # Move past the processed options.
+
+# The package name is the first remaining argument.
+PACKAGE_NAME=$1
+
+# --- Input Validation ---
+
+# Check if the PACKAGE_NAME is provided.
+if [ -z "${PACKAGE_NAME}" ]; then
+  echo "Error: PACKAGE_NAME is a required argument." >&2
+  usage
+fi
+
+# Check if jq is installed, as it is required for JSON parsing.
+if ! command -v jq &> /dev/null; then
+  echo "Error: 'jq' is not installed. Please install it to run this script." >&2
+  echo "On Debian/Ubuntu: sudo apt-get install jq" >&2
+  echo "On macOS (Homebrew): brew install jq" >&2
+  exit 1
+fi
+
+# Use the user-provided filter, or the default if none was given.
+JQ_FILTER=${FIELDS:-$DEFAULT_FIELDS}
+
+
+# --- Main Script Logic ---
+
+# Construct the full API URL for the package.
+# The format is INDEX_URL/PACKAGE_NAME/json
+API_URL="${INDEX_URL}/${PACKAGE_NAME}/json"
+
+echo "🔎 Searching for '${PACKAGE_NAME}' on ${INDEX_URL}..."
+echo "--------------------------------------------------"
+
+# Use curl to fetch the package data.
+# -s: Silent mode (don't show progress meter)
+# -L: Follow redirects (important for PyPI)
+# The output is piped directly to jq for parsing.
+RESPONSE=$(curl -sL "${API_URL}")
+
+# Check if curl command succeeded and if the response contains anything.
+if [ $? -ne 0 ] || [ -z "$RESPONSE" ]; then
+    echo "Error: Failed to fetch data from the URL. Please check the package name and index URL." >&2
+    exit 1
+fi
+
+# Check if the response indicates the package was not found.
+# PyPI returns a simple '{"message": "Not Found"}' for missing packages.
+if echo "$RESPONSE" | jq -e '.message == "Not Found"' > /dev/null; then
+    echo "Package '${PACKAGE_NAME}' not found on this index."
+    exit 0
+fi
+
+# Use jq to parse the JSON and print the selected fields.
+# The -r flag in jq outputs raw strings, not JSON-escaped strings.
+echo "$RESPONSE" | jq -r "$JQ_FILTER"
+
+# Check the exit status of jq to see if the filter was valid.
+if [ $? -ne 0 ]; then
+    echo "--------------------------------------------------"
+    echo "Error: The jq filter '${JQ_FILTER}' failed to execute." >&2
+    echo "Please check your filter syntax." >&2
+    exit 1
+fi
