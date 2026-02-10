@@ -1,8 +1,9 @@
 return {
     "waiting-for-dev/ergoterm.nvim",
-    keys = { "<leader>ri", "<leader>rr", "<leader>rx", "<leader>cc", "<leader>ot", "<leader>oi" },
+    keys = { "<leader>ri", "<leader>rr", "<leader>rx", "<leader>rl", "<leader>cc", "<leader>ot", "<leader>oi" },
     config = function()
         local ergoterm = require("ergoterm")
+        local stringx = require("lib.stringx")
 
         ergoterm.setup({
             -- use darker background by default
@@ -81,12 +82,43 @@ return {
             end
         end)
 
+        -- run current script with ipython
         vim.keymap.set("n", "<leader>ri", function()
             local filename = vim.api.nvim_buf_get_name(0)
-            local cmd = "ipython --no-banner --no-confirm-exit"
+            local cmd = string.format("ipython --no-banner --no-confirm-exit -i %s", filename)
+            vim.print(cmd)
             local term =
                 ergoterm:new({ cmd = cmd, cleanup_on_success = false, start_in_insert = true, layout = "float" })
-            term:send({ string.format("run %s", filename) })
+            term:focus()
+            vim.bo.bufhidden = "delete" -- close the terminal when window closes
+
+            -- Skips the "[Process exited 0]" message from the embedded terminal
+            vim.api.nvim_create_autocmd({ "TermClose" }, {
+                buffer = vim.api.nvim_get_current_buf(),
+                callback = function()
+                    vim.api.nvim_feedkeys("i", "n", false)
+                end,
+            })
+        end)
+
+        -- run everything up to (and including) curent cursorline
+        -- in ipython
+        vim.keymap.set("n", "<leader>rl", function()
+            local filename = vim.api.nvim_buf_get_name(0)
+            local cursor = vim.api.nvim_win_get_cursor(0)
+            local lines = vim.api.nvim_buf_get_lines(0, 0, cursor[1], true)
+           -- Create temp file
+            local tmp = vim.fn.tempname() .. ".py"
+            vim.fn.writefile(lines, tmp)
+            local cmd = string.format(
+                "ipython --no-banner --no-confirm-exit -i %s",
+                vim.fn.shellescape(tmp)
+            )
+            -- local cmd = "ipython --no-banner --no-confirm-exit"
+            local term =
+                ergoterm:new({ cmd = cmd, cleanup_on_success = false, start_in_insert = true, layout = "float" })
+            -- term:send(preceding_lines)
+            term:focus()
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
 
             -- Skips the "[Process exited 0]" message from the embedded terminal
@@ -103,7 +135,6 @@ return {
             local cmd = "ipython --no-banner --no-confirm-exit"
             local term =
                 ergoterm:new({ cmd = cmd, cleanup_on_success = false, start_in_insert = true, layout = "float" })
-            -- term:send({ string.format("run %s", filename) })
             term:focus()
             vim.bo.bufhidden = "delete" -- close the terminal when window closes
 

@@ -1,12 +1,19 @@
 return {
     "saghen/blink.cmp",
-    -- dependencies = { 'rafamadriz/friendly-snippets' },
     build = "cargo build --release",
     dependencies = {
         "echasnovski/mini.icons",
-        'daliusd/blink-cmp-fuzzy-path',
+        "daliusd/blink-cmp-fuzzy-path",
+        {
+            "folke/lazydev.nvim",
+            ft = "lua",
+            opts = {
+                library = {
+                    { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+                },
+            },
+        },
     },
-
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
@@ -29,7 +36,7 @@ return {
                     components = {
                         kind_icon = {
                             text = function(ctx)
-                                local kind_icon = require('icons').kinds[ctx.kind]
+                                local kind_icon = require("icons").kinds[ctx.kind]
                                 if not kind_icon then
                                     kind_icon, _, _ = require("mini.icons").get("lsp", ctx.kind)
                                 end
@@ -58,19 +65,19 @@ return {
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
-            default = { 'fuzzy-path', "lazydev", "lsp", "path", "buffer", "cmdline" },
+            default = { "lazydev", "lsp", "fuzzy-path", "path", "buffer", "cmdline" },
             providers = {
                 lazydev = {
                     name = "LazyDev",
                     module = "lazydev.integrations.blink",
                     score_offset = 100, -- make lazydev completions top priority (see `:h blink.cmp`)
                 },
-                ['fuzzy-path'] = {
-                    name = 'Fuzzy Path',
-                    module = 'blink-cmp-fuzzy-path',
+                ["fuzzy-path"] = {
+                    name = "Fuzzy Path",
+                    module = "blink-cmp-fuzzy-path",
                     score_offset = 0,
                     opts = {
-                        filetypes = { 'markdown', 'json' }, -- optional
+                        filetypes = { "markdown", "json" }, -- optional
                     },
                 },
             },

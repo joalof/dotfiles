@@ -4,7 +4,7 @@ local routes = {
     -- { filter = { cmdline = true}, view = "notify", opts = {skip = false} },
     
     -- use a popup to show prints from lua code executed in cmdline
-    { filter = { event = "msg_show", kind = 'lua_print' }, view = "popup", opts = {skip = false, replace = false} },
+    -- { filter = { event = "msg_show", kind = 'lua_print' }, view = "popup", opts = {skip = false, replace = false} },
     
     -- buffer write messages
     { filter = { event = "msg_show", find = "%d+B written$" }, view = "mini" },

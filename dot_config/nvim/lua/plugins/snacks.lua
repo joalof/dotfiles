@@ -74,7 +74,7 @@ return {
         {
             "<leader>f.",
             function()
-                Snacks.picker.files({ cwd = vim.fs.abspath("~/dotfiles") })
+                Snacks.picker.files({ cwd = vim.fs.abspath("~/.local/share/chezmoi/") })
             end,
             desc = "Find managed dotfiles",
         },
