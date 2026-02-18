@@ -13,3 +13,6 @@ detect_folders = []
 # Only show when there's an active virtual environment
 python_binary = "python3"
 style = "bold green"
+
+[gcloud]
+disabled = true
