@@ -29,10 +29,6 @@ shopt -s globstar
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
@@ -47,7 +43,14 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-#
+
+# enable locally installed autocompletions
+for comp in "$HOME/.local/share/bash-completion/completions/*"; do
+    if [[ -f $comp ]] then
+        . $comp
+    fi
+done
+
 # Disable CTRL-S and CTRL-Q
 [[ $- =~ i ]] && stty -ixoff -ixon
 
@@ -97,28 +100,9 @@ function has_sudo() {
 }
 
 
-function stow-app ()
-{
-    local OPTIND opt flag 
-    del_flag=""
-    while getopts ":D" opt; do
-        case "${opt}" in
-            D) 
-                del_flag="-${opt}"
-                ;;
-            *) 
-                echo "Usage: stow_app [-D] package" 
-                ;;
-        esac
-    done
-    shift $((OPTIND-1))
-    xstow -ni '^(bin|include|lib|lib64|local|sbin|share|tmp|man|etc)' -d $HOME/apps -t $HOME/.local $del_flag $1
-}
-
-
 o() {
     declare -A openers
-    
+
     # Mapping of file extensions to programs
     openers=(
         [pdf]="zathura"
@@ -152,30 +136,30 @@ o() {
         [yaml]="nvim"
         [yml]="nvim"
     )
-    
+
     # Check if a file is provided
     if [[ -z "$1" ]]; then
         echo "Usage: o <file>"
         return 1
     fi
-    
+
     # If the argument is a directory, open it in nvim with oil.nvim
     if [[ -d "$1" ]]; then
         nvim +Oil "$1"
         return 0
     fi
-    
+
     # If the file is a dotfile, open in nvim
     if [[ "$(basename "$1")" =~ ^\. ]]; then
         nvim "$1"
         return 0
     fi
-    
+
     # Check if the file is binary
     if grep -Iq . "$1"; then
         # Extract file extension
         ext="${1##*.}"
-        
+
         # Check if there's a mapped program
         if [[ -n "${openers[$ext]}" ]]; then
             "${openers[$ext]}" "$1" &
@@ -200,16 +184,24 @@ loadenv() {
 }
 
 realize() {
-    cp -Lr "$1" "$1.copy" 
+    cp -Lr "$1" "$1.copy"
     rm -r "$1"
     mv "$1.copy" "$1"
+}
+
+function ya() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
 }
 
 
 # }}}
 
  # Defaults {{{
- 
+
 is_wsl2=$(uname -r | grep -c microsoft)
 
 export SHELL=/bin/bash
@@ -218,10 +210,10 @@ export EDITOR=nvim
 
 if [[ "$is_wsl2" -eq 1 ]] ; then
     export BROWSER=firefox
-else 
+else
     export BROWSER=chrome
 fi
-    
+
 export XDG_CONFIG_HOME=$HOME/.config
 
 export PATH=$HOME/.local/bin:$PATH
@@ -250,7 +242,7 @@ fi
 export PATH=$PATH:$HOME/go/bin
 
 # }}}
-# 
+#
 # WSL {{{
 
 if [[ "$is_wsl2" -eq 1 ]] ; then
@@ -342,7 +334,7 @@ fi
 
 # Ezenv {{{
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-[ -f ~/.local/bin/ezenv ] && source ~/.local/bin/ezenv &> /dev/null
+[ -f ~/.local/bin/ezenv ] && source ~/.local/bin/ezenv
 
 last_venv_file="$HOME/.cache/last_venv"
 if [[ -f $last_venv_file ]]; then
@@ -369,8 +361,7 @@ export MODAL_ENVIRONMENT='joakim-dev'
 # }}}
 
  # pnpm {{{
-# pnpm
-export PNPM_HOME="$HOME/.local/share/pnpm"
+export PNPM_HOME="/home/autarch/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
