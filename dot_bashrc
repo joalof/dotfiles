@@ -1,5 +1,8 @@
+# vim: set fdm=marker fmr={{{,}}} fdl=0 :
+# vim: set filetype=bash:
+
 # Basics {{{
-#
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -8,10 +11,19 @@ esac
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
-HISTCONTROL=ignoreboth
+export HISTCONTROL=ignoreboth:erasedups
 
 # append to the history file, don't overwrite it
 shopt -s histappend
+
+# Ignore trivial / noisy commands
+export HISTIGNORE="\
+ls:ls *:ll:ll *:\
+cd:cd ..:cd -:\
+pwd:\
+exit:\
+history:history *:\
+clear"
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
@@ -332,18 +344,6 @@ if grep -q "microsoft" /proc/version > /dev/null 2>&1; then
 fi
 # }}}
 
-# Ezenv {{{
-export VIRTUAL_ENV_DISABLE_PROMPT=1
-[ -f ~/.local/bin/ezenv ] && source ~/.local/bin/ezenv
-
-last_venv_file="$HOME/.cache/last_venv"
-if [[ -f $last_venv_file ]]; then
-    read -r last_venv < $last_venv_file
-    ezenv activate $last_venv
-fi
-
-# }}}
-
 # Keychain {{{
 [ -f ~/.keychain/$(hostname)-sh ] && source ~/.keychain/$(hostname)-sh
 # }}}
@@ -375,6 +375,18 @@ if [ -f "$HOME/apps/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/apps/google
 
 # The next line enables shell command completion for gcloud.
 if [ -f "$HOME/apps/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/apps/google-cloud-sdk/completion.bash.inc"; fi
+# }}}
+
+# Ezenv {{{
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+[ -f ~/.local/bin/ezenv ] && source ~/.local/bin/ezenv
+
+last_venv_file="$HOME/.cache/last_venv"
+if [[ -f $last_venv_file ]]; then
+    read -r last_venv < $last_venv_file
+    ezenv activate $last_venv
+fi
+
 # }}}
 
 # end apps }}}
@@ -445,6 +457,3 @@ alias gemini-flash='gemini --model gemini-2.5-flash'
 alias gsearch='function _search(){ google-chrome "https://www.google.com/search?q=$(printf "%s+" "$@" | sed "s/+$//")"; }; _search'
 
 # }}}
-
-# vim: set fdm=marker fmr={{{,}}} fdl=0 :
-# vim: set filetype=bash:
