@@ -17,6 +17,7 @@ local function update_table(t1, t2)
     return t1
 end
 
+config.term = "wezterm"
 config.disable_default_key_bindings = true
 config.leader = { key = "s", mods = "CTRL", timeout_milliseconds = 1000 }
 
