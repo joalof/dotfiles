@@ -35,3 +35,20 @@ end
 for _, direction in ipairs({'h', 'j', 'k', 'l'}) do
     vim.keymap.set({'n', 't'}, string.format(navigate_prefix, direction), function() navigate_window(direction) end)
 end
+
+-- treesitter inc selection
+vim.keymap.set({ "x", "o" }, "n", function()
+  if vim.treesitter.get_parser(nil, nil, { error = false }) then
+    require("vim.treesitter._select").select_parent(vim.v.count1)
+  else
+    vim.lsp.buf.selection_range(vim.v.count1)
+  end
+end)
+
+vim.keymap.set({ "x", "o" }, "p", function()
+  if vim.treesitter.get_parser(nil, nil, { error = false }) then
+    require("vim.treesitter._select").select_child(vim.v.count1)
+  else
+    vim.lsp.buf.selection_range(-vim.v.count1)
+  end
+end)
