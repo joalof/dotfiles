@@ -64,3 +64,16 @@ vim.api.nvim_create_autocmd("TermOpen", {
         vim.wo.winhighlight = "Normal:TermNormal,NormalNC:TermNormal"
     end,
 })
+
+vim.api.nvim_create_autocmd({"BufReadPost", "BufNewFile"}, {
+    group = vim.api.nvim_create_augroup("joakim.python", { clear = true }),
+    desc = "Make python library buffers read-only",
+    pattern = {
+        "*/site-packages/*",
+        "*/dist-packages/*",
+    },
+    callback = function()
+        vim.bo.readonly = true
+        vim.bo.modifiable = false
+    end,
+})

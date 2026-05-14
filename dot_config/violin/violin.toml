@@ -1,0 +1,32 @@
+# Default GCP datastore project for asset operations
+datastore_project = "dev-cluster-b"
+
+# Log level used by all Violin modules
+log_level = "WARNING"
+
+# Centrally stored assets are placed in this dir then symlinked back to their original path
+asset_storage_dir = "/home/joakim/.local/share/violin/assets"
+
+# Asset workspaces are stored as csv files in this dir
+workspace_dir = "/home/joakim/projects/violin-workspaces/workspaces/"
+
+# Cached data (e.g., catalogs) are stored in this dir
+cache_dir = "/home/joakim/.cache/violin"
+
+# Path to the vion-orchestra image-database.json file, required for Modal compatibility
+orchestra_database = "/home/joakim/projects/vion-orchestra/image-database.json"
+
+# Use this workspace as default on TUI launch
+# tui_default_workspace = "mlsqd1-classics"
+
+tui_cell_quotes = "smart"
+
+# Color theme for the TUI app
+tui_theme = "tokyo-night"
+
+# Style for displaying asset tables. Options: "fancy" (rich table), "plain" (tabulate, no truncation), "block" (key-value block per asset) or "auto" to automatically choose based on context.
+asset_table_style = "auto"
+
+asset_download_name = "vionlabs_id"
+
+[catalog_api_keys]

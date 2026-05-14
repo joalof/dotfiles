@@ -201,7 +201,7 @@ realize() {
     mv "$1.copy" "$1"
 }
 
-function ya() {
+function yazi() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	command yazi "$@" --cwd-file="$tmp"
 	IFS= read -r -d '' cwd < "$tmp"

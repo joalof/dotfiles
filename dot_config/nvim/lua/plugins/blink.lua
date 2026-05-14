@@ -1,6 +1,7 @@
 return {
     "saghen/blink.cmp",
     build = "cargo build --release",
+    version = "1.*",
     dependencies = {
         "echasnovski/mini.icons",
         "daliusd/blink-cmp-fuzzy-path",
