@@ -18,7 +18,7 @@ shopt -s histappend
 
 # Ignore trivial / noisy commands
 export HISTIGNORE="\
-ls:ls *:ll:ll *:\
+ls:ll:\
 cd:cd ..:cd -:\
 pwd:\
 exit:\
