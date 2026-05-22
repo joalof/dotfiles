@@ -57,8 +57,8 @@ if ! shopt -oq posix; then
 fi
 
 # enable locally installed autocompletions
-for comp in "$HOME/.local/share/bash-completion/completions/*"; do
-    if [[ -f $comp ]] then
+for comp in "$HOME"/.local/share/bash-completion/completions/*; do
+    if [[ -f $comp ]]; then
         . $comp
     fi
 done
@@ -155,9 +155,9 @@ o() {
         return 1
     fi
 
-    # If the argument is a directory, open it in nvim with oil.nvim
+    # If the argument is a directory, open it with yazi
     if [[ -d "$1" ]]; then
-        nvim +Oil "$1"
+        yazi "$1"
         return 0
     fi
 
@@ -361,11 +361,11 @@ export MODAL_ENVIRONMENT='joakim-dev'
 # }}}
 
  # pnpm {{{
-export PNPM_HOME="/home/autarch/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+# export PNPM_HOME="/home/autarch/.local/share/pnpm"
+# case ":$PATH:" in
+#   *":$PNPM_HOME:"*) ;;
+#   *) export PATH="$PNPM_HOME:$PATH" ;;
+# esac
 # pnpm end
 # }}}
 
@@ -408,22 +408,25 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -alF'
-alias l='ls -alF'
-alias la='ls -A'
-
+# ls aliases
 if [[ -f $(command -v eza) ]] ; then
     alias ll='eza -alF'
-    alias l='eza -alF'
     alias ls='eza'
 else
-    alias ll='ls -alF --color=auto'
-    alias ls='ls --color=auto'
+    if [ -x /usr/bin/dircolors ]; then
+        test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+        alias ls='ls --color=auto'
+        alias ll='ls -alF --color=auto'
+        alias grep='grep --color=auto'
+        alias fgrep='fgrep --color=auto'
+        alias egrep='egrep --color=auto'
+    else
+        alias ll='ls -alF'
+    fi
 fi
 
 # if we have nvim use it over vim
-if [ -f $(command -v nvim) ] ; then
+if command -v nvim >/dev/null 2>&1; then
     alias vi='nvim'
     alias vim='/usr/bin/vi'
 fi
@@ -444,15 +447,8 @@ alias ipython='ipython3 --no-confirm-exit --no-banner'
 alias ipy='ipython3 --no-confirm-exit --no-banner'
 alias jpy='jupyter-lab'
 
-# latex make
-alias lmk='latexmk'
-alias lmkpdf='latexmk -pdf'
-alias lmkxet='latexmk -xelatex'
-alias lmklua='latexmk -lualatex'
-
 # other
 alias feh="feh --zoom=50"
-alias gemini-flash='gemini --model gemini-2.5-flash'
 
 alias gsearch='function _search(){ google-chrome "https://www.google.com/search?q=$(printf "%s+" "$@" | sed "s/+$//")"; }; _search'
 
