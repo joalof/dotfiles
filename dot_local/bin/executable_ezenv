@@ -19,10 +19,12 @@ ezenv() {
     local cmd="$1"
     shift
 
+    local all_dirs=("$PWD" "${VENV_DIRS[@]}")
+
     case "$cmd" in
         list)
             local found_envs=false
-            for dir in "${VENV_DIRS[@]}"; do
+            for dir in "${all_dirs[@]}"; do
                 if [[ ! -d "$dir" ]]; then
                     continue
                 fi
@@ -53,13 +55,23 @@ ezenv() {
         activate)
             local name="$1"
             
-            if [[ -z "$name" ]]; then
+            if [[ "$name" == /* ]]; then
+                # Full path provided (e.g. from last_venv cache)
+                local activate_path="$name/bin/activate"
+                if [[ ! -f "$activate_path" ]]; then
+                    echo "Environment at '$name' not found."
+                    return 1
+                fi
+                source "$activate_path"
+                echo "$name" > ~/.cache/last_venv
+                return
+            elif [[ -z "$name" ]]; then
                 # Interactive mode - build a list of all environments
                 local env_paths=()
                 local env_names=()
                 local count=0
                 
-                for dir in "${VENV_DIRS[@]}"; do
+                for dir in "${all_dirs[@]}"; do
                     if [[ ! -d "$dir" ]]; then
                         continue
                     fi
@@ -96,7 +108,7 @@ ezenv() {
             else
                 # Direct selection mode - look for specified environment
                 local activate_path=""
-                for dir in "${VENV_DIRS[@]}"; do
+                for dir in "${all_dirs[@]}"; do
                     local potential_path="$dir/$name/bin/activate"
                     if [[ -f "$potential_path" ]]; then
                         activate_path="$potential_path"
@@ -116,7 +128,7 @@ ezenv() {
             # fi
 
             source "$activate_path"
-            echo $name > ~/.cache/last_venv
+            echo "${activate_path%/bin/activate}" > ~/.cache/last_venv
             # echo "Activated virtual environment: $name"
             ;;
 
@@ -145,7 +157,7 @@ ezenv() {
             # Look for environment in all configured directories
             local env_path=""
             local env_dir=""
-            for dir in "${VENV_DIRS[@]}"; do
+            for dir in "${all_dirs[@]}"; do
                 local potential_path="$dir/$name"
                 if [[ -d "$potential_path" && -f "$potential_path/bin/activate" ]]; then
                     env_path="$potential_path"

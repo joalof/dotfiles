@@ -1,0 +1,33 @@
+_ezenv_completions() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [[ $COMP_CWORD -eq 1 ]]; then
+        COMPREPLY=($(compgen -W "list activate deactivate remove" -- "$cur"))
+        return
+    fi
+
+    case "$prev" in
+        activate|remove)
+            local search_dirs=("$PWD" "${VENV_DIRS[@]}")
+            local seen=()
+            local envs=()
+            for dir in "${search_dirs[@]}"; do
+                [[ -d "$dir" ]] || continue
+                while IFS= read -r -d $'\0' env_path; do
+                    if [[ -f "$env_path/bin/activate" ]]; then
+                        local name
+                        name="$(basename "$env_path")"
+                        if [[ ! " ${seen[*]} " =~ " $name " ]]; then
+                            seen+=("$name")
+                            envs+=("$name")
+                        fi
+                    fi
+                done < <(find "$dir" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null)
+            done
+            COMPREPLY=($(compgen -W "${envs[*]}" -- "$cur"))
+            ;;
+    esac
+}
+
+complete -F _ezenv_completions ezenv
