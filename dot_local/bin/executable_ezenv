@@ -138,6 +138,7 @@ ezenv() {
                 return
             fi
             deactivate
+            rm -f ~/.cache/last_venv &> /dev/null
             echo "Deactivated virtual environment."
             ;;
 
@@ -178,6 +179,7 @@ ezenv() {
                 echo "Removing virtual environment: $name"
                 rm -rf "$env_path"
                 if [[ $? -eq 0 ]]; then
+                    rm -f ~/.cache/last_venv &> /dev/null
                     echo "Environment '$name' has been removed successfully."
                 else
                     echo "Failed to remove environment '$name'. Check permissions and try again."
